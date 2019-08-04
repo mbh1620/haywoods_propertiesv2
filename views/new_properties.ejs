@@ -1,0 +1,88 @@
+<% include ./partials/header.ejs %>
+
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin="" />
+</head>
+
+<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+  crossorigin=""></script>
+  
+<div class="container w-50 p-3">
+  <div class="jumbotron">
+    <h1 class="text-center">Add a new Property</h1>
+    <form action="/properties/new" enctype="multipart/form-data" method="POST">
+      <div class="form-group">
+        <label for="exampleInputEmail1">Property Name</label>
+        <input type="text" name="property[name]" class="form-control" id="exampleInputEmail1"
+          aria-describedby="emailHelp" placeholder="Name">
+
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Price</label>
+        <input type="text" class="form-control" id="exampleInputPassword1" name="property[price]" placeholder="Price">
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlTextarea1">Description</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" name="property[description]" rows="3"
+          placeholder="Description"></textarea>
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+      </div>
+      <input type="file" name="image">
+      <label class="form-check-label" for="exampleCheck1" style="margin-top:20px;">Choose location</label>
+      <div id="mapid" style="height:400px;margin-top: 20px;"></div>
+      <input type="hidden" name="property[lat]" id="lat" value="0" step="0.000000001">
+      <input type="hidden" name="property[long]" id="long" value="0" step="0.000000001">
+      
+      <script>
+        var mymap = L.map('mapid').setView([52.63771, -1.15017], 10);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+          maxZoom: 18,
+          id: 'mapbox.streets',
+          accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
+        }).addTo(mymap);
+
+        var marker;
+
+        function onMapClick(e) {
+         if(marker != undefined){
+          mymap.removeLayer(marker);
+         }
+          
+          
+         
+
+
+          marker = new L.marker(e.latlng,{draggable:true}).addTo(mymap);
+          var lat = document.getElementById("lat");
+          var long = document.getElementById("long");
+          console.log(e.latlng.lat);
+          lat.value = e.latlng.lat.toFixed(8);
+          long.value = e.latlng.lng.toFixed(8);
+
+          
+        }
+
+        
+
+        mymap.on('click', onMapClick);
+
+      </script>
+
+
+      <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Submit</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+
+
+<% include ./partials/footer.ejs %>
