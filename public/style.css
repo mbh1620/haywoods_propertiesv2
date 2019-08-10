@@ -2,10 +2,13 @@ html, body{
     height:100%
 }
 
+
+
 body {
     height: auto;
     display:flex;
     flex-flow:column;
+    
     
 }
 
@@ -66,5 +69,9 @@ img {
  .box {
     display:flex;
     
+ }
+
+ .dont{
+    display:none;
  }
 

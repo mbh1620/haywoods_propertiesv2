@@ -124,8 +124,9 @@ var upload = multer({ storage: storage });
 //=============================================================
 app.set('views', './views');
 
-app.use(express.static(__dirname + "/public"));
+
 app.use('/uploads', express.static('uploads'));
+app.use(express.static(__dirname + "/public"));
 
 
 mongoose.connect("mongodb://localhost/haywoodsproperties", { useNewUrlParser: true, useFindAndModify: false });
@@ -267,6 +268,14 @@ app.get("/properties/:id", function (req, res) {
 app.get("/properties/:id/edit", function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
         res.render("edit.ejs", { property: foundProperty })
+    })
+})
+
+//MANAGE ROUTE
+
+app.get("/properties/:id/manage", function(req,res){
+    Property.findById(req.params.id, function(err, foundProperty){
+        res.render("manage.ejs", {property: foundProperty})
     })
 })
 
