@@ -1,2 +1,2 @@
-cd ~/Desktop/Haywoods\ Properties
-node app.js
+cd ~/Desktop/haywoods_propertiesv2
+node ./app.js

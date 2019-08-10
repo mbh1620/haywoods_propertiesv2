@@ -155,7 +155,7 @@ app.get("/properties", function (req, res) {
 
 //NEW PROPERTIES FORM ROUTE
 
-app.get("/properties/new", function (req, res) {
+app.get("/properties/new", middleware.isLoggedIn, function (req, res) {
     res.render("new_properties.ejs");
 })
 
@@ -190,7 +190,6 @@ function createNewProperty(req, res, next) {
         } else { }
         req.property = _property;
         var the_User = req.user;
-        console.log(the_User.username);
         the_User.properties.push(_property);
 
 
@@ -218,15 +217,19 @@ app.post("/properties/new", createNewProperty, upload_mult.array('images',5), fu
                     console.log(err);
                     res.redirect("/properties");
                 }
-                updatedProperty.first = files[0];
-                updatedProperty.save(function(err, data){
-                    if(err){
-                        console.log(err)
-                        res.redirect("/properties");
-                    }else{
-                        res.redirect("/properties");
-                    }
-                })
+                console.log(files);
+                if(files !== undefined){
+                    updatedProperty.first = files[0];
+                    updatedProperty.save(function(err, data){
+                        if(err){
+                            console.log(err)
+                            res.redirect("/properties");
+                        }else{
+                            res.redirect("/properties");
+                        }
+                    })
+                }
+                
                 
             } )
             
@@ -247,12 +250,14 @@ app.get("/properties/:id", function (req, res) {
                     console.log(err);
                     res.render("show.ejs", {property: foundProperty, images: images})
                 }
-
-                for (const file of files) {
-                    images.push(file);
+                if(files !== undefined){
+                    for (const file of files) {
+                        images.push(file);
+                    }
                 }
+                
                 res.render("show.ejs", { property: foundProperty, images: images})
-            } )
+            })
         }
     })
 })
