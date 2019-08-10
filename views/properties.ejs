@@ -1,11 +1,12 @@
 <% include ./partials/header.ejs %>
+
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-      crossorigin="" />
-  </head>
-  
-  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+</head>
+
+<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
     crossorigin=""></script>
 
@@ -15,53 +16,66 @@
     <h5>Here are all the properties to choose from.</h5>
     <a class="btn btn-success btn-sm" href="/properties/new" style="float:left">Add new property</a>
 </div>
-<div class="container container-fluid" >
-<div id="mapid" style="height:400px;margin-top: 20px;"></div>
+<div class="container container-fluid">
+    <div id="mapid" style="height:400px;margin-top: 20px;"></div>
 </div>
 <div class="container container-fluid">
+    
+    
+        <% var x = 0; %>
+        <% properties.forEach(function(property){ %>
         
-        <div class="row h-50 text-center">
+        
+        
+        
+        <% if( x % 4 == 0 || x == 0){ %>
+        <div class="row h-30 text-center">
+        <% } %>
+        <% x++; %>
 
-                <% properties.forEach(function(property){ %>
-                <div class="mt-5 col-md-6 col-lg-4 col-xl-3">
-                    <div class="card w-100 p-3 p-3" style="height:400px;">
-                        <img class="card-img-top" src="../uploads/<%= property._id%>/<%= property.first %>"></img>
-                        <!-- <img src="<%= property.image %>"> -->
-                        <div style="margin-bottom:0px;" class="card-title">
-                            <h4><%= property.name %></h4>
-                        </div>
-                        
-                        <div class="card-body">
-                                
-                            <p style="margin-top:0px;"><%= property.description.slice(0,100) %></p>
-                            <p><a href="/properties/<%= property._id %>" class="btn btn-primary">More Info</a></p>
-                                
-                        </div>
-                        
-                    </div>
-                        
+        <div class="mt-5 col-md-6 col-lg-4 col-xl-3">
+            <div class="card w-100 p-3 p-3" style="height:400px;">
+                <img class="card-img-top" src="../uploads/<%= property._id%>/<%= property.first %>"></img>
+                <!-- <img src="<%= property.image %>"> -->
+                <div style="margin-bottom:0px;" class="card-title">
+                    <h4><%= property.name %></h4>
                 </div>
-                    <% }); %>
-                
-        
+
+                <div class="card-body">
+
+                    <p style="margin-top:0px;"><%= property.description.slice(0,100) %></p>
+                    <p><a href="/properties/<%= property._id %>" class="btn btn-primary">More Info</a></p>
+
+                </div>
+
             </div>
+
+        </div>
+        <% if(x % 4 == 0){ %>
+        </div>
+        <% } %>
+    
+        <%}); %>
+        
+
+    
 </div>
 </div>
 
 <script>
-    var mymap = L.map('mapid').setView( [52.63771, -1.15017], 12);
-            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-              attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-              
-              maxZoom: 18,
-              id: 'mapbox.streets',
-              accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
-            }).addTo(mymap);
-            <% properties.forEach(function(property){ %>
+    var mymap = L.map('mapid').setView([52.63771, -1.15017], 12);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+
+        maxZoom: 18,
+        id: 'mapbox.streets',
+        accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
+    }).addTo(mymap);
+            <% properties.forEach(function (property) { %>
             var marker = new L.marker([<%= property.lat %>, <%= property.long %>]).addTo(mymap);
-            <% }); %>    
-    
-    </script>
+            <% }); %>
+
+</script>
 
 
 <% include ./partials/footer.ejs %>
