@@ -18,15 +18,15 @@
   <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
     <div class="carousel-inner">
       <!-- This section needs to be a foreach for each photo in the directory -->
-      <div class="carousel-item active">
-        <img src="../uploads/<%= property._id %>/<%= property._id %>" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="../uploads/<%= property._id %>/<%= property._id %>" class="d-block w-100" alt="...">
-      </div>
-      <div class="carousel-item">
-        <img src="../uploads/<%= property._id %>/<%= property._id %>" class="d-block w-100" alt="...">
-      </div>
+      <% images.forEach(function(image, index){ %>
+        <div id="<%= index %>" class="carousel-item">
+          <img src="../uploads/<%= property._id %>/<%= image %>" class="d-block w-100" alt="...">
+        </div>
+      <% }) %>
+      <script>
+        document.getElementById("0").classList.add("active");
+      </script>
+
     </div>
     <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -39,6 +39,7 @@
 
 
   </div>
+  <p style="margin-top:20px;">This was listed by: <em><%= property.author.username %></em></p>
   <p style="margin-top:20px;">Location:</p>
   <div id="map-desc" style="width:100% height:300px;"></div>
     <div id="mapid" style="float:left;height:400px;width:400px; display:block; margin-right:20px; margin-bottom:20px;"></div>
@@ -51,6 +52,7 @@
     </form>
     <a style="display:inline-block" href="/properties/<%= property._id %>/edit" class="btn btn-warning">Edit</a>
   </div>
+  
 
 </div>
 
@@ -68,6 +70,5 @@
 
 
 </script>
-
 
 <% include ./partials/footer.ejs %>

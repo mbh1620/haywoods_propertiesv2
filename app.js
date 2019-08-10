@@ -23,7 +23,8 @@ var propertySchema = new mongoose.Schema({
             ref: "User"
         },
         username: String
-    }
+    },
+    first:String
 
 });
 
@@ -74,8 +75,10 @@ var storage = multer.diskStorage({
     destination: (request, file, callback) => {
         if (request.property) {
             var dest = "./uploads/" + request.property._id.toString();
-
-            fs.mkdir(dest, err => callback(err, dest));
+            if (!fs.existsSync(dest)){
+                fs.mkdirSync(dest);
+            }
+            return callback(null, dest);
         } else {
             return 0;
         }
@@ -91,6 +94,32 @@ var storage = multer.diskStorage({
     }
 })
 
+var store_multiple = multer.diskStorage({
+    destination: (request, file, callback) => {
+        if (request.property) {
+            var dest = "./uploads/" + request.property._id.toString();
+            if (!fs.existsSync(dest)){
+                fs.mkdirSync(dest);
+            }
+            return callback(null, dest);
+        
+        } else {
+            return 0;
+        }
+    },
+
+    filename: function (request, file, callback) {
+        if (request.property) {
+            return callback(null, request.property._id.toString() + Date.now());
+        }
+        else {
+            return 0;
+        }
+    }
+})
+
+var upload_mult = multer({ storage: store_multiple});
+
 var upload = multer({ storage: storage });
 //=============================================================
 app.set('views', './views');
@@ -101,13 +130,6 @@ app.use('/uploads', express.static('uploads'));
 
 mongoose.connect("mongodb://localhost/haywoodsproperties", { useNewUrlParser: true, useFindAndModify: false });
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
-
-// SCHEMA SETUP 
-
-
-
 
 
 //===============================
@@ -144,6 +166,7 @@ function createNewProperty(req, res, next) {
     var description = req.body.description;
     var lat = req.body.lat;
     var long = req.body.long;
+    var currentUser = req.user;
 
 
 
@@ -155,6 +178,10 @@ function createNewProperty(req, res, next) {
         description: description,
         lat: lat,
         long: long,
+        author: {
+            id: currentUser,
+            username: currentUser.username
+        }
     }
 
     Property.create(newProperty, function (err, _property) {
@@ -166,6 +193,7 @@ function createNewProperty(req, res, next) {
         console.log(the_User.username);
         the_User.properties.push(_property);
 
+
         // 
         the_User.save(function (err, data) {
             if (err) {
@@ -174,23 +202,34 @@ function createNewProperty(req, res, next) {
                 next();
             }
         })
-
-
-
-
-
     });
 
 }
 
 
-app.post("/properties/new", createNewProperty, upload.array('image'), function (req, res) {
+app.post("/properties/new", createNewProperty, upload_mult.array('images',5), function (req, res) {
     Property.findByIdAndUpdate(req.property._id, req.body.property, function (err, updatedProperty) {
         if (err) {
             console.log("error has occurred");
             res.redirect("/properties");
         } else {
-            res.redirect("/properties");
+            fs.readdir("uploads/" + req.property._id, (err, files) => {
+                if (err){
+                    console.log(err);
+                    res.redirect("/properties");
+                }
+                updatedProperty.first = files[0];
+                updatedProperty.save(function(err, data){
+                    if(err){
+                        console.log(err)
+                        res.redirect("/properties");
+                    }else{
+                        res.redirect("/properties");
+                    }
+                })
+                
+            } )
+            
         }
     })
 });
@@ -198,12 +237,22 @@ app.post("/properties/new", createNewProperty, upload.array('image'), function (
 
 app.get("/properties/:id", function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
-
+        var images = []
         if (err) {
             console.log("this error");
             console.log(err);
         } else {
-            res.render("show.ejs", { property: foundProperty })
+            fs.readdir("uploads/" + req.params.id, (err, files) => {
+                if (err) {
+                    console.log(err);
+                    res.render("show.ejs", {property: foundProperty, images: images})
+                }
+
+                for (const file of files) {
+                    images.push(file);
+                }
+                res.render("show.ejs", { property: foundProperty, images: images})
+            } )
         }
     })
 })
@@ -238,8 +287,16 @@ app.delete("/properties/:id", function (req, res) {
         } else {
             // Check to see if the file exists before deleting it
             if (fs.existsSync("uploads/" + req.params.id)) {
-                fs.unlinkSync("uploads/" + req.params.id + "/" + req.params.id)
-                fs.rmdirSync("uploads/" + req.params.id)
+                fs.readdir("uploads/" + req.params.id, (err, files) => {
+                    if (err) throw err;
+
+                    for (const file of files) {
+                        fs.unlinkSync("uploads/" + req.params.id + "/" + file)
+                    }
+                    fs.rmdirSync("uploads/" + req.params.id);
+                } )
+                
+                
             }
             res.redirect("/properties");
 
