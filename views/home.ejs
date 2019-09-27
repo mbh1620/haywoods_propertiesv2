@@ -29,3 +29,33 @@
 </div>
 <script src="script.js"></script>
 <% include ./partials/footer.ejs %>
+
+<script>
+var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    if(viewportWidth > 1500){
+        $(".outer").attr("style", "width: 100%; position: relative; height:200px; padding-bottom: 325px;");
+    } else if (viewportWidth < 1500 && viewportWidth > 800 && viewportWidth > 560){
+        $(".outer").attr("style", "width: 100%; position: relative; height:200px; padding-bottom: 22%;")
+    }
+    else if( viewportWidth < 800 || viewportWidth < 560){
+        $(".outer").attr("style", "width: 100%; position: relative; height:149px; padding-bottom: 0px;")
+    } else if ( viewportWidth > 560 || viewportWidth > 800 && viewportWidth < 1500) {
+        $(".outer").attr("style", "width: 100%; position: relative; height:200px; padding-bottom: 22%;")
+    }
+
+window.addEventListener('resize', function(){
+    var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    if(viewportWidth > 1500){
+        $(".outer").attr("style", "width: 100%; position: relative; height:200px; padding-bottom: 325px;");
+    } else if (viewportWidth < 1500 && viewportWidth > 800 && viewportWidth > 560){
+        $(".outer").attr("style", "width: 100%; position: relative; height:200px; padding-bottom: 22%;")
+    }
+    else if( viewportWidth < 800 || viewportWidth < 560){
+        $(".outer").attr("style", "width: 100%; position: relative; height:149px; padding-bottom: 0px;")
+    } else if ( viewportWidth > 560 || viewportWidth > 800 && viewportWidth < 1500) {
+        $(".outer").attr("style", "width: 100%; position: relative; height:200px; padding-bottom: 22%;")
+    }
+}
+)
+
+</script>

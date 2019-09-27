@@ -47,8 +47,8 @@
                           </a>
                           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="/user/<%=currentUser._id%>/properties">My Properties</a>
-                            <a class="dropdown-item" href="/user/73128392">Account Settings</a>
-                            <a class="dropdown-item" href="#">Manage</a>
+                            <a class="dropdown-item" href="/user/<%=currentUser._id%>">Account Settings</a>
+                            <a class="dropdown-item" href="/user/<%=currentUser._id%>/manage">Manage</a>
                             <a class="dropdown-item" href="#">Analytics</a>
                             <a class="dropdown-item" href="#">Messages</a>
                             <form class="dropdown-item form-inline my-2 my-lg-0" action="/logout" method="POST"> 

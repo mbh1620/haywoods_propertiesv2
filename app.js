@@ -360,7 +360,15 @@ app.post("/logout", function (req, res) {
 //Account Settings routes
 
 app.get("/user/:id", function (req, res) {
-    res.render("settings.ejs")
+    var userid = req.params.id
+    User.findById(req.params.id, function (err, founduser){
+        if(err) {
+            console.log(err);
+        } else {
+            res.render("settings.ejs", {user: founduser})
+        }
+    })
+    
 })
 
 //USERS PROPERTIES ROUTES
@@ -374,6 +382,31 @@ app.get("/user/:id/properties", function (req, res) {
             console.log(err);
         } else {
             res.render("usersproperties.ejs", { founduser: founduser });
+        }
+    })
+})
+
+app.get("/user/:id/manage", function (req, res){
+    var userid = req.params.id
+    //Add populate function HERE!!!!
+    User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("manage.ejs", { property: founduser.properties });
+        }
+    })
+})
+
+app.get("/user/:id/manage/:propid", function (req, res){
+    var userid = req.params.id
+    var propid = req.params.propid;
+
+    Property.findById(propid).exec(function (err, foundProperty){
+        if(err) {
+            console.log(err);
+        } else {
+            res.render("manageproperty.ejs", {property: foundProperty});
         }
     })
 })

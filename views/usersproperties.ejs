@@ -42,7 +42,7 @@
 
                 <div class="card-body">
 
-                    <p style="margin-top:-20px;"><%= property.description %></p>
+                    <p style="margin-top:-20px;"><%= property.description.slice(0,80) %>...</p>
                     <p><a href="/properties/<%= property._id %>" class="btn btn-primary">More Info</a></p>
 
                 </div>
