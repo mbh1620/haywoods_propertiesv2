@@ -1,17 +1,150 @@
 <% include ./partials/header.ejs %>
 
-<div class="container">
+<link rel="stylesheet" href="/../../style3.css">
+<div class="container" style="margin-bottom:50px;margin-top:50px">
 <h2><%= property.name %> </h2> 
 
-<h3> Tenant Info </h3>
+<img src="../../../uploads/<%= property._id %>/<%= images[0] %>" class="d-block w-25" alt="...">
+</div>    
+<div class="container">
 
-<h3> Property Info </h3>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Tenant Info</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Property Info</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">Rent</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Enquiries</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="maintenance-tab" data-toggle="tab" href="#maintenance" role="tab" aria-controls="maintenance" aria-selected="false">Maintenance</a>
+        </li>
+      </ul>
+      
+      <div class="tab-content">
+        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab"><div class="jumbotron">
+                <h4>Current Tenant </h4>    
+            <p>Name: Joe Bloggs</p>
+                <p>Email: JoeBloggs@bloggsmail.com</p>
+                <p>Mobile: 9904358908</p>
+                <p>Number of Occupants</p>
+                <p>Animals: Yes</p>
+                <p></p>
+                <h4>Tenant History</h4>
+                <textarea style="width:500px;height:200px;" readonly>
+Joe Bloggs, 1/1/1-2/2/2, 07928347892, ref
+Sam Bloggs, 1/1/1-2/2/2, 07928347892, ref
+Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
+                </textarea>
+                
+            
+            </div></div>
+        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab"><div class="jumbotron">
+                <p>Property type: Semi-detached</p>
+                <p>Price bought: £120000</p>
+                <p>Current estimated price: £150000</p>
+                <canvas id="myChart"></canvas>
+                
+                
+            
+            </div></div>
+        <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab"><div class="jumbotron">
+                <p>Rent amount PCM: £650</p>
+                <canvas id="myRentChart"></canvas>
+                
+            
+            </div></div>
+        <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab"><div class="jumbotron">
+                
+                <p>Name: Joe Bloggs</p>
+                <p>Email: JoeBloggs@bloggsmail.com</p>
+                <p>Mobile: 9904358908</p>
+                <p>Number of Occupants</p>
+                <p>Animals: Yes</p>
+                <p></p>
+                
+            
+            </div></div>
+        <div class="tab-pane" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab"><div class="jumbotron">
+                
+                <h3 style="margin-top:-50px;">Current Jobs</h2>
+                <table id="maintenance-table">
+                  <tr>
+                    <th>Job</th>
+                    <th>Date to be completed</th> 
+                  </tr>
+                  <tr>
+                    <td>
+                      Fix boiler
+                    </td>
+                    <td>
+                      friday
+                    </td>
+                  </tr>
+                </table>
 
-<h3> Rent Info</h3>
+                
+                
+            
+            </div></div>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+      <script>
+        $(function () {
+          $('#myTab li:last-child a').tab('show')
+        })
+      </script>
+      <script>
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var ctxrent = document.getElementById('myRentChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+    
+    // The data for our dataset
+    data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+            fill:false,
+            label: 'House price',
+            lineTension:0,
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [120000, 125000, 130000, 145000]
+        }]
+    },
 
-<h3> Value Info </h3>
+    // Configuration options go here
+    options: {
+    }
+});
+var chart2 = new Chart(ctxrent, {
+    // The type of chart we want to create
+    type: 'line',
+    
+    // The data for our dataset
+    data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        datasets: [{
+            fill:false,
+            label: 'Rent Paid',
+            lineTension:0,
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [650, 650, 650, 650, 650, 650, 650, 700, 700, 700, 700, 700]
+        }]
+    },
 
-</div>
+    // Configuration options go here
+    options: {
+    }
+});
+      </script>
 
 
 

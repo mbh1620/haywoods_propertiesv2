@@ -56,6 +56,7 @@ body {
     position: relative;
     height:200px;
     padding-bottom: 22%;
+    
 }
 
 img {
@@ -74,6 +75,7 @@ img {
  .dont{
     display:none;
  }
+
 
 
 

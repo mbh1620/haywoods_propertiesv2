@@ -24,7 +24,7 @@ var propertySchema = new mongoose.Schema({
         },
         username: String
     },
-    first:String
+    first: String
 
 });
 
@@ -75,7 +75,7 @@ var storage = multer.diskStorage({
     destination: (request, file, callback) => {
         if (request.property) {
             var dest = "./uploads/" + request.property._id.toString();
-            if (!fs.existsSync(dest)){
+            if (!fs.existsSync(dest)) {
                 fs.mkdirSync(dest);
             }
             return callback(null, dest);
@@ -98,11 +98,11 @@ var store_multiple = multer.diskStorage({
     destination: (request, file, callback) => {
         if (request.property) {
             var dest = "./uploads/" + request.property._id.toString();
-            if (!fs.existsSync(dest)){
+            if (!fs.existsSync(dest)) {
                 fs.mkdirSync(dest);
             }
             return callback(null, dest);
-        
+
         } else {
             return 0;
         }
@@ -118,7 +118,7 @@ var store_multiple = multer.diskStorage({
     }
 })
 
-var upload_mult = multer({ storage: store_multiple});
+var upload_mult = multer({ storage: store_multiple });
 
 var upload = multer({ storage: storage });
 //=============================================================
@@ -207,33 +207,33 @@ function createNewProperty(req, res, next) {
 }
 
 
-app.post("/properties/new", createNewProperty, upload_mult.array('images',5), function (req, res) {
+app.post("/properties/new", createNewProperty, upload_mult.array('images', 5), function (req, res) {
     Property.findByIdAndUpdate(req.property._id, req.body.property, function (err, updatedProperty) {
         if (err) {
             console.log("error has occurred");
             res.redirect("/properties");
         } else {
             fs.readdir("uploads/" + req.property._id, (err, files) => {
-                if (err){
+                if (err) {
                     console.log(err);
                     res.redirect("/properties");
                 }
                 console.log(files);
-                if(files !== undefined){
+                if (files !== undefined) {
                     updatedProperty.first = files[0];
-                    updatedProperty.save(function(err, data){
-                        if(err){
+                    updatedProperty.save(function (err, data) {
+                        if (err) {
                             console.log(err)
                             res.redirect("/properties");
-                        }else{
+                        } else {
                             res.redirect("/properties");
                         }
                     })
                 }
-                
-                
-            } )
-            
+
+
+            })
+
         }
     })
 });
@@ -249,15 +249,15 @@ app.get("/properties/:id", function (req, res) {
             fs.readdir("uploads/" + req.params.id, (err, files) => {
                 if (err) {
                     console.log(err);
-                    res.render("show.ejs", {property: foundProperty, images: images})
+                    res.render("show.ejs", { property: foundProperty, images: images })
                 }
-                if(files !== undefined){
+                if (files !== undefined) {
                     for (const file of files) {
                         images.push(file);
                     }
                 }
-                
-                res.render("show.ejs", { property: foundProperty, images: images})
+
+                res.render("show.ejs", { property: foundProperty, images: images })
             })
         }
     })
@@ -273,9 +273,9 @@ app.get("/properties/:id/edit", function (req, res) {
 
 //MANAGE ROUTE
 
-app.get("/properties/:id/manage", function(req,res){
-    Property.findById(req.params.id, function(err, foundProperty){
-        res.render("manage.ejs", {property: foundProperty})
+app.get("/properties/:id/manage", function (req, res) {
+    Property.findById(req.params.id, function (err, foundProperty) {
+        res.render("manage.ejs", { property: foundProperty })
     })
 })
 
@@ -308,9 +308,9 @@ app.delete("/properties/:id", function (req, res) {
                         fs.unlinkSync("uploads/" + req.params.id + "/" + file)
                     }
                     fs.rmdirSync("uploads/" + req.params.id);
-                } )
-                
-                
+                })
+
+
             }
             res.redirect("/properties");
 
@@ -361,14 +361,14 @@ app.post("/logout", function (req, res) {
 
 app.get("/user/:id", function (req, res) {
     var userid = req.params.id
-    User.findById(req.params.id, function (err, founduser){
-        if(err) {
+    User.findById(req.params.id, function (err, founduser) {
+        if (err) {
             console.log(err);
         } else {
-            res.render("settings.ejs", {user: founduser})
+            res.render("settings.ejs", { user: founduser })
         }
     })
-    
+
 })
 
 //USERS PROPERTIES ROUTES
@@ -386,7 +386,7 @@ app.get("/user/:id/properties", function (req, res) {
     })
 })
 
-app.get("/user/:id/manage", function (req, res){
+app.get("/user/:id/manage", function (req, res) {
     var userid = req.params.id
     //Add populate function HERE!!!!
     User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
@@ -398,16 +398,29 @@ app.get("/user/:id/manage", function (req, res){
     })
 })
 
-app.get("/user/:id/manage/:propid", function (req, res){
+app.get("/user/:id/manage/:propid", function (req, res) {
     var userid = req.params.id
     var propid = req.params.propid;
+    var images = []
 
-    Property.findById(propid).exec(function (err, foundProperty){
-        if(err) {
+    Property.findById(propid).exec(function (err, foundProperty) {
+        if (err) {
             console.log(err);
         } else {
-            res.render("manageproperty.ejs", {property: foundProperty});
-        }
+            fs.readdir("uploads/" + req.params.propid, (err, files) => {
+                if (err) {
+                    console.log(err);
+                    res.render("show.ejs", { property: foundProperty, images: images })
+                }
+                if (files !== undefined) {
+                    for (const file of files) {
+                        images.push(file);
+                    }
+                }
+                res.render("manageproperty.ejs", { property: foundProperty, images: images });
+        })
+    }
+    
     })
 })
 
