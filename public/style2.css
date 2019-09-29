@@ -1,0 +1,26 @@
+
+#manage-table {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+#manage-table th {
+    color: white;
+    background-color: #343a40 ;
+    border: 1.5px white solid;
+    height: 50px;
+}
+
+#manage-table td {
+    
+    background-color: #f8f9fa;
+    border: 3.5px white solid;
+    height: 50px;
+    padding-left: 15px;
+}
+
+#manage-table td:hover {
+    background-color: #cdcdcd;
+    
+}
+

@@ -1,7 +1,10 @@
 <% include ./partials/header.ejs %>
+<link rel="stylesheet" href="../../style2.css">
 <div class="container">
-    <h3>Your Properties: </h3>
-    <table style="width:100%">
+
+    <h3>Overview for this year: </h3>
+    <h3 style="margin-top: 30px;">Your Properties: </h3>
+    <table id="manage-table" style="width:100%">
         
         <tr>
             <th>
@@ -22,6 +25,12 @@
         <tr onClick="document.location = '/user/<%= currentUser._id %>/manage/<%= property[i]._id %>'">
             <td>
                 <h5><%= property[i].name %></h5>
+            </td>
+            <td>
+
+            </td>
+            <td>
+
             </td>
         </tr>
         
