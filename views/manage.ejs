@@ -6,38 +6,17 @@
     </div>
     
     
-    <table id="manage-table" style="width:100%">
-        
-        <tr>
-            <th>
-                Property
-            </th>
-            <th>
-                Edit 
-            </th>
-            <th>
-                Manage
-            </th>
-
+    <ul id="manage-table" style="width:100%">
             
-        </tr>
-            
-        
     <% for(var i = 0; i < property.length; i++) { %>
-        <tr onClick="document.location = '/user/<%= currentUser._id %>/manage/<%= property[i]._id %>'">
-            <td>
-                <h5><%= property[i].name %></h5>
-            </td>
-            <td>
-
-            </td>
-            <td>
-
-            </td>
-        </tr>
+            <li onClick="document.location = '/user/<%= currentUser._id %>/manage/<%= property[i]._id %>'" class=" list-group-item-action list-group-item">
+                <h5 style="margin-top:10px;"><%= property[i].name %></h5><span style="float:right;" class="badge badge-danger badge-pill">property notification number</span>
+            </li>
+           
+        
         
     <% } %>
-    </table>
+        </ul>
 </div>
     
 
