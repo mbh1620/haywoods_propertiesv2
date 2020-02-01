@@ -11,7 +11,6 @@ var passportLocalMongoose = require("passport-local-mongoose");
 var middleware = require("./middleware");
 var axios = require('axios');
 var cheerio = require('cheerio');
-var SessionStore = require('session-mongoose')
 
 //TENANT SCHEMA
 var TenantSchema = new mongoose.Schema({
@@ -90,24 +89,11 @@ var UserSchema = new mongoose.Schema({
 UserSchema.plugin(passportLocalMongoose);
 var User = mongoose.model("User", UserSchema);
 
-// app.use(require("express-session")({
-//     secret: "Once again Rusty wins the cutest dog!",
-//     resave: false,
-//     saveUninitialized: false
-// }));
-
-app.use(
-  express.session({
-    store: new SessionStore({
-    url: process.env.MONGODB_URI,
-    interval: 1200000
-  }),
-  cookie: { maxAge: 1200000 },
-  secret: 'my secret'
-}))
-
-
-
+app.use(require("express-session")({
+    secret: "Once again Rusty wins the cutest dog!",
+    resave: false,
+    saveUninitialized: false
+}));
 
 
 //PASSPORT SETUP
@@ -182,7 +168,7 @@ app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname + "/public"));
 
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false });
+mongoose.connect("mongodb://matthew:matthew12@ds129796.mlab.com:29796/heroku_cx76x142", { useNewUrlParser: true, useFindAndModify: false });
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
