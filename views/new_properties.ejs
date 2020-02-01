@@ -29,6 +29,11 @@
         <textarea class="form-control" id="exampleFormControlTextarea1" name="property[description]" rows="3"
           placeholder="Description"></textarea>
       </div>
+      <div class="form-group">
+        <label for="exampleFormControlTextarea1">Zoopla Id</label>
+        <input class="form-control" id="exampleFormControlTextarea1" name="property[zoopla_id]" rows="3"
+          placeholder="Zoopla Id"></textarea>
+      </div>
       <div class="form-group form-check">
         <input type="checkbox" class="form-check-input" id="exampleCheck1">
         <label class="form-check-label" for="exampleCheck1">Check me out</label>
@@ -38,6 +43,7 @@
       <div id="mapid" style="height:400px;margin-top: 20px;"></div>
       <input type="hidden" name="property[lat]" id="lat" value="0" step="0.000000001">
       <input type="hidden" name="property[long]" id="long" value="0" step="0.000000001">
+      
       
       <script>
         var mymap = L.map('mapid').setView([52.63771, -1.15017], 10);

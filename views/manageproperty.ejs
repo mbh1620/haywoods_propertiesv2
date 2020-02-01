@@ -2,115 +2,195 @@
 
 <link rel="stylesheet" href="/../../style3.css">
 <div class="container" style="margin-bottom:50px;margin-top:50px">
-<h2><%= property.name %> </h2> 
+  <h2><%= property.name %> </h2>
 
-<img src="../../../uploads/<%= property._id %>/<%= images[0] %>" class="d-block w-25" alt="...">
-</div>    
+  <img src="../../../uploads/<%= property._id %>/<%= images[0] %>" class="d-block w-25" alt="...">
+</div>
 <div class="container">
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Tenant Info</a>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+        aria-selected="true">Tenant Info</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+        aria-selected="false">Property Info</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages"
+        aria-selected="false">Rent</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings"
+        aria-selected="false">Enquiries</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="maintenance-tab" data-toggle="tab" href="#maintenance" role="tab"
+        aria-controls="maintenance" aria-selected="false">Maintenance</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+      <div class="jumbotron">
+        <div class="container">
+        <h4 style="margin-top:-20px;margin-bottom:20px;">Current Tenants</h4>
+        <% for(var i = 0; i < property.Tenants.length; i++) { %>
+          <li class="list-group-item list-group-item-action w-50">
+
+          <p style="margin-top:10px;">First Name: <%= property.Tenants[i].firstname %></p>
+          <p>Last Name: <%= property.Tenants[i].lastname %></p>
+          <p>Email: <%= property.Tenants[i].email %></p>
+          <p>Animals: </p>
+          <p>Number: </p>
+          <p>Moved in: </p>
+          <form action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE" method="POST">
+          <button class="btn btn-danger">Remove Tenant</button>
+          </form>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Property Info</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">Rent</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Enquiries</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="maintenance-tab" data-toggle="tab" href="#maintenance" role="tab" aria-controls="maintenance" aria-selected="false">Maintenance</a>
-        </li>
-      </ul>
+        <% } %>
+        <button onclick="showtenantform()" class="btn btn-primary">Add Tenant</button>
+        
+        <div class="container w-50">
+        <form id="tenantform" style="display:none" action="/properties/<%=property._id%>/new-tenant" method="POST">
+        <input class="form-control" type="text" name="firstname" placeholder="Firstname">
+        <input class="form-control" type="text" name="lastname" placeholder="Lastname">
+        <input class="form-control" type="text" name="email" placeholder="Email">
+        <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
+        <input class="form-control" type="text" name="house_number" placeholder="Home Number">
+        <input class="form-control" type="submit">
+        </form>  
+        </div>
       
-      <div class="tab-content">
-        <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab"><div class="jumbotron">
-                <h4>Current Tenant </h4>    
-            <p>Name: Joe Bloggs</p>
-                <p>Email: JoeBloggs@bloggsmail.com</p>
-                <p>Mobile: 9904358908</p>
-                <p>Number of Occupants</p>
-                <p>Animals: Yes</p>
-                <p></p>
-                <h4>Tenant History</h4>
-                <textarea style="width:500px;height:200px;" readonly>
+      
+      </div>
+        <h4 style="margin-top:20px">Tenant History</h4>
+        <textarea style="width:500px;height:200px;" readonly>
 Joe Bloggs, 1/1/1-2/2/2, 07928347892, ref
 Sam Bloggs, 1/1/1-2/2/2, 07928347892, ref
 Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
                 </textarea>
-                
-            
-            </div></div>
-        <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab"><div class="jumbotron">
-                <p>Property type: Semi-detached</p>
-                <p>Price bought: £120000</p>
-                <p>Current estimated price: £150000</p>
-                <canvas id="myChart"></canvas>
-                
-                
-            
-            </div></div>
-        <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab"><div class="jumbotron">
-                <p>Rent amount PCM: £650</p>
-                <canvas id="myRentChart"></canvas>
-                
-            
-            </div></div>
-        <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab"><div class="jumbotron">
-                
-                <p>Name: Joe Bloggs</p>
-                <p>Email: JoeBloggs@bloggsmail.com</p>
-                <p>Mobile: 9904358908</p>
-                <p>Number of Occupants</p>
-                <p>Animals: Yes</p>
-                <p></p>
-                
-            
-            </div></div>
-        <div class="tab-pane" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab"><div class="jumbotron">
-                
-                <div class="container">
-                  <ul style="padding:0;">
-                    <li class="list-group-item list-group-item-action">Fix the boiler</li>
-                    <li class="list-group-item list-group-item-action">Move in new tenants</li>
-                    <li class="list-group-item list-group-item-action">Fix window</li>
-                    <li class="list-group-item list-group-item-action">Change Carpet</li>
-                  </ul>
-                  <button style="" class="btn btn-primary">Add new Job</button>
 
-                </div>
 
-                
-                
-            
-            </div></div>
       </div>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-      <script>
-        $(function () {
-          $('#myTab li:last-child a').tab('show')
-        })
-      </script>
-      <script>
-      var ctx = document.getElementById('myChart').getContext('2d');
-      var ctxrent = document.getElementById('myRentChart').getContext('2d');
-var chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'line',
-    
-    // The data for our dataset
-    data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [{
-            fill:false,
-            label: 'House price',
-            lineTension:0,
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: [120000, 125000, 130000, 145000]
+    </div>
+    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <div class="jumbotron">
+        <h2 style="margin-top:-30px;margin-bottom:20px;">Property Information</h2>
+        <p>Zoopla ID: <%= property.zoopla_id %></p>
+        
+        <p>Property type: Semi-detached</p>
+        <p>Price bought: £120000</p>
+        
+        <form action="/user/<%=currentUser._id%>/manage/<%=property._id%>?_method=PUT" method="POST">
+          
+
+        </form>
+        <canvas style="background-color:white;" id="myChart"></canvas>
+        <button style="margin-top:20px;" class="btn btn-primary" onclick="showTable()">Show Table</button>
+        <button style="margin-top:20px;display:none;" id="csvbutton" class="btn btn-warning" onclick="">Create CSV/Spreadsheet</button>
+        <table style="display:none;margin-top:20px;" id="valueTable">
+            <tr>
+              <th></th>
+              <% for(var i = 0; i < property.estimatedValue.length/12 ; i++) { %>
+                
+                <th><%= property.estimatedValue[i].year %></th>  
+              
+                <% } %>
+            </tr>
+            <% for(var i = 0; i < property.estimatedValue.length ; i++) { %>
+            <tr>
+            <td><%= property.estimatedValue[i].month %></td>
+            <td><%= property.estimatedValue[i].price %></td>
+            </tr>
+            <% } %>
+        </table>
+
+
+      </div>
+    </div>
+    <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+      <div class="jumbotron">
+        <p>Rent amount PCM: £650</p>
+        <canvas style="background-color:white;" id="myRentChart"></canvas>
+
+
+      </div>
+    </div>
+    <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+      <div class="jumbotron">
+
+        <p>Name: Joe Bloggs</p>
+        <p>Email: JoeBloggs@bloggsmail.com</p>
+        <p>Mobile: 9904358908</p>
+        <p>Number of Occupants</p>
+        <p>Animals: Yes</p>
+        <p></p>
+
+
+      </div>
+    </div>
+    <div class="tab-pane" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
+      <div class="jumbotron">
+
+        <div class="container">
+          <ul style="padding:0;">
+            <% for(var i = 0; i < property.maintenance_item.length ; i++) { %>
+              
+              <li class="list-group-item list-group-item-action"><%= property.maintenance_item[i].Name %><span style="float:right;"><%= property.maintenance_item[i].Finish_Date %></span></li>
+              
+              
+              <% } %>
+            </ul>
+          <button onclick="showInput()" class="btn btn-primary">Add new Job</button>
+          <button style="float:right;" onclick="DeleteJob()" class="btn btn-danger">Delete Job</button>
+          <form class="form-group" style="display:none;" id="jobId" action="/user/<%=currentUser._id%>/properties/<%= property._id%>/job?_method=PUT" method="POST">
+            <div class="container w-50">
+            <input class="form-control" name="jobname" id="jobIdname" type="text" placeholder="Job name">
+            <input class="form-control" name="jobbody" id="jobBody" type="text" placeholder="Job body">
+            <input class="form-control" name="jobdate" id="jobDate" type="date" placeholder="Job date">
+            <input class="btn btn-primary" type="submit">
+          </div>
+          </form>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script>
+    $(function () {
+      $('#myTab li:last-child a').tab('show')
+    })
+  </script>
+  <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var ctxrent = document.getElementById('myRentChart').getContext('2d');
+    var chart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'line',
+
+      // The data for our dataset
+      data: {
+        labels: [
+          <% for(var i = 0; i<property.estimatedValue.length; i++) { %>
+      '<%= property.estimatedValue[i].month %>',
+          <% } %>
+            ],
+    datasets: [{
+      fill: false,
+      label: 'House price',
+      lineTension: 0,
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: [<% for(var i = 0; i<property.estimatedValue.length; i++) { %>
+                  <%= property.estimatedValue[i].price %>,
+                  <% } %>
+            ]
         }]
     },
 
@@ -118,29 +198,46 @@ var chart = new Chart(ctx, {
     options: {
     }
 });
-var chart2 = new Chart(ctxrent, {
-    // The type of chart we want to create
-    type: 'line',
-    
-    // The data for our dataset
-    data: {
+    var chart2 = new Chart(ctxrent, {
+      // The type of chart we want to create
+      type: 'line',
+
+      // The data for our dataset
+      data: {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         datasets: [{
-            fill:false,
-            label: 'Rent Paid',
-            lineTension:0,
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: [650, 650, 650, 650, 650, 650, 650, 700, 700, 700, 700, 700]
+          fill: false,
+          label: 'Rent Paid',
+          lineTension: 0,
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: [650, 650, 650, 650, 650, 650, 650, 700, 700, 700, 700, 700]
         }]
-    },
+      },
 
-    // Configuration options go here
-    options: {
+      // Configuration options go here
+      options: {
+      }
+    });
+
+    function showInput(){
+      $("#jobId").toggle();
     }
-});
-      </script>
+
+    function showtenantform(){
+      $("#tenantform").toggle();
+    }
+
+    function showTable(){
+      $("#valueTable").toggle();
+      $("#csvbutton").toggle();
+    }
+
+    
+
+
+  </script>
 
 
 
-<% include ./partials/footer.ejs %>
+  <% include ./partials/footer.ejs %>

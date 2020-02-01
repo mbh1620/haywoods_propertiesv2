@@ -4,3 +4,19 @@
     width:300px;
     background-color:white
 }
+
+#valueTable {
+    border: 1px solid #ddd;
+    border-collapse: collapse;
+      
+      
+      
+      
+}
+
+#valueTable td, th {
+    background-color: white;
+    white-space: nowrap;
+    border: 1px solid #ddd;
+    padding: 20px;
+  }
