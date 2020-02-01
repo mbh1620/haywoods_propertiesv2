@@ -11,6 +11,7 @@ var passportLocalMongoose = require("passport-local-mongoose");
 var middleware = require("./middleware");
 var axios = require('axios');
 var cheerio = require('cheerio');
+var SessionStore = require('session-mongoose')
 
 //TENANT SCHEMA
 var TenantSchema = new mongoose.Schema({
@@ -89,11 +90,24 @@ var UserSchema = new mongoose.Schema({
 UserSchema.plugin(passportLocalMongoose);
 var User = mongoose.model("User", UserSchema);
 
-app.use(require("express-session")({
-    secret: "Once again Rusty wins the cutest dog!",
-    resave: false,
-    saveUninitialized: false
-}));
+// app.use(require("express-session")({
+//     secret: "Once again Rusty wins the cutest dog!",
+//     resave: false,
+//     saveUninitialized: false
+// }));
+
+app.use(
+  express.session({
+    store: new SessionStore({
+    url: process.env.MONGODB_URI,
+    interval: 1200000
+  }),
+  cookie: { maxAge: 1200000 },
+  secret: 'my secret'
+}))
+
+
+
 
 
 //PASSPORT SETUP
