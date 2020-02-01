@@ -168,7 +168,7 @@ app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname + "/public"));
 
 
-mongoose.connect("mongodb://localhost/haywoodsproperties", { useNewUrlParser: true, useFindAndModify: false });
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false });
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
