@@ -11,6 +11,7 @@ var passportLocalMongoose = require("passport-local-mongoose");
 var middleware = require("./middleware");
 var axios = require('axios');
 var cheerio = require('cheerio');
+var schedule = require('node-schedule');
 
 //TENANT SCHEMA
 var TenantSchema = new mongoose.Schema({
@@ -83,7 +84,12 @@ var UserSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Property"
         }
-    ]
+    ],
+    PortfolioValue: [{
+        year: String,
+        month: String,
+        value: Number
+    }]
 })
 
 UserSchema.plugin(passportLocalMongoose);
@@ -266,7 +272,14 @@ app.post("/properties/new", createNewProperty, upload_mult.array('images', 5), f
                             console.log(err)
                             res.redirect("/properties");
                         } else {
-                            res.redirect("/properties");
+                            prop_val_update(updatedProperty._id, function (err, data) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    res.redirect("/properties");
+                                }
+                            })
+
                         }
                     })
                 }
@@ -382,15 +395,14 @@ app.get("/login", function (req, res) {
     res.render("login.ejs");
 })
 
-app.post("/login", passport.authenticate("local",
-    {
-        successRedirect: "/properties",
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/properties",
 
-        failureRedirect: "/login"
+    failureRedirect: "/login"
 
-    }), function (req, res) {
+}), function (req, res) {
 
-    });
+});
 
 app.post("/logout", function (req, res) {
     req.logout();
@@ -426,9 +438,55 @@ app.get("/user/:id/properties", function (req, res) {
     })
 })
 
+//Function for updating PortFolio Value 
+
+function update_portfolio(user_id, next) {
+    User.findById(user_id).populate('properties').exec(function (err, founduser) {
+        if (err) {
+            console.log(err)
+        } else {
+            var portfolio_total = 0;
+            var CurrentYear;
+            var CurrentMonth;
+            //Code for updating the users Portfolio value, rent etc...
+            for (var i = 0; i < founduser.properties.length; i++) {
+                if (typeof founduser.properties[i].estimatedValue !== 'undefined') {
+                    if (typeof founduser.properties[i].estimatedValue[founduser.properties[i].estimatedValue.length - 1].price !== 'undefined') {
+                        portfolio_total = portfolio_total + founduser.properties[i].estimatedValue[founduser.properties[i].estimatedValue.length - 1].price;
+                        console.log(portfolio_total);
+                        CurrentYear = founduser.properties[0].estimatedValue[founduser.properties[i].estimatedValue.length - 1].year;
+                        CurrentMonth = founduser.properties[0].estimatedValue[founduser.properties[i].estimatedValue.length - 1].month;
+                    }
+                } else {
+                    console.log("estimated value for this property is undefined");
+                }
+            }
+
+            var CurrentPortFolioValue = {
+                year: CurrentYear,
+                month: CurrentMonth,
+                value: portfolio_total
+            }
+
+            founduser.PortfolioValue.push(CurrentPortFolioValue);
+
+            console.log(founduser)
+
+
+            User.findByIdAndUpdate(founduser._id, founduser, function (err, updatedUser) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    next();
+                }
+            });
+        }
+    })
+}
+
+
 app.get("/user/:id/manage", function (req, res) {
-    var userid = req.params.id
-    //Add populate function HERE!!!!
+
     User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
         if (err) {
             console.log(err);
@@ -437,6 +495,138 @@ app.get("/user/:id/manage", function (req, res) {
         }
     })
 })
+
+//Function used for updating a property value
+
+function prop_val_update(propid, next) {
+
+    var url = 'https://www.zoopla.co.uk/property/';
+
+    Property.findById(propid).populate("Tenants").populate('properties').exec(function (err, foundProperty) {
+        if (err) {
+            console.log(err);
+        } else {
+
+            var d = new Date();
+            var month = new Array();
+            month[0] = "January";
+            month[1] = "February";
+            month[2] = "March";
+            month[3] = "April";
+            month[4] = "May";
+            month[5] = "June";
+            month[6] = "July";
+            month[7] = "August";
+            month[8] = "September";
+            month[9] = "October";
+            month[10] = "November";
+            month[11] = "December";
+            var themonth = month[d.getMonth()];
+            console.log(foundProperty)
+            var theyear = d.getFullYear();
+
+            //console.log(foundProperty.estimatedValue.length)
+
+            console.log(foundProperty);
+
+            url = url + foundProperty.zoopla_id;
+            console.log(url);
+            axios(url)
+                .then(response => {
+                    const html = response.data;
+                    const $ = cheerio.load(html);
+                    const estimatedPrice = $('.pdp-estimate__price');
+                    console.log("Scraped from Zoopla")
+                    currentPrice = estimatedPrice.text();
+                    console.log(currentPrice);
+
+                    //If the property does not have a m in the string then do the following
+
+
+
+                    //If the property is valued at 1m or above
+                    currentPrice = currentPrice.substr(currentPrice.indexOf('£') + 1, currentPrice.indexOf('m'));
+                    //Check if the string has a 'k' in else it is a 'm'.
+                    if (currentPrice.indexOf('k') > -1) {
+                        currentPrice = currentPrice.split('k')[0];
+                        currentPrice = currentPrice.replace(',', '');
+                        currentPrice = currentPrice.replace(',', '');
+                        currentPrice = currentPrice * 1E3;
+                        console.log(currentPrice);
+
+                    } else {
+
+                        currentPrice = currentPrice.split('m')[0];
+                        currentPrice = currentPrice.replace(',', '');
+                        currentPrice = currentPrice.replace(',', '');
+                        currentPrice = currentPrice * 1E6;
+                        console.log(currentPrice);
+
+                    }
+
+                    console.log(currentPrice);
+
+                    function pushNewprop(callback) {
+                        foundProperty.estimatedValue.push({
+                            year: theyear,
+                            month: themonth,
+                            price: currentPrice
+                        })
+                        callback();
+                    }
+
+                    pushNewprop(function (err) {
+                        Property.findByIdAndUpdate(propid, foundProperty, { new: true }, function (err, updatedProperty) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                                console.log("PROPERTY UPDATED!!!!")
+                                console.log(updatedProperty)
+                                next();
+                            }
+                        })
+                    })
+
+                })
+
+
+        }
+    })
+
+}
+
+//         Scheduler        (Second, minute, hour, day_of_month, month, day_of_week)                     
+var j = schedule.scheduleJob('/20 * * * * *', function () {
+    //for all users, Calculate the prop_val_updat
+    console.log("Completing update of values");
+    User.find({}, function (err, users) {
+        users.forEach(function (user) {
+
+            //For all properties associated with the user calculate the prop value 
+            //Then update the portfolio value 
+
+            for (var i = 0; i < user.properties.length; i++) {
+
+                prop_val_update(user.properties[i]._id, function (err, data) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+
+                    }
+                });
+            }
+            update_portfolio(user._id, function (err, data) {
+                if (err) {
+                    console.log(err);
+                } else {
+
+                }
+            });
+        })
+    })
+})
+
+
 
 app.get("/user/:id/manage/:propid", function (req, res) {
     var userid = req.params.id
@@ -492,36 +682,48 @@ app.get("/user/:id/manage/:propid", function (req, res) {
                             const estimatedPrice = $('.pdp-estimate__price');
                             console.log("Scraped from Zoopla")
                             currentPrice = estimatedPrice.text();
-                            currentPrice = currentPrice.replace(',', '');
-                            currentPrice = currentPrice.replace(',', '');
-                            currentPrice = currentPrice.split('£');
-                            currentRent = currentPrice[2];
-                            currentPrice = currentPrice[1];
                             console.log(currentPrice);
-                            
-                            function pushNewprop(callback){
+
+                            //If the property does not have a m in the string then do the following
+
+
+
+                            //If the property is valued at 1m or above
+                            currentPrice = currentPrice.substr(currentPrice.indexOf('£') + 1, currentPrice.indexOf('m'));
+                            currentPrice = currentPrice.split('m')[0];
+
+                            console.log(currentPrice);
+                            currentPrice = currentPrice.replace(',', '');
+                            currentPrice = currentPrice.replace(',', '');
+                            currentPrice = currentPrice * 1E6;
+
+
+
+                            console.log(currentPrice);
+
+                            function pushNewprop(callback) {
                                 foundProperty.estimatedValue.push({
                                     year: theyear,
                                     month: themonth,
                                     price: currentPrice
                                 })
-                                callback(); 
+                                callback();
                             }
 
-                            pushNewprop(function(err){
-                                Property.findByIdAndUpdate(propid, foundProperty, {new: true}, function (err, updatedProperty) {
+                            pushNewprop(function (err) {
+                                Property.findByIdAndUpdate(propid, foundProperty, { new: true }, function (err, updatedProperty) {
                                     if (err) {
                                         console.log(err)
                                     } else {
                                         console.log("PROPERTY UPDATED!!!!")
                                         console.log(updatedProperty)
                                         res.render("manageproperty.ejs", { property: updatedProperty, images: images });
-                                        }
-                                    })
+                                    }
+                                })
                             })
 
                         })
-                        
+
                 } else {
                     res.render("manageproperty.ejs", { property: foundProperty, images: images });
                 }
@@ -534,7 +736,7 @@ app.get("/user/:id/manage/:propid", function (req, res) {
 //Route for updating the estimated value and rent
 
 app.put("/user/:id/manage/:propid", function (req, res) {
-    
+
     Property.findByIdAndUpdate(req.params.id, req.body.property, function (err, updatedProperty) {
         if (err) {
             console.log("error has occurred");
@@ -546,11 +748,11 @@ app.put("/user/:id/manage/:propid", function (req, res) {
 })
 
 //Route for adding a maintenance job to the house
-app.put("/user/:id/properties/:propid/job", function (req,res) {
+app.put("/user/:id/properties/:propid/job", function (req, res) {
     jobname = req.body.jobname;
     jobbody = req.body.jobbody;
     jobdate = req.body.jobdate;
-    
+
 
     id = req.params.id;
     Property.findById(req.params.propid, function (err, updatedProperty) {
@@ -563,14 +765,14 @@ app.put("/user/:id/properties/:propid/job", function (req,res) {
                 Finish_Date: req.body.jobdate
             })
             console.log(updatedProperty);
-            Property.findByIdAndUpdate(req.params.propid, updatedProperty, function(err, updatedProperty) {
-                if(err) {
+            Property.findByIdAndUpdate(req.params.propid, updatedProperty, function (err, updatedProperty) {
+                if (err) {
                     console.log(err);
-                }else{
+                } else {
                     res.redirect("/user/" + id + "/manage/" + updatedProperty.id);
                 }
             })
-            
+
         }
     })
 })
@@ -579,7 +781,7 @@ app.put("/user/:id/properties/:propid/job", function (req,res) {
 
 //NEW TENANT ROUTE
 
-function createNewTenant(req,res,next){
+function createNewTenant(req, res, next) {
 
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
@@ -599,17 +801,17 @@ function createNewTenant(req,res,next){
         animals: animals,
         property: propid,
         CurrentTenant: true,
-        
+
     }
 
     Tenant.create(newTenant, function (err, _tenant) {
         if (err) {
             console.log(err);
         } else { }
-        Property.findById(propid, function(err, foundProperty){
+        Property.findById(propid, function (err, foundProperty) {
             foundProperty.Tenants.push(_tenant);
-            foundProperty.save(function (err,data){
-                if(err) {
+            foundProperty.save(function (err, data) {
+                if (err) {
                     console.log(err);
                 } else {
                     next();
@@ -618,23 +820,19 @@ function createNewTenant(req,res,next){
         })
     });
 
-    
+
 }
 
 
-app.post("/properties/:id/new-tenant", createNewTenant, function(req,res){
+app.post("/properties/:id/new-tenant", createNewTenant, function (req, res) {
     res.render("home.ejs");
 })
 
-app.delete("/properties/:id/new-tenant/:tid", function(req,res){
-    Tenant.findByIdAndRemove(req.params.tid, function(err){
+app.delete("/properties/:id/new-tenant/:tid", function (req, res) {
+    Tenant.findByIdAndRemove(req.params.tid, function (err) {
         res.redirect("/properties");
     })
-    
+
 })
-
-
-
-
 
 app.listen("3000");

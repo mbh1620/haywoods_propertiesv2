@@ -176,11 +176,7 @@ Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
 
       // The data for our dataset
       data: {
-        labels: [
-          <% for(var i = 0; i<property.estimatedValue.length; i++) { %>
-      '<%= property.estimatedValue[i].month %>',
-          <% } %>
-            ],
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     datasets: [{
       fill: false,
       label: 'House price',
