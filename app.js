@@ -596,7 +596,7 @@ function prop_val_update(propid, next) {
 }
 
 //         Scheduler        (Second, minute, hour, day_of_month, month, day_of_week)                     
-var j = schedule.scheduleJob('/30 * * * *', function () {
+var j = schedule.scheduleJob('* * 1 * *', function () {
     //for all users, Calculate the prop_val_updat
     console.log("Completing update of values");
     User.find({}, function (err, users) {
