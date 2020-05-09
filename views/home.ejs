@@ -26,7 +26,13 @@
             <a class="btn btn-primary btn-lg" href="/properties" role="button">All Properties</a>
         </p>
     </div>
+    <div class="jumbotron" style="padding-top:10px">
+    <div id="rss-feed" style="margin-top:40px;height:350px;overflow: scroll;">
+        <!-- <iframe width="100%" height="400px" class="rssdog" src="https://landlordzone.co.uk/feed"></iframe> -->
+    </div>
 </div>
+</div>
+
 <script src="script.js"></script>
 <% include ./partials/footer.ejs %>
 
@@ -57,5 +63,33 @@ window.addEventListener('resize', function(){
     }
 }
 )
+
+</script>
+
+<script>
+    const rss_url = 'https://landlordzone.co.uk/feed';
+    fetch(rss_url)
+    .then(response => response.text())
+    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+    .then(data => {
+        console.log(data);
+        const items = data.querySelectorAll("item")
+        let html = ``;
+
+        items.forEach(el => {
+            html =`
+            <article>
+            <h5> ${el.querySelector("description").innerHTML.substr(el.querySelector("description").innerHTML.indexOf("® - ")+3, )}</h5>
+            <p> ${el.querySelector("description").innerHTML.substr(9,el.querySelector("description").innerHTML.indexOf("©")-9)} </p>
+            <hr>
+            </article>`;
+            var elem = document.getElementById("rss-feed")
+            elem.insertAdjacentHTML("beforeend", html) 
+            
+        })
+                
+    });
+
+
 
 </script>
