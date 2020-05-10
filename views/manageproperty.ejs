@@ -37,41 +37,40 @@
     <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
       <div class="jumbotron">
         <div class="container">
-        <h4 style="margin-top:-20px;margin-bottom:20px;">Current Tenants</h4>
-        <% for(var i = 0; i < property.Tenants.length; i++) { %>
+          <h4 style="margin-top:-20px;margin-bottom:20px;">Current Tenants</h4>
+          <% for(var i = 0; i < property.Tenants.length; i++) { %>
           <li class="list-group-item list-group-item-action w-50">
 
-          <p style="margin-top:10px;">First Name: <%= property.Tenants[i].firstname %></p>
-          <p>Last Name: <%= property.Tenants[i].lastname %></p>
-          <p>Email: <%= property.Tenants[i].email %></p>
-          <p>Animals: </p>
-          <p>Number: </p>
-          <p>Moved in: </p>
-          <form action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE" method="POST">
-          <button class="btn btn-danger">Remove Tenant</button>
-          </form>
-        </li>
-        <% } %>
-        <button onclick="showtenantform()" class="btn btn-primary">Add Tenant</button>
-        
-        <div class="container w-50">
-        <form id="tenantform" style="display:none" action="/properties/<%=property._id%>/new-tenant" method="POST">
-        <input class="form-control" type="text" name="firstname" placeholder="Firstname">
-        <input class="form-control" type="text" name="lastname" placeholder="Lastname">
-        <input class="form-control" type="text" name="email" placeholder="Email">
-        <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
-        <input class="form-control" type="text" name="house_number" placeholder="Home Number">
-        <input class="form-control" type="submit">
-        </form>  
+            <p style="margin-top:10px;">First Name: <%= property.Tenants[i].firstname %></p>
+            <p>Last Name: <%= property.Tenants[i].lastname %></p>
+            <p>Email: <%= property.Tenants[i].email %></p>
+            <p>Animals: </p>
+            <p>Number: </p>
+            <p>Moved in: </p>
+            <form action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE"
+              method="POST">
+              <button class="btn btn-danger">Remove Tenant</button>
+            </form>
+          </li>
+          <% } %>
+          <button onclick="showtenantform()" class="btn btn-primary">Add Tenant</button>
+
+          <div class="container w-50">
+            <form id="tenantform" style="display:none" action="/properties/<%=property._id%>/new-tenant" method="POST">
+              <input class="form-control" type="text" name="firstname" placeholder="Firstname">
+              <input class="form-control" type="text" name="lastname" placeholder="Lastname">
+              <input class="form-control" type="text" name="email" placeholder="Email">
+              <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
+              <input class="form-control" type="text" name="house_number" placeholder="Home Number">
+              <input class="form-control" type="submit">
+            </form>
+          </div>
+
+
         </div>
-      
-      
-      </div>
         <h4 style="margin-top:20px">Tenant History</h4>
         <textarea style="width:500px;height:200px;" readonly>
-Joe Bloggs, 1/1/1-2/2/2, 07928347892, ref
-Sam Bloggs, 1/1/1-2/2/2, 07928347892, ref
-Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
+              
                 </textarea>
 
 
@@ -81,32 +80,33 @@ Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
       <div class="jumbotron">
         <h2 style="margin-top:-30px;margin-bottom:20px;">Property Information</h2>
         <p>Zoopla ID: <%= property.zoopla_id %></p>
-        
+
         <p>Property type: Semi-detached</p>
         <p>Price bought: £120000</p>
-        
+
         <form action="/user/<%=currentUser._id%>/manage/<%=property._id%>?_method=PUT" method="POST">
-          
+
 
         </form>
         <canvas style="background-color:white;" id="myChart"></canvas>
         <button style="margin-top:20px;" class="btn btn-primary" onclick="showTable()">Show Table</button>
-        <button style="margin-top:20px;display:none;" id="csvbutton" class="btn btn-warning" onclick="">Create CSV/Spreadsheet</button>
+        <button style="margin-top:20px;display:none;" id="csvbutton" class="btn btn-warning" onclick="">Create
+          CSV/Spreadsheet</button>
         <table style="display:none;margin-top:20px;" id="valueTable">
-            <tr>
-              <th></th>
-              <% for(var i = 0; i < property.estimatedValue.length/12 ; i++) { %>
-                
-                <th><%= property.estimatedValue[i].year %></th>  
-              
-                <% } %>
-            </tr>
-            <% for(var i = 0; i < property.estimatedValue.length ; i++) { %>
-            <tr>
+          <tr>
+            <th></th>
+            <% for(var i = 0; i < property.estimatedValue.length/12 ; i++) { %>
+
+            <th><%= property.estimatedValue[i].year %></th>
+
+            <% } %>
+          </tr>
+          <% for(var i = 0; i < property.estimatedValue.length ; i++) { %>
+          <tr>
             <td><%= property.estimatedValue[i].month %></td>
             <td><%= property.estimatedValue[i].price %></td>
-            </tr>
-            <% } %>
+          </tr>
+          <% } %>
         </table>
 
 
@@ -139,21 +139,23 @@ Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
         <div class="container">
           <ul style="padding:0;">
             <% for(var i = 0; i < property.maintenance_item.length ; i++) { %>
-              
-              <li class="list-group-item list-group-item-action"><%= property.maintenance_item[i].Name %><span style="float:right;"><%= property.maintenance_item[i].Finish_Date %></span></li>
-              
-              
-              <% } %>
-            </ul>
+
+            <li class="list-group-item list-group-item-action"><%= property.maintenance_item[i].Name %><span
+                style="float:right;"><%= property.maintenance_item[i].Finish_Date %></span></li>
+
+
+            <% } %>
+          </ul>
           <button onclick="showInput()" class="btn btn-primary">Add new Job</button>
           <button style="float:right;" onclick="DeleteJob()" class="btn btn-danger">Delete Job</button>
-          <form class="form-group" style="display:none;" id="jobId" action="/user/<%=currentUser._id%>/properties/<%= property._id%>/job?_method=PUT" method="POST">
+          <form class="form-group" style="display:none;" id="jobId"
+            action="/user/<%=currentUser._id%>/properties/<%= property._id%>/job?_method=PUT" method="POST">
             <div class="container w-50">
-            <input class="form-control" name="jobname" id="jobIdname" type="text" placeholder="Job name">
-            <input class="form-control" name="jobbody" id="jobBody" type="text" placeholder="Job body">
-            <input class="form-control" name="jobdate" id="jobDate" type="date" placeholder="Job date">
-            <input class="btn btn-primary" type="submit">
-          </div>
+              <input class="form-control" name="jobname" id="jobIdname" type="text" placeholder="Job name">
+              <input class="form-control" name="jobbody" id="jobBody" type="text" placeholder="Job body">
+              <input class="form-control" name="jobdate" id="jobDate" type="date" placeholder="Job date">
+              <input class="btn btn-primary" type="submit">
+            </div>
           </form>
         </div>
 
@@ -162,7 +164,7 @@ Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
 
       </div>
     </div>
-    
+
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
   <script>
@@ -180,13 +182,13 @@ Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
       // The data for our dataset
       data: {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    datasets: [{
-      fill: false,
-      label: 'House price',
-      lineTension: 0,
-      backgroundColor: 'rgb(255, 99, 132)',
-      borderColor: 'rgb(255, 99, 132)',
-      data: [<% for(var i = 0; i<property.estimatedValue.length; i++) { %>
+        datasets: [{
+          fill: false,
+          label: 'House price',
+          lineTension: 0,
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: [<% for(var i = 0; i<property.estimatedValue.length; i++) { %>
                   <%= property.estimatedValue[i].price %>,
                   <% } %>
             ]
@@ -219,20 +221,20 @@ Fred Bloggs, 1/1/1-2/2/2, 083948304345, ref
       }
     });
 
-    function showInput(){
+    function showInput() {
       $("#jobId").toggle();
     }
 
-    function showtenantform(){
+    function showtenantform() {
       $("#tenantform").toggle();
     }
 
-    function showTable(){
+    function showTable() {
       $("#valueTable").toggle();
       $("#csvbutton").toggle();
     }
 
-    
+
 
 
   </script>
