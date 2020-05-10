@@ -70,7 +70,7 @@
         </div>
         <h4 style="margin-top:20px">Tenant History</h4>
         <textarea style="width:500px;height:200px;" readonly>
-              
+
                 </textarea>
 
 
@@ -192,13 +192,13 @@
                   <%= property.estimatedValue[i].price %>,
                   <% } %>
             ]
-        }]
-    },
+          }]
+        },
 
     // Configuration options go here
     options: {
     }
-});
+      });
     var chart2 = new Chart(ctxrent, {
       // The type of chart we want to create
       type: 'line',
@@ -234,11 +234,9 @@
       $("#csvbutton").toggle();
     }
 
-
-
-
   </script>
-
+  </div>
+  
 
 
   <% include ./partials/footer.ejs %>
