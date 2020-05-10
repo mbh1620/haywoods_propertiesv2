@@ -20,3 +20,13 @@
     border: 1px solid #ddd;
     padding: 20px;
   }
+
+#main{
+    /* if content is bigger than vh then make main auto else if content is smaller than vh make main height vh*/
+    height:auto;
+    min-height: 100vh;
+}
+
+#sticky-footer{
+    flex-shrink: 0;
+}
