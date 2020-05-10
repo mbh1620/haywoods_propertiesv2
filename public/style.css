@@ -14,12 +14,12 @@ body {
 
 #main{
     
-    height:100vh;
+    height:auto;
 }
 
 #sticky-footer{
-    flex-shrink: none;
-    margin-top:auto;
+    flex-shrink: 0;
+    
 }
 
 #slides {
@@ -74,6 +74,10 @@ img {
 
  .dont{
     display:none;
+ }
+
+ #news-jumbo{
+     flex:1 0 auto;
  }
 
 
