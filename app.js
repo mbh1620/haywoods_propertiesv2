@@ -272,14 +272,43 @@ app.post("/properties/new", createNewProperty, upload_mult.array('images', 5), f
                             console.log(err)
                             res.redirect("/properties");
                         } else {
-                            prop_val_update(updatedProperty._id, function (err, data) {
-                                if (err) {
+                            //Add in empty property values from january until the current month
+                            
+                            //first get current month 
+
+                            var d = new Date();
+                            var curr_month = d.getMonth();
+
+                            //now add a loop for the 
+
+                            for(var i = 0; i < curr_month; i++){
+
+
+                                //Clean up later however year and month not needed.
+
+                                var estimatedValue = {
+                                    year: null,
+                                    month: null,
+                                    value: null
+                                }
+
+                                updatedProperty.estimatedValue.push(estimatedValue);
+
+                            }
+
+                            Property.findByIdAndUpdate(updatedProperty._id, updatedProperty, function(err, data){
+                                if(err){
                                     console.log(err);
-                                } else {
-                                    res.redirect("/properties");
+                                }else{
+                                    prop_val_update(updatedProperty._id, function (err, data) {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            res.redirect("/properties");
+                                        }
+                                    })
                                 }
                             })
-
                         }
                     })
                 }
@@ -382,11 +411,40 @@ app.post("/register", function (req, res) {
         if (err) {
             console.log(err);
             return res.render("register.ejs");
+        } 
+
+        //Create empty portfolio values from January until present month
+
+        //var current month
+        var d = new Date();
+
+        var current_month = d.getMonth();
+        
+        //We now need to make a loop for how many months we have passed since january 
+
+        for(var i = 0; i < current_month; i++){ 
+            //fill these months with empty values for portfolio value
+            
+            //Clean up later by adding in year and month but not neccesary at this point.
+            var PortFolioValue = {
+                year: null,
+                month: null,
+                value: null
+            }
+
+            user.PortfolioValue.push(PortFolioValue);
         }
 
-
-        passport.authenticate("local")(req, res, function () {
-            res.redirect("/");
+        User.findByIdAndUpdate(user._id, user, function(err, updatedUser){
+            if(err){
+                console.log(err);
+            } else {
+                passport.authenticate("local")(req, res, function () {
+                    update_portfolio(user._id, function(){
+                        res.redirect("/");
+                    }) 
+                })
+            }
         })
     })
 })
