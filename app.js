@@ -542,6 +542,16 @@ function update_portfolio(user_id, next) {
     })
 }
 
+//Route for recalculating PortFolio Value
+
+app.post("/recalculate", function (req,res){
+    console.log(req.body.id)
+
+    update_portfolio(req.body.id, function(){
+        res.redirect("/");
+    })
+})
+
 
 app.get("/user/:id/manage", function (req, res) {
 

@@ -29,7 +29,9 @@
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
                 <canvas id="myAreaChart"></canvas>
+                <button style="margin-top:20px;" class="btn btn-primary" onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
               </div>
+              
             </div>
           </div>
           <div class="card shadow mb-4" style="height:650px">
@@ -88,6 +90,7 @@
 
 <% include ./partials/footer.ejs %>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 var to_do_items = [];
 
@@ -117,5 +120,19 @@ var chart2 = new Chart(ctx, {
         // bezierCurve: true,
       }
     });
+
+  
+  
+function recalculate(user_id){
+
+  //Send an AJAX call to server calling the update portfolio function
+
+  $.post("/recalculate", 
+  {
+    id:user_id
+  })
+
+
+}
 
 </script>
