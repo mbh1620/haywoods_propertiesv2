@@ -31,6 +31,7 @@
                 <canvas id="myAreaChart"></canvas>
                 <button style="margin-top:20px;" class="btn btn-primary"
                   onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
+                <button style="margin-top:20px;" class="btn btn-primary" onclick="">Compare Years</button>
               </div>
 
             </div>
@@ -42,7 +43,14 @@
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
                 <canvas id="myAreaChartRent"></canvas>
-                <button style="margin-top:20px;" class="btn btn-primary" onclick="calulate_rent('<%= currentUser._id %>')">Calulate Rent</button>
+                <p style="margin-top:20px;">Year Total:
+                  <% var total = 0; %>
+                  <% for(var i = 0; i<currentUser.totalRentIncomeData.length; i++) { %>
+                  <% total = total + currentUser.totalRentIncomeData[i].value %>
+                  <% } %>
+                  £<%= total %></p>
+                <button style="" class="btn btn-primary" onclick="calulate_rent('<%= currentUser._id %>')">Calulate
+                  Rent</button>
               </div>
             </div>
           </div>
@@ -53,7 +61,7 @@
           <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Donut Chart</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Yearly Expenses</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
@@ -139,7 +147,7 @@
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
         data: [<% for(var i = 0; i<currentUser.totalRentIncomeData.length; i++) { %>
-                  <%= currentUser.totalRentIncomeData[i].value%>,
+                  <%= currentUser.totalRentIncomeData[i].value %>,
                   <% } %>
             ]
         }]
