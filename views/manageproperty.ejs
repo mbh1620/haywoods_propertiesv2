@@ -71,7 +71,7 @@
         <h4 style="margin-top:20px">Tenant History</h4>
         <textarea style="width:500px;height:200px;" readonly>
 
-                </textarea>
+        </textarea>
 
 
       </div>
@@ -222,7 +222,10 @@
           lineTension: 0,
           backgroundColor: 'rgb(255, 99, 132)',
           borderColor: 'rgb(255, 99, 132)',
-          data: [650, 650, 650, 650, 650, 650, 650, 700, 700, 700, 700, 700]
+          data: [<% for(var i = 0; i<property.rentData.length; i++) { %>
+                  <%= property.rentData[i].price %>,
+                  <% } %>
+                ]
         }]
       },
 
