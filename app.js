@@ -13,94 +13,21 @@ var axios = require('axios');
 var cheerio = require('cheerio');
 var schedule = require('node-schedule');
 
-//TENANT SCHEMA
-var TenantSchema = new mongoose.Schema({
-    firstname: String,
-    lastname: String,
-    email: String,
-    mobile_number: String,
-    home_number: String,
-    animals: Number,
-    property: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Property"
-    },
-    CurrentTenant: Boolean,
-    date_moved_in: String,
-    date_moved_out: String
-})
+//Model includes
 
-var Tenant = mongoose.model("Tenant", TenantSchema)
+var Property = require("./models/property");
+var Tenant = require("./models/tenant");
+var User = require("./models/user");
 
-
-
-//PROPERTY SCHEMA
-var propertySchema = new mongoose.Schema({
-    name: String,
-    price: String,
-    description: String,
-    lat: Number,
-    long: Number,
-    author: {
-        id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        },
-        username: String
-    },
-    first: String,
-    estimatedValue: [{
-        year: String,
-        month: String,
-        price: Number
-    }],
-    zoopla_id: Number,
-    maintenance_item: [{
-        Name: String,
-        Detail: String,
-        Finish_Date: String,
-        Done: Boolean
-    }],
-    Tenants: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Tenant"
-    }]
-
-});
-
-var Property = mongoose.model("Property", propertySchema);
+//app config
 
 app.use(methodOverride("_method"));
-
-
-//USER SCHEMA
-var UserSchema = new mongoose.Schema({
-    firstname: String,
-    lastname: String,
-    username: String,
-    email: String,
-    properties: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Property"
-        }
-    ],
-    PortfolioValue: [{
-        year: String,
-        month: String,
-        value: Number
-    }]
-})
-
-UserSchema.plugin(passportLocalMongoose);
-var User = mongoose.model("User", UserSchema);
 
 app.use(require("express-session")({
     secret: "Once again Rusty wins the cutest dog!",
     resave: false,
     saveUninitialized: false
 }));
-
 
 //PASSPORT SETUP
 app.use(passport.initialize());
@@ -173,10 +100,17 @@ app.set('views', './views');
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname + "/public"));
 
+//Database connection
 
 mongoose.connect("mongodb://matthew:matthew12@ds129796.mlab.com:29796/heroku_cx76x142", { useNewUrlParser: true, useFindAndModify: false });
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
+//=====================================================
+//
+//          Routes (need to go in separate files)
+//
+//=====================================================
 
 //===============================
 //      Properties Routes
@@ -301,10 +235,18 @@ app.post("/properties/new", createNewProperty, upload_mult.array('images', 5), f
                                     console.log(err);
                                 }else{
                                     prop_val_update(updatedProperty._id, function (err, data) {
+                                        
                                         if (err) {
                                             console.log(err);
                                         } else {
-                                            res.redirect("/properties");
+                                            prop_rent_val_update(updatedProperty._id, function (err, data){
+                                                if(err) {
+                                                    console.log(err);
+                                                } else {
+                                                    res.redirect("/properties");
+                                                }
+                                            })
+                                            
                                         }
                                     })
                                 }
@@ -496,6 +438,66 @@ app.get("/user/:id/properties", function (req, res) {
     })
 })
 
+//Function for updating total rent income
+
+function update_rent_total_income(user_id, next){
+    User.findByIdAndUpdate(user_id).populate('properties').exec(function (err, founduser){
+        if(err){
+            console.log(err);
+        } else {
+            //Total all the current months rent income from each house and then sum it and push to total rent data.
+            var total_rent_income = 0;
+            var CurrentYear;
+            var CurrentMonth;
+
+            console.log(founduser);
+
+            var d = new Date();
+
+            CurrentYear = d.getFullYear();
+            CurrentMonth = d.getMonth();
+            
+            for(var i = 0; i < founduser.properties.length; i++){
+                if(!isNaN(founduser.properties[i].price))
+                total_rent_income = total_rent_income + founduser.properties[i].price;
+            }
+            
+            /* 
+            totalRentIncomeData: [{
+                year: String, 
+                month: String, 
+                value: Number
+            }]
+            */
+
+            var totalRentIncomeData = {
+                year: CurrentYear,
+                month: CurrentMonth,
+                value: total_rent_income
+            }
+
+            founduser.totalRentIncomeData.push(totalRentIncomeData);
+
+            User.findByIdAndUpdate(founduser._id, founduser, function(err, updatedUser){
+                if(err){
+                    console.log(err);
+                } else {
+                    next();
+                }
+            })
+        }
+    })
+}
+
+//Route for recalculating Rent Value 
+
+app.post("/calculate_rent", function (req,res){
+    update_rent_total_income(req.body.id, function(){
+        res.redirect("/user/" + req.body.id + "/manage");
+    })
+})
+
+
 //Function for updating PortFolio Value 
 
 function update_portfolio(user_id, next) {
@@ -542,13 +544,15 @@ function update_portfolio(user_id, next) {
     })
 }
 
+
 //Route for recalculating PortFolio Value
+//Need to add in the correct month by deleting the previously populated current month.
 
 app.post("/recalculate", function (req,res){
     console.log(req.body.id)
 
     update_portfolio(req.body.id, function(){
-        res.redirect("/");
+        res.redirect("/user/" + req.body.id + "/manage");
     })
 })
 
@@ -563,6 +567,49 @@ app.get("/user/:id/manage", function (req, res) {
         }
     })
 })
+
+//Function used for updating property rent value data 
+
+function prop_rent_val_update(propid, next) {
+
+    //first find prop by id
+
+    Property.findById(propid, function(err, foundProperty){
+        if(err){
+            console.log();
+        } else {
+            var d = new Date();
+            var month = d.getMonth();
+            var year = d.getFullYear();
+
+
+            //Get current property rent value
+
+            var rent = foundProperty.price;
+
+            /* var rentData: [{
+                year: String, 
+                month: String,
+                price: Number
+            }], */
+
+            var rentData = {
+                year: year,
+                month:month,
+                price:rent
+            }
+
+            foundProperty.rentData.push(rentData);
+
+            Property.findByIdAndUpdate(foundProperty._id,foundProperty, function(){
+                next();
+            })
+
+        }
+    })
+
+}
+
 
 //Function used for updating a property value
 

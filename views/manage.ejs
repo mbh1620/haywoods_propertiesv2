@@ -29,9 +29,10 @@
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
                 <canvas id="myAreaChart"></canvas>
-                <button style="margin-top:20px;" class="btn btn-primary" onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
+                <button style="margin-top:20px;" class="btn btn-primary"
+                  onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
               </div>
-              
+
             </div>
           </div>
           <div class="card shadow mb-4" style="height:650px">
@@ -41,6 +42,7 @@
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
                 <canvas id="myAreaChartRent"></canvas>
+                <button style="margin-top:20px;" class="btn btn-primary" onclick="calulate_rent('<%= currentUser._id %>')">Calulate Rent</button>
               </div>
             </div>
           </div>
@@ -70,8 +72,8 @@
 
   </div>
   <!-- End of Main Content -->
-</div>  
-    <!-- <ul id="manage-table" style="width:100%">
+</div>
+<!-- <ul id="manage-table" style="width:100%">
             
     <% for(var i = 0; i < property.length; i++) { %>
             <li onClick="document.location = '/user/<%= currentUser._id %>/manage/<%= property[i]._id %>'" class=" list-group-item-action list-group-item">
@@ -85,54 +87,88 @@
     
         </ul> -->
 </div>
-    
+
 
 
 <% include ./partials/footer.ejs %>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-var to_do_items = [];
+  var to_do_items = [];
 
-var ctx = document.getElementById('myAreaChart').getContext('2d');
-var chart2 = new Chart(ctx, {
-      // The type of chart we want to create
-      type: 'line',
+  var ctx = document.getElementById('myAreaChart').getContext('2d');
+  var chart2 = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
 
-      // The data for our dataset
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        datasets: [{
-          fill: false,
-          label: 'Total Net Value',
-          lineTension: 0,
-          backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgb(255, 99, 132)',
-          data: [<% for(var i = 0; i< currentUser.PortfolioValue.length; i++) { %>
+    // The data for our dataset
+    data: {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      datasets: [{
+        fill: false,
+        label: 'Total Net Value',
+        lineTension: 0,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: [<% for(var i = 0; i<currentUser.PortfolioValue.length; i++) { %>
                   <%= currentUser.PortfolioValue[i].value %>,
                   <% } %>
             ]
         }]
       },
 
-      // Configuration options go here
-      options: {
-        // bezierCurve: true,
-      }
+  // Configuration options go here
+  options: {
+    // bezierCurve: true,
+  }
     });
 
-  
-  
-function recalculate(user_id){
 
-  //Send an AJAX call to server calling the update portfolio function
+  var ctx = document.getElementById('myAreaChartRent').getContext('2d');
+  var chart2 = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
 
-  $.post("/recalculate", 
-  {
-    id:user_id
-  })
+    // The data for our dataset
+    data: {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      datasets: [{
+        fill: false,
+        label: 'Total Rent Income per month',
+        lineTension: 0,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: [<% for(var i = 0; i<currentUser.totalRentIncomeData.length; i++) { %>
+                  <%= currentUser.totalRentIncomeData[i].value%>,
+                  <% } %>
+            ]
+        }]
+      },
+
+  // Configuration options go here
+  options: {
+    // bezierCurve: true,
+  }
+    });
 
 
-}
+  function recalculate(user_id) {
+
+    //Send an AJAX call to server calling the update portfolio function
+
+    $.post("/recalculate",
+      {
+        id: user_id
+      })
+
+
+  }
+
+  function calulate_rent(user_id) {
+    $.post("/calculate_rent",
+      {
+        id: user_id
+      })
+  }
 
 </script>

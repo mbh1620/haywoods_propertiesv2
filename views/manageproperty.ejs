@@ -114,8 +114,11 @@
     </div>
     <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">
       <div class="jumbotron">
+        <h3>Rent</h3>
         <p>Rent amount PCM: £650</p>
-        <canvas style="background-color:white;" id="myRentChart"></canvas>
+        <input class="form-control w-50" style="margin-top:20px;display:inline-block;" name="rentamount"
+          value="<%=property.price%>" id="rentamount" type="number" placeholder="Rent per month">
+        <canvas style="background-color:white;margin-top:20px" id="myRentChart"></canvas>
 
 
       </div>
@@ -123,13 +126,15 @@
     <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
       <div class="jumbotron">
 
-        <p>Name: Joe Bloggs</p>
-        <p>Email: JoeBloggs@bloggsmail.com</p>
-        <p>Mobile: 9904358908</p>
-        <p>Number of Occupants</p>
-        <p>Animals: Yes</p>
-        <p></p>
-
+        <div class="card w-25">
+          <p>Name: Joe Bloggs</p>
+          <p>Email: JoeBloggs@bloggsmail.com</p>
+          <p>Mobile: 9904358908</p>
+          <p>Number of Occupants</p>
+          <p>Animals: Yes</p>
+          <p>Message: Hi, My name is Joe I am looking for a house to live in.</p>
+          <p></p>
+        </div>
 
       </div>
     </div>
@@ -151,10 +156,12 @@
           <form class="form-group" style="display:none;" id="jobId"
             action="/user/<%=currentUser._id%>/properties/<%= property._id%>/job?_method=PUT" method="POST">
             <div class="container w-50">
-              <input class="form-control" name="jobname" id="jobIdname" type="text" placeholder="Job name">
-              <input class="form-control" name="jobbody" id="jobBody" type="text" placeholder="Job body">
-              <input class="form-control" name="jobdate" id="jobDate" type="date" placeholder="Job date">
-              <input class="btn btn-primary" type="submit">
+              <input class="form-control w-50" style="margin-top:20px;display:inline-block;" name="jobname"
+                id="jobIdname" type="text" placeholder="Name">
+              <input class="form-control w-25" style="margin-top:20px;display:inline;float:right;" name="jobdate"
+                id="jobDate" type="date" placeholder="Date">
+              <textarea class="form-control" style="margin-top:20px;" name="jobbody" id="jobBody" rows="3"></textarea>
+              <input class="btn btn-primary" style="margin-top: 20px;" type="submit">
             </div>
           </form>
         </div>
@@ -167,6 +174,7 @@
 
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
     $(function () {
       $('#myTab li:last-child a').tab('show')
@@ -199,6 +207,8 @@
     options: {
     }
       });
+
+
     var chart2 = new Chart(ctxrent, {
       // The type of chart we want to create
       type: 'line',
@@ -235,8 +245,8 @@
     }
 
   </script>
-  </div>
-  
+</div>
 
 
-  <% include ./partials/footer.ejs %>
+
+<% include ./partials/footer.ejs %>
