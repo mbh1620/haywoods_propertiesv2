@@ -2,25 +2,23 @@ var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
-var fs = require("fs");
 var methodOverride = require("method-override");
-var multer = require("multer");
-var LocalStrategy = require("passport-local");
-var passport = require("passport");
-var passportLocalMongoose = require("passport-local-mongoose");
-var middleware = require("./middleware");
 var axios = require('axios');
 var cheerio = require('cheerio');
 var schedule = require('node-schedule');
 
+// ROUTE IMPORTS 
+var propertyroutes = require('./routes/propertyroutes');
+var tenantroutes = require('./routes/tenantroutes');
+var usersroutes = require('./routes/usersroutes');
+var graphingroutes = require('./routes/graphingroutes');
+
 //Model includes
 
-var Property = require("./models/property");
 var Tenant = require("./models/tenant");
 var User = require("./models/user");
 
 //app config
-
 app.use(methodOverride("_method"));
 
 app.use(require("express-session")({
@@ -29,73 +27,8 @@ app.use(require("express-session")({
     saveUninitialized: false
 }));
 
-//PASSPORT SETUP
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-app.use(function (req, res, next) {
-    res.locals.currentUser = req.user;
-    next();
-});
-
-
-//MULTER SET UP
-var storage = multer.diskStorage({
-    destination: (request, file, callback) => {
-        if (request.property) {
-            var dest = "./uploads/" + request.property._id.toString();
-            if (!fs.existsSync(dest)) {
-                fs.mkdirSync(dest);
-            }
-            return callback(null, dest);
-        } else {
-            return 0;
-        }
-    },
-
-    filename: function (request, file, callback) {
-        if (request.property) {
-            return callback(null, request.property._id.toString());
-        }
-        else {
-            return 0;
-        }
-    }
-})
-
-var store_multiple = multer.diskStorage({
-    destination: (request, file, callback) => {
-        if (request.property) {
-            var dest = "./uploads/" + request.property._id.toString();
-            if (!fs.existsSync(dest)) {
-                fs.mkdirSync(dest);
-            }
-            return callback(null, dest);
-
-        } else {
-            return 0;
-        }
-    },
-
-    filename: function (request, file, callback) {
-        if (request.property) {
-            return callback(null, request.property._id.toString() + Date.now());
-        }
-        else {
-            return 0;
-        }
-    }
-})
-
-var upload_mult = multer({ storage: store_multiple });
-
-var upload = multer({ storage: storage });
 //=============================================================
 app.set('views', './views');
-
 
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname + "/public"));
@@ -112,316 +45,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //
 //=====================================================
 
-//===============================
-//      Properties Routes
-//===============================
+app.use("/",usersroutes);
 
+app.use("/",propertyroutes);
 
+// index route
 app.get("/", function (req, res) {
     res.render("home.ejs");
-})
-
-//INDEX ROUTE
-
-app.get("/properties", function (req, res) {
-    Property.find({}, function (err, allProperties) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("properties.ejs", { properties: allProperties });
-        }
-    })
-})
-
-//NEW PROPERTIES FORM ROUTE
-
-app.get("/properties/new", middleware.isLoggedIn, function (req, res) {
-    res.render("new_properties.ejs");
-})
-
-//CREATE ROUTE
-function createNewProperty(req, res, next) {
-    var name = req.body.name;
-    var price = req.body.price;
-    var description = req.body.description;
-    var lat = req.body.lat;
-    var long = req.body.long;
-    var currentUser = req.user;
-
-
-
-
-    console.log(name);
-
-    var newProperty = {
-        name: name,
-        price: price,
-        description: description,
-        lat: lat,
-        long: long,
-        author: {
-            id: currentUser,
-            username: currentUser.username
-        },
-    }
-
-    Property.create(newProperty, function (err, _property) {
-        if (err) {
-            console.log(err);
-        } else { }
-        req.property = _property;
-        var the_User = req.user;
-        the_User.properties.push(_property);
-
-
-        // 
-        the_User.save(function (err, data) {
-            if (err) {
-                console.log(err)
-            } else {
-                next();
-            }
-        })
-    });
-
-}
-
-
-app.post("/properties/new", createNewProperty, upload_mult.array('images', 5), function (req, res) {
-    Property.findByIdAndUpdate(req.property._id, req.body.property, function (err, updatedProperty) {
-        if (err) {
-            console.log("error has occurred");
-            res.redirect("/properties");
-        } else {
-            fs.readdir("uploads/" + req.property._id, (err, files) => {
-                if (err) {
-                    console.log(err);
-                    res.redirect("/properties");
-                }
-                console.log(files);
-                if (files !== undefined) {
-                    updatedProperty.first = files[0];
-                    updatedProperty.save(function (err, data) {
-                        if (err) {
-                            console.log(err)
-                            res.redirect("/properties");
-                        } else {
-                            //Add in empty property values from january until the current month
-                            
-                            //first get current month 
-
-                            var d = new Date();
-                            var curr_month = d.getMonth();
-
-                            //now add a loop for the 
-
-                            for(var i = 0; i < curr_month; i++){
-
-
-                                //Clean up later however year and month not needed.
-
-                                var estimatedValue = {
-                                    year: null,
-                                    month: null,
-                                    value: null
-                                }
-
-                                updatedProperty.estimatedValue.push(estimatedValue);
-
-                            }
-
-                            Property.findByIdAndUpdate(updatedProperty._id, updatedProperty, function(err, data){
-                                if(err){
-                                    console.log(err);
-                                }else{
-                                    prop_val_update(updatedProperty._id, function (err, data) {
-                                        
-                                        if (err) {
-                                            console.log(err);
-                                        } else {
-                                            prop_rent_val_update(updatedProperty._id, function (err, data){
-                                                if(err) {
-                                                    console.log(err);
-                                                } else {
-                                                    res.redirect("/properties");
-                                                }
-                                            })
-                                            
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    })
-                }
-
-
-            })
-
-        }
-    })
 });
-//SHOW ROUTE
-
-app.get("/properties/:id", function (req, res) {
-    Property.findById(req.params.id, function (err, foundProperty) {
-        var images = []
-        if (err) {
-            console.log("this error");
-            console.log(err);
-        } else {
-            fs.readdir("uploads/" + req.params.id, (err, files) => {
-                if (err) {
-                    console.log(err);
-                    res.render("show.ejs", { property: foundProperty, images: images })
-                }
-                if (files !== undefined) {
-                    for (const file of files) {
-                        images.push(file);
-                    }
-                }
-
-                res.render("show.ejs", { property: foundProperty, images: images })
-            })
-        }
-    })
-})
-
-//EDIT ROUTE
-
-app.get("/properties/:id/edit", function (req, res) {
-    Property.findById(req.params.id, function (err, foundProperty) {
-        res.render("edit.ejs", { property: foundProperty })
-    })
-})
-
-//MANAGE ROUTE
-
-app.get("/properties/:id/manage", function (req, res) {
-    Property.findById(req.params.id, function (err, foundProperty) {
-        res.render("manage.ejs", { property: foundProperty })
-    })
-})
-
-//UPDATE ROUTE
-
-app.put("/properties/:id", function (req, res) {
-    Property.findByIdAndUpdate(req.params.id, req.body.property, function (err, updatedProperty) {
-        if (err) {
-            console.log("error has occurred");
-        } else {
-            console.log(req.body.property);
-            res.redirect("/properties");
-        }
-    })
-})
-
-//DESTROY ROUTE
-
-app.delete("/properties/:id", function (req, res) {
-    Property.findByIdAndRemove(req.params.id, function (err) {
-        if (err) {
-            console.log(err)
-        } else {
-            // Check to see if the file exists before deleting it
-            if (fs.existsSync("uploads/" + req.params.id)) {
-                fs.readdir("uploads/" + req.params.id, (err, files) => {
-                    if (err) throw err;
-
-                    for (const file of files) {
-                        fs.unlinkSync("uploads/" + req.params.id + "/" + file)
-                    }
-                    fs.rmdirSync("uploads/" + req.params.id);
-                })
-
-
-            }
-            res.redirect("/properties");
-
-        }
-    })
-});
-
-//USERS SIGNUP/Login/Logout ROUTES
-
-app.get("/register", function (req, res) {
-    res.render("register.ejs");
-});
-
-app.post("/register", function (req, res) {
-    User.register(new User({ username: req.body.username, firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email }), req.body.password, function (err, user) {
-        if (err) {
-            console.log(err);
-            return res.render("register.ejs");
-        } 
-
-        //Create empty portfolio values from January until present month
-
-        //var current month
-        var d = new Date();
-
-        var current_month = d.getMonth();
-        
-        //We now need to make a loop for how many months we have passed since january 
-
-        for(var i = 0; i < current_month; i++){ 
-            //fill these months with empty values for portfolio value
-            
-            //Clean up later by adding in year and month but not neccesary at this point.
-            var PortFolioValue = {
-                year: null,
-                month: null,
-                value: null
-            }
-
-            user.PortfolioValue.push(PortFolioValue);
-        }
-
-        User.findByIdAndUpdate(user._id, user, function(err, updatedUser){
-            if(err){
-                console.log(err);
-            } else {
-                passport.authenticate("local")(req, res, function () {
-                    update_portfolio(user._id, function(){
-                        res.redirect("/");
-                    }) 
-                })
-            }
-        })
-    })
-})
-
-app.get("/login", function (req, res) {
-    res.render("login.ejs");
-})
-
-app.post("/login", passport.authenticate("local", {
-    successRedirect: "/properties",
-
-    failureRedirect: "/login"
-
-}), function (req, res) {
-
-});
-
-app.post("/logout", function (req, res) {
-    req.logout();
-    res.redirect("/");
-})
-
-//Account Settings routes
-
-app.get("/user/:id", function (req, res) {
-    var userid = req.params.id
-    User.findById(req.params.id, function (err, founduser) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("settings.ejs", { user: founduser })
-        }
-    })
-
-})
 
 //USERS PROPERTIES ROUTES
 //Index
