@@ -6,6 +6,9 @@ var LocalStrategy = require("passport-local");
 var passport = require("passport");
 var passportLocalMongoose = require("passport-local-mongoose");
 var fs = require("fs");
+var axios = require('axios');
+var cheerio = require('cheerio');
+var schedule = require('schedule');
 
 var User = require("../models/user");
 var Property = require("../models/property")
