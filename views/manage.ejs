@@ -26,9 +26,10 @@
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Total net value</h6>
             </div>
-            <div class="card-body" style="height:500px;">
+            <div class="card-body" style="height:550px;">
               <div class="chart-area">
                 <canvas id="myAreaChart"></canvas>
+                Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect">
                 <button style="margin-top:20px;" class="btn btn-primary"
                   onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
                 <button style="margin-top:20px;" class="btn btn-primary" onclick="">Compare Years</button>
@@ -102,13 +103,38 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-  var to_do_items = [];
+  $(document).ready( function() {
+    $('#yearselect').val(new Date().getFullYear());
+  });
 
+  var data = [<% for(var i = 0; i<currentUser.PortfolioValue.length; i++) { %>
+                //While the year is correct and month is Jan,Feb,etc....
+                <%if(currentUser.PortfolioValue[i].value != null){%>
+                    {value:<%= currentUser.PortfolioValue[i].value %>,
+                     month:'<%= currentUser.PortfolioValue[i].month %>',
+                     year:<%= currentUser.PortfolioValue[i].year%>},
+                <%}%>
+              <% } %>
+              ]
+
+  /*Get the selected year from #yearselect input and then append the data                     
+  for that year into the data for the chart.
+  */
+  for(var i = 0; i < data.length; i++){
+    if(data[i].year === 2020){
+      console.log("is in 2020");
+    }
+  }
+  
+  console.log(data);
+  
+
+  var to_do_items = [];
   var ctx = document.getElementById('myAreaChart').getContext('2d');
   var chart2 = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
-
+  
     // The data for our dataset
     data: {
       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -119,7 +145,8 @@
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
         data: [<% for(var i = 0; i<currentUser.PortfolioValue.length; i++) { %>
-                  <%= currentUser.PortfolioValue[i].value %>,
+                //While the year is correct and month is Jan,Feb,etc....
+                    <%= currentUser.PortfolioValue[i].value %>,
                   <% } %>
             ]
         }]
@@ -131,7 +158,10 @@
   }
     });
 
-
+  
+  console.log(chart2.data.datasets[0].data);
+  
+  
   var ctx = document.getElementById('myAreaChartRent').getContext('2d');
   var chart2 = new Chart(ctx, {
     // The type of chart we want to create

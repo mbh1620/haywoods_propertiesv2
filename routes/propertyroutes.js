@@ -4,6 +4,8 @@ var router = express.Router();
 var middleware = require("../middleware");
 var multer = require("multer");
 var fs = require("fs");
+var axios = require('axios');
+var cheerio = require('cheerio');
 
 //============================================
 //              Multer Setup
