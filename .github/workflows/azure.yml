@@ -15,6 +15,9 @@
 on:
   release:
     types: [created]
+  push:
+   branches:
+     - master
 
 env:
   AZURE_WEBAPP_NAME: Haywoods-Properties    # set this to your application's name
