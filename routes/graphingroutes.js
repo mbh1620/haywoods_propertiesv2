@@ -1,8 +1,9 @@
 // The routes used for updating the values used for graphing the zoopla values for total portfolio.
 var express = require('express');
 var router = express.Router();
+var axios = require('axios');
+var cheerio = require('cheerio');
 var schedule = require('node-schedule');
-
 var User = require("../models/user");
 var Property = require("../models/property");
 
@@ -302,4 +303,8 @@ var j = schedule.scheduleJob({hour: 14, minute:0, dayOfWeek:0}, function () {
     })
 })
 
-module.exports = router;
+module.exports.router = router;
+module.exports.prop_val_update = prop_val_update;
+module.exports.update_portfolio = update_portfolio;
+module.exports.update_rent_total_income = update_rent_total_income;
+module.exports.prop_rent_val_update = prop_rent_val_update;

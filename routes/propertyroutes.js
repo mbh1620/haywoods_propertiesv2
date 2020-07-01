@@ -4,8 +4,11 @@ var router = express.Router();
 var middleware = require("../middleware");
 var multer = require("multer");
 var fs = require("fs");
-var axios = require('axios');
-var cheerio = require('cheerio');
+var graphingroutes = require("./graphingroutes");
+var prop_val_update = graphingroutes.prop_val_update;
+var update_portfolio = graphingroutes.update_portfolio;
+var update_rent_total_income = graphingroutes.update_rent_total_income;
+var prop_rent_val_update = graphingroutes.prop_rent_val_update;
 
 //============================================
 //              Multer Setup

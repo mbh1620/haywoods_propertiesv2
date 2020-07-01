@@ -8,7 +8,7 @@ var methodOverride = require("method-override");
 var propertyroutes = require('./routes/propertyroutes');
 var tenantroutes = require('./routes/tenantroutes');
 var usersroutes = require('./routes/usersroutes');
-var graphingroutes = require('./routes/graphingroutes');
+var graphingroutes = require('./routes/graphingroutes').router;
 
 //app config
 app.use(methodOverride("_method"));
