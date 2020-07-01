@@ -19,13 +19,15 @@ app.use(require("express-session")({
     saveUninitialized: false
 }));
 
-//=============================================================
+//=====================================================
 app.set('views', './views');
 
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname + "/public"));
 
-//Database connection
+//=====================================================
+//                 Database connection
+//=====================================================
 
 mongoose.connect("mongodb://matthew:matthew12@ds129796.mlab.com:29796/heroku_cx76x142", { useNewUrlParser: true, useFindAndModify: false });
 app.use(bodyParser.urlencoded({ extended: true }));
