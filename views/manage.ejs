@@ -43,7 +43,7 @@
             </div>
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
-                <canvas id="myAreaChartRent"></canvas>
+                <canvas id="myAreaChartRent"></canvas>Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
                 <p style="margin-top:20px;">Year Total:
                   <% var total = 0; %>
                   <% for(var i = 0; i<currentUser.totalRentIncomeData.length; i++) { %>
@@ -105,6 +105,7 @@
 <script>
   $(document).ready(function () {
     $('#yearselect').val(new Date().getFullYear());
+    $('#yearselectrent').val(new Date().getFullYear());
   });
 
   var portfoliodata = [<% for (var i = 0; i < currentUser.PortfolioValue.length; i++) { %>
@@ -260,7 +261,7 @@
   chart2.update();
 
   //===========================================
-  //    Function for changing rent graph year
+  //    Function for changing portfolio graph year
   //===========================================
 
   $('#yearselect').on("change", function(){
@@ -300,9 +301,46 @@
     chart1.update();
   })
 
-  function display_rent_year() {
-    //This function is to change the year displayed on the rent graph
-  }
+  //===========================================
+  //    Function for changing rent graph year
+  //===========================================
+
+  $('#yearselectrent').on("change", function(){
+    //This function is to change the year displayed on the value graph
+
+    //First clear the data array for graph
+    chart2.data.datasets[0].data = [];
+    //Populate with correct year data
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var yearSelectRent = $("#yearselectrent").val();
+    var correctYear = [];
+    for (var i = 0; i < rentdata.length; i++) {
+      if (portfoliodata[i].year == yearSelectRent) {
+        //Append to the graph data array
+        correctYear.push(rentdata[i]);
+        //console.log(portfoliodata[i].year + " = 2020");
+        //Sort data into correct months
+        //Go down the months list and check for data and append
+      }
+    }
+    for (var j = 0; j < months.length; j++) {
+      var flag = false;
+      for (var k = 0; k < correctYear.length; k++) {
+        //Search for January, if not present then value = null 
+        flag = false;
+        if (months[j] === correctYear[k].month) {
+          chart2.data.datasets[0].data.push(correctYear[k].value);
+          break;
+        } else {
+          flag = true;
+        }
+      }
+      if (flag === true) {
+        chart2.data.datasets[0].data.push(null);
+      }
+    }
+    chart2.update();
+  })
 
 
 
