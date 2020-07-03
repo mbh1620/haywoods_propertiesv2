@@ -69,6 +69,8 @@ function update_rent_total_income(user_id, next){
 
             CurrentYear = d.getFullYear();
             CurrentMonth = d.getMonth();
+
+            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             
             for(var i = 0; i < founduser.properties.length; i++){
                 if(!isNaN(founduser.properties[i].price))
@@ -85,7 +87,7 @@ function update_rent_total_income(user_id, next){
 
             var totalRentIncomeData = {
                 year: CurrentYear,
-                month: CurrentMonth,
+                month: months[CurrentMonth],
                 value: total_rent_income
             }
 

@@ -103,38 +103,49 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-  $(document).ready( function() {
+  $(document).ready(function () {
     $('#yearselect').val(new Date().getFullYear());
   });
 
-  var data = [<% for(var i = 0; i<currentUser.PortfolioValue.length; i++) { %>
+  var portfoliodata = [<% for (var i = 0; i < currentUser.PortfolioValue.length; i++) { %>
                 //While the year is correct and month is Jan,Feb,etc....
-                <%if(currentUser.PortfolioValue[i].value != null){%>
-                    {value:<%= currentUser.PortfolioValue[i].value %>,
-                     month:'<%= currentUser.PortfolioValue[i].month %>',
-                     year:<%= currentUser.PortfolioValue[i].year%>},
+                <%if (currentUser.PortfolioValue[i].value != null) {%>
+    {
+      value:<%= currentUser.PortfolioValue[i].value %>,
+      month: '<%= currentUser.PortfolioValue[i].month %>',
+      year:<%= currentUser.PortfolioValue[i].year %>},
                 <%}%>
               <% } %>
               ]
 
+  //console.log(portfoliodata);
+
+  var rentdata = [<% for (var i = 0; i < currentUser.totalRentIncomeData.length; i++) { %>
+                <%if (currentUser.totalRentIncomeData[i].value != null) {%>
+    {
+      value:<%= currentUser.totalRentIncomeData[i].value %>,
+      month: '<%= currentUser.totalRentIncomeData[i].month %>',
+      year:<%= currentUser.totalRentIncomeData[i].year %>},
+                <%}%>
+              <%}%>
+            ]
+
   /*Get the selected year from #yearselect input and then append the data                     
   for that year into the data for the chart.
   */
-  for(var i = 0; i < data.length; i++){
-    if(data[i].year === 2020){
-      console.log("is in 2020");
-    }
-  }
-  
-  console.log(data);
-  
+
+  // for(var i = 0; i < rentdata.length; i++){
+  //   if(rentdata[i].year === yearSelectRent){
+  //     //Append to an array
+  //   }
+  // }
 
   var to_do_items = [];
   var ctx = document.getElementById('myAreaChart').getContext('2d');
-  var chart2 = new Chart(ctx, {
+  var chart1 = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
-  
+
     // The data for our dataset
     data: {
       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -144,24 +155,16 @@
         lineTension: 0,
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
-        data: [<% for(var i = 0; i<currentUser.PortfolioValue.length; i++) { %>
-                //While the year is correct and month is Jan,Feb,etc....
-                    <%= currentUser.PortfolioValue[i].value %>,
-                  <% } %>
-            ]
-        }]
-      },
+        data: []
+      }]
+    },
 
-  // Configuration options go here
-  options: {
-    // bezierCurve: true,
-  }
-    });
+    // Configuration options go here
+    options: {
+      // bezierCurve: true,
+    }
+  });
 
-  
-  console.log(chart2.data.datasets[0].data);
-  
-  
   var ctx = document.getElementById('myAreaChartRent').getContext('2d');
   var chart2 = new Chart(ctx, {
     // The type of chart we want to create
@@ -176,18 +179,87 @@
         lineTension: 0,
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
-        data: [<% for(var i = 0; i<currentUser.totalRentIncomeData.length; i++) { %>
-                  <%= currentUser.totalRentIncomeData[i].value %>,
-                  <% } %>
-            ]
-        }]
-      },
+        data: []
+      }]
+    },
 
-  // Configuration options go here
-  options: {
-    // bezierCurve: true,
+    // Configuration options go here
+    options: {
+      // bezierCurve: true,
+    }
+  });
+
+  //===========================================
+  //       Function for total value graph
+  //===========================================
+
+  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var yearSelectPortfolio = $("#yearselect").val();
+  var correctYear = [];
+  console.log($("#yearselect").val());
+  console.log("val");
+  for (var i = 0; i < portfoliodata.length; i++) {
+    if (portfoliodata[i].year === 2020) {
+      //Append to the graph data array
+      correctYear.push(portfoliodata[i]);
+      //console.log(portfoliodata[i].year + " = 2020");
+      //Sort data into correct months
+      //Go down the months list and check for data and append
+    }
   }
-    });
+  for (var j = 0; j < months.length; j++) {
+    var flag = false;
+    for (var k = 0; k < correctYear.length; k++) {
+      //Search for January, if not present then value = null 
+      flag = false;
+      if (months[j] === correctYear[k].month) {
+        chart1.data.datasets[0].data.push(correctYear[k].value);
+        break;
+      } else {
+        flag = true;
+      }
+    }
+    if (flag === true) {
+      chart1.data.datasets[0].data.push(null);
+    }
+  }
+  chart1.update();
+  //console.log(chart1.data.datasets[0].data);
+
+  //===========================================
+  //       Function for total rent graph
+  //===========================================
+  console.log(rentdata);
+  var yearSelectRent = $("#yearselect2").val();
+  var correctYearRent = [];
+  for (var i = 0; i < rentdata.length; i++) {
+    if (rentdata[i].year === 2020) {
+      //Append to the graph data array
+      correctYearRent.push(rentdata[i]);
+      //console.log(portfoliodata[i].year + " = 2020");
+      //Sort data into correct months
+      //Go down the months list and check for data and append
+    }
+  }
+  for (var j = 0; j < months.length; j++) {
+    var flag = false;
+    for (var k = 0; k < correctYearRent.length; k++) {
+      //Search for January, if not present then value = null 
+      flag = false;
+      if (months[j] === correctYearRent[k].month) {
+        chart2.data.datasets[0].data.push(correctYearRent[k].value);
+        break;
+      } else {
+        flag = true;
+      }
+    }
+    if (flag === true) {
+      chart2.data.datasets[0].data.push(null);
+    }
+  }
+  chart2.update();
+
+
 
 
   function recalculate(user_id) {
