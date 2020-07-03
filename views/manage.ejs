@@ -29,7 +29,7 @@
             <div class="card-body" style="height:550px;">
               <div class="chart-area">
                 <canvas id="myAreaChart"></canvas>
-                Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect">
+                Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect" onchange="">
                 <button style="margin-top:20px;" class="btn btn-primary"
                   onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
                 <button style="margin-top:20px;" class="btn btn-primary" onclick="">Compare Years</button>
@@ -259,6 +259,50 @@
   }
   chart2.update();
 
+  //===========================================
+  //    Function for changing rent graph year
+  //===========================================
+
+  $('#yearselect').on("change", function(){
+    //This function is to change the year displayed on the value graph
+
+    //First clear the data array for graph
+    chart1.data.datasets[0].data = [];
+    //Populate with correct year data
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var yearSelectPortfolio = $("#yearselect").val();
+    var correctYear = [];
+    for (var i = 0; i < portfoliodata.length; i++) {
+      if (portfoliodata[i].year == yearSelectPortfolio) {
+        //Append to the graph data array
+        correctYear.push(portfoliodata[i]);
+        //console.log(portfoliodata[i].year + " = 2020");
+        //Sort data into correct months
+        //Go down the months list and check for data and append
+      }
+    }
+    for (var j = 0; j < months.length; j++) {
+      var flag = false;
+      for (var k = 0; k < correctYear.length; k++) {
+        //Search for January, if not present then value = null 
+        flag = false;
+        if (months[j] === correctYear[k].month) {
+          chart1.data.datasets[0].data.push(correctYear[k].value);
+          break;
+        } else {
+          flag = true;
+        }
+      }
+      if (flag === true) {
+        chart1.data.datasets[0].data.push(null);
+      }
+    }
+    chart1.update();
+  })
+
+  function display_rent_year() {
+    //This function is to change the year displayed on the rent graph
+  }
 
 
 

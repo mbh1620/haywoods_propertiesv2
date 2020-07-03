@@ -139,7 +139,6 @@ function createNewProperty(req, res, next) {
             }
         })
     });
-
 }
 
 

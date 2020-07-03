@@ -26,7 +26,7 @@
     
         <% var x = 0; %>
         <% properties.forEach(function(property){ %>
-        
+        <% if(property.show_on_main){ %>
         
         
         
@@ -52,6 +52,7 @@
         </div>
         <% if(x % 4 == 0){ %>
         </div>
+        <% } %>
         <% } %>
     
         <%}); %>

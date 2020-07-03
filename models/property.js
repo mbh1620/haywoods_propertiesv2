@@ -40,7 +40,8 @@ var propertySchema = new mongoose.Schema({
     Tenants: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tenant"
-    }]
+    }],
+    show_on_main: Boolean
 
 });
 
