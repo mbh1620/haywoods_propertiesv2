@@ -7,7 +7,9 @@
   <h2><%= property.name %> </h2>
 
   <img src="../../../uploads/<%= property._id %>/<%= images[0] %>" class="d-block w-25" alt="...">
+  <a style="padding-top:20px" href="/user/<%=currentUser._id%>/manage"> ← Back to manage panel</a>
 </div>
+
 <div class="container">
 
   <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -79,9 +81,15 @@
     <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
       <div class="jumbotron">
         <h2 style="margin-top:-30px;margin-bottom:20px;">Property Information</h2>
-        <p>Zoopla ID: <%= property.zoopla_id %></p>
-
+        <p>Zoopla ID:</p>
+        <input style="margin-bottom:20px;" class="form-control w-25" value="<%= property.zoopla_id %>" type="text">
         <p>Property type: Semi-detached</p>
+        <select style="margin-bottom:20px;" class="form-control w-25" id="property-type" name="property-type">
+          <option value="Terraced">Terraced</option>
+          <option value="End of Terrace">End of Terrace</option>
+          <option value="Semi-detached">Semi-detached</option>
+          <option value="Detached">Detached</option>
+        </select>
         <p>Price bought: £120000</p>
 
         <form action="/user/<%=currentUser._id%>/manage/<%=property._id%>?_method=PUT" method="POST">

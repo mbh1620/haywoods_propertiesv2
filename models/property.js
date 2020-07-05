@@ -42,7 +42,6 @@ var propertySchema = new mongoose.Schema({
         ref: "Tenant"
     }],
     show_on_main: Boolean
-
 });
 
 module.exports = mongoose.model("Property", propertySchema);

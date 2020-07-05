@@ -28,7 +28,8 @@
             </div>
             <div class="card-body" style="height:550px;">
               <div class="chart-area">
-                <canvas id="myAreaChart"></canvas>
+
+                <canvas style="height:600px;width:800px" id="myAreaChart"></canvas>
                 Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect" onchange="">
                 <button style="margin-top:20px;" class="btn btn-primary"
                   onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
@@ -143,6 +144,8 @@
 
   var to_do_items = [];
   var ctx = document.getElementById('myAreaChart').getContext('2d');
+  //ctx.canvas.width="600";
+  //ctx.canvas.height = "400";
   var chart1 = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
@@ -166,8 +169,10 @@
     }
   });
 
-  var ctx = document.getElementById('myAreaChartRent').getContext('2d');
-  var chart2 = new Chart(ctx, {
+  var ctx2 = document.getElementById('myAreaChartRent').getContext('2d');
+  //ctx2.canvas.width="600";
+  //ctx2.canvas.height = "400";
+  var chart2 = new Chart(ctx2, {
     // The type of chart we want to create
     type: 'line',
 
@@ -187,6 +192,7 @@
     // Configuration options go here
     options: {
       // bezierCurve: true,
+      
     }
   });
 

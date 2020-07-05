@@ -299,4 +299,15 @@ router.get("/user/:id/properties", function (req, res) {
     })
 })
 
+//Router for management projection tool
+router.get("/user/:id/projection", function(req,res){
+    User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("projection.ejs", { currentUser: founduser, property:founduser.properties});
+        }
+    })
+})
+
 module.exports = router;

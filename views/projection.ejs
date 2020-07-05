@@ -1,0 +1,221 @@
+<% include ./partials/header.ejs %>
+
+<% include ./partials/landlord-dashboard.ejs %>
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container-fluid" style="margin-top:20px;">
+            <h1 class="h3 mb-2 text-gray-800">Projection Tool</h1>
+            <div class="card shadow mb-4" style="height:2000px">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Projection Tool</h6>
+                </div>
+                <div class="card-body" style="height:700px;">
+                  <div class="chart-area" style="height:400px;width:600px">
+                    <canvas id="total" style="height:400px;width:600px;"></canvas>
+                    <canvas id="total2" style="height:400px;width:600px;"></canvas>
+                    <canvas id="total3" style="height:400px;width:600px;"></canvas>
+                    <!-- <canvas id="num_of_houses" style="height:400px;width:600px"></canvas> -->
+                    <p>Please note that this tool is just a rough estimate based on averages and so will not be fully accurate, so should not 
+                        be depended upon when making decisions.
+                    </p>
+                    Select Number of Years: <input style="display:block" value="5" type="number" id="numberYears" name="numberYears">
+                    Rate of house price growth per year: <input style="display:block" value="5" type="number" id="house-growth" name="house-growth">
+                    Rate of house rent growth per year: <input style="display:block;margin-bottom:10px" value="5" type="number" id="rent-growth" name="rent-growth">
+                    Use your house details (rent,value,etc..): <input style="display:block;" type="checkbox" id="yearselect" name="yearselect">
+                    <p>This tool will assume that when enough money is made, a house at the average price is bought.</p>
+                    <button style="margin-top:20px;" id="run" class="btn btn-danger" onclick="">Run</button>
+                  </div>
+    
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<% include ./partials/footer.ejs %>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    //Deactivate Dashboard
+    $("#dashboard-nav").removeClass('active');
+    //Make Utilities active
+    $("#utilities-nav").addClass('active');
+
+    var ctx = document.getElementById('total').getContext('2d');
+    var ctx2 = document.getElementById('total2').getContext('2d');
+    var ctx3 = document.getElementById('total3').getContext('2d');
+  //ctx.canvas.width="600";
+  //ctx.canvas.height = "400";
+  var chart1 = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+      labels: [],
+      datasets: [{
+        fill: false,
+        label: 'Total Net Worth',
+        lineTension: 0,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: []
+      }]
+    },
+
+    // Configuration options go here
+    options: {
+      // bezierCurve: true,
+      responsive:false
+    }
+  });
+  var chart2 = new Chart(ctx2, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+      labels: [],
+      datasets: [{
+        fill: false,
+        label: 'Number of Houses',
+        lineTension: 0,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: []
+      }]
+    },
+
+    // Configuration options go here
+    options: {
+      // bezierCurve: true,
+      responsive:false
+    }
+  });
+  var chart3 = new Chart(ctx3, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+      labels: [],
+      datasets: [{
+        fill: false,
+        label: 'Total Money',
+        lineTension: 0,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: []
+      }]
+    },
+
+    // Configuration options go here
+    options: {
+      // bezierCurve: true,
+      responsive:false,
+    }
+  });
+
+    $('#run').click(function(){
+        //First clear out the graph from old data
+
+        chart1.data.datasets[0].data = [];
+        chart1.data.labels = [];
+        chart1.update();
+        chart2.data.datasets[0].data = [];
+        chart2.data.labels = [];
+        chart2.update();
+        chart3.data.datasets[0].data = [];
+        chart3.data.labels = [];
+        chart3.update();
+
+
+        //First take in all parameters
+        console.log('clicked');
+        var total = 0;
+        //num of houses is users number of houses
+        var num_of_houses = <%= currentUser.properties.length %>;
+        var graphing_list = []
+        var house_num_list = []
+        var house_price_list = []
+        var networth = []
+        var income = []
+        var num_of_months = $('#numberYears').val()*12;
+        var rent_per_month = 650
+        var house_price = 130000
+        var rate_of_rent_increase = ($('#rent-growth').val()/(100*12));
+        var rate_of_house_increase = ($('#house-growth').val()/(100*12));
+
+        var tick = [];
+
+        //var income_from_job_per_month
+
+        /*
+        
+        For range of number of months, add the total income up from rent from properties.
+
+        If the total gets above the price of a house, buy a house and add that to the number of houses.
+
+        repeat until time range is completed.
+        
+        */
+
+        for(var i = 0; i < num_of_months; i++){
+            //for every house in users houses find the rent and add to total.
+            <%for(var j = 0; j < currentUser.properties.length; j++){ %>
+                var price = <%= currentUser.properties[j].price %>;
+                //total = total + price;
+                total = total + (num_of_houses*rent_per_month);
+                graphing_list.push(total);
+                // chart1.data.labels.push(i);
+                // chart1.data.datasets[0].data.push(total);
+                
+                //console.log(total);
+            <% } %>
+            
+            //console.log(total + " " + house_price);
+            //console.log(total/house_price);
+            var num_of_houses_potential_buy = Math.floor(total/house_price);
+            //console.log(num_of_houses_potential_buy);
+            if (num_of_houses_potential_buy >= 1){
+                //Buy that number of houses
+                total -= house_price * num_of_houses_potential_buy
+                num_of_houses += num_of_houses_potential_buy
+                console.log('house bought!');
+            }
+
+            house_num_list.push(num_of_houses);
+            income.push(num_of_houses*rent_per_month*12);
+
+            //Increase the house price and rent 
+
+            house_price += (house_price*rate_of_house_increase);
+            //console.log(house_price + " " + rate_of_house_increase);
+            house_price_list.push(house_price);
+            rent_per_month += rent_per_month*rate_of_rent_increase;
+
+            //Net worth calculation
+            networth.push((house_price * num_of_houses)+total);
+
+            //chart1.data.labels.push(tick);
+            chart1.data.datasets[0].data.push((house_price * num_of_houses)+total);
+            chart1.data.labels.push(i);
+            chart2.data.datasets[0].data.push(num_of_houses);
+            chart2.data.labels.push(i);
+            chart3.data.datasets[0].data.push(total);
+            chart3.data.labels.push(i);
+        }
+        chart1.update();
+        chart2.update();
+        chart3.update();
+        console.log(num_of_houses + " :Num of houses");
+
+        
+
+    })  
+
+</script>
