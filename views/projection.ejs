@@ -7,19 +7,22 @@
     <div id="content">
         <div class="container-fluid" style="margin-top:20px;">
             <h1 class="h3 mb-2 text-gray-800">Projection Tool</h1>
-            <div class="card shadow mb-4" style="height:2000px">
+            <div class="card shadow mb-4" style="height:1500px">
                 <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Projection Tool</h6>
                 </div>
-                <div class="card-body" style="height:700px;">
-                  <div class="chart-area" style="height:400px;width:600px">
-                    <canvas id="total" style="height:400px;width:600px;"></canvas>
-                    <canvas id="total2" style="height:400px;width:600px;"></canvas>
-                    <canvas id="total3" style="height:400px;width:600px;"></canvas>
+                <div class="card-body" style="height:700px;flex:none">
+                  <div class="chart-area" style="height:100%;width:100%">
+                    <div><canvas id="total" style="height:400px;width:600px;float:right;margin-right:10%"></canvas>
+                    <canvas id="total2" style="height:400px;width:600px;margin-left:10%"></canvas></div>
+                    <div><canvas id="total3" style="height:400px;width:600px;float:right;margin-right:10%"></canvas>
+                    <canvas id="total4" style="height:400px;width:600px;margin-left:10%"></canvas></div>
+                    
                     <!-- <canvas id="num_of_houses" style="height:400px;width:600px"></canvas> -->
                     <p>Please note that this tool is just a rough estimate based on averages and so will not be fully accurate, so should not 
                         be depended upon when making decisions.
                     </p>
+                    Select Starting Number of Properties: <input style="display:block" value="0" type="number" id="numberHouses" name="numberHouses">
                     Select Number of Years: <input style="display:block" value="5" type="number" id="numberYears" name="numberYears">
                     Rate of house price growth per year: <input style="display:block" value="5" type="number" id="house-growth" name="house-growth">
                     Rate of house rent growth per year: <input style="display:block;margin-bottom:10px" value="5" type="number" id="rent-growth" name="rent-growth">
@@ -45,9 +48,13 @@
     //Make Utilities active
     $("#utilities-nav").addClass('active');
 
+    $('#numberHouses').val(<%=currentUser.properties.length%>);
+    
+
     var ctx = document.getElementById('total').getContext('2d');
     var ctx2 = document.getElementById('total2').getContext('2d');
     var ctx3 = document.getElementById('total3').getContext('2d');
+    var ctx4 = document.getElementById('total4').getContext('2d');
   //ctx.canvas.width="600";
   //ctx.canvas.height = "400";
   var chart1 = new Chart(ctx, {
@@ -119,6 +126,31 @@
       responsive:false,
     }
   });
+  var chart4 = new Chart(ctx4, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+      labels: [],
+      datasets: [{
+        fill: false,
+        label: 'Total Income',
+        lineTension: 0,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: []
+      }]
+    },
+
+    // Configuration options go here
+    options: {
+      // bezierCurve: true,
+      responsive:false,
+    }
+  });
+
+    
 
     $('#run').click(function(){
         //First clear out the graph from old data
@@ -132,13 +164,19 @@
         chart3.data.datasets[0].data = [];
         chart3.data.labels = [];
         chart3.update();
+        chart4.data.datasets[0].data = [];
+        chart4.data.labels = [];
+        chart4.update();
 
 
         //First take in all parameters
         console.log('clicked');
         var total = 0;
         //num of houses is users number of houses
-        var num_of_houses = <%= currentUser.properties.length %>;
+        console.log()
+        console.log($('#numberHouses').val());
+        
+        var num_of_houses = parseInt($('#numberHouses').val());
         var graphing_list = []
         var house_num_list = []
         var house_price_list = []
@@ -166,16 +204,17 @@
 
         for(var i = 0; i < num_of_months; i++){
             //for every house in users houses find the rent and add to total.
-            <%for(var j = 0; j < currentUser.properties.length; j++){ %>
-                var price = <%= currentUser.properties[j].price %>;
-                //total = total + price;
-                total = total + (num_of_houses*rent_per_month);
-                graphing_list.push(total);
-                // chart1.data.labels.push(i);
-                // chart1.data.datasets[0].data.push(total);
+            // <%for(var j = 0; j < currentUser.properties.length; j++){ %>
+            //     var price = <%= currentUser.properties[j].price %>;
+            //     //total = total + price;
                 
-                //console.log(total);
-            <% } %>
+            //     // chart1.data.labels.push(i);
+            //     // chart1.data.datasets[0].data.push(total);
+                
+            //     //console.log(total);
+            // <% } %>
+            total = total + (num_of_houses*rent_per_month);
+            graphing_list.push(total);
             
             //console.log(total + " " + house_price);
             //console.log(total/house_price);
@@ -208,10 +247,13 @@
             chart2.data.labels.push(i);
             chart3.data.datasets[0].data.push(total);
             chart3.data.labels.push(i);
+            chart4.data.datasets[0].data.push(num_of_houses*rent_per_month*12);
+            chart4.data.labels.push(i);
         }
         chart1.update();
         chart2.update();
         chart3.update();
+        chart4.update();
         console.log(num_of_houses + " :Num of houses");
 
         
