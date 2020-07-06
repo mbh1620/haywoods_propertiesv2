@@ -5,4 +5,4 @@
 This is the Github Repository for the Haywoods Properties Node.js Web app.
 
 ![photo1](https://github.com/mbh1620/haywoods_propertiesv2/blob/master/photos/photo1.png)
-![photo2](https://github.com/mbh1620/haywoods_propertiesv2/blob/master/photo2.png)
+![photo2](https://github.com/mbh1620/haywoods_propertiesv2/blob/master/photos/photo2.png)
