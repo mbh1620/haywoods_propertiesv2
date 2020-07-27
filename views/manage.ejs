@@ -22,14 +22,14 @@
         <div class="col-xl-8 col-lg-7">
 
           <!-- Area Chart -->
-          <div class="card shadow mb-4" style="height:650px">
+          <div class="card shadow mb-4" style="height:720px">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Total net value</h6>
             </div>
             <div class="card-body" style="height:550px;">
               <div class="chart-area">
 
-                <canvas style="height:600px;width:800px" id="myAreaChart"></canvas>
+                <canvas style="height:500px;width:700px;margin:0 auto;" id="myAreaChart"></canvas>
                 Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect" onchange="">
                 <button style="margin-top:20px;" class="btn btn-primary"
                   onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
@@ -38,13 +38,13 @@
 
             </div>
           </div>
-          <div class="card shadow mb-4" style="height:650px">
+          <div class="card shadow mb-4" style="height:750px">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Total Rent Income</h6>
             </div>
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
-                <canvas id="myAreaChartRent"></canvas>Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
+                <canvas id="myAreaChartRent" style="height:500px;width:700px;margin: 0 auto;"></canvas>Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
                 <p style="margin-top:20px;">Year Total:
                   <% var total = 0; %>
                   <% for(var i = 0; i<currentUser.totalRentIncomeData.length; i++) { %>
@@ -166,6 +166,7 @@
     // Configuration options go here
     options: {
       // bezierCurve: true,
+      responsive:false
     }
   });
 
@@ -192,7 +193,7 @@
     // Configuration options go here
     options: {
       // bezierCurve: true,
-      
+      responsive:false
     }
   });
 
