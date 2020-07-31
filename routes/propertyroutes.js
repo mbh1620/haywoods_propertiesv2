@@ -271,8 +271,11 @@ router.put("/properties/:id", function (req, res) {
     Property.findByIdAndUpdate(req.params.id, req.body.property, function (err, updatedProperty) {
         if (err) {
             console.log("error has occurred");
+            console.log(err);
         } else {
             console.log(req.body.property);
+            console.log(req.body);
+            //console.log(updatedProperty);
             res.redirect("/properties");
         }
     })

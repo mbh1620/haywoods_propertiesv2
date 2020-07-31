@@ -30,7 +30,24 @@
           placeholder=""><%= property.description %></textarea>
       </div>
       <div class="form-group form-check">
-        <input type="checkbox" name="property[show_on_main]" class="form-check-input" id="exampleCheck1" value="true">
+        <!-- <input name="property[test]" hidden> -->
+        <input type="hidden" id="other" name="property[show_on_main]" value="<%=property.show_on_main%>"><input id="value_input" type="checkbox" onclick="the_switch()" <% if(property.show_on_main == true){ %>
+          checked
+          <%}%>
+          >
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
+        <script>
+
+          function the_switch(){
+            if($("#value_input").is(':checked')){
+              $("#other").val("true");
+            } else {
+              $("#other").val("false");
+            } 
+          }
+
+        </script>
+        
         <label class="form-check-label" for="exampleCheck1">Display property on properties page</label>
       </div>
       <input type="file" name="image">
