@@ -123,16 +123,29 @@ function update_portfolio(user_id, next) {
             console.log(err)
         } else {
             var portfolio_total = 0;
-            var CurrentYear;
-            var CurrentMonth;
+            var the_date = new Date();
+            var month = new Array();
+            month[0] = "January";
+            month[1] = "February";
+            month[2] = "March";
+            month[3] = "April";
+            month[4] = "May";
+            month[5] = "June";
+            month[6] = "July";
+            month[7] = "August";
+            month[8] = "September";
+            month[9] = "October";
+            month[10] = "November";
+            month[11] = "December";
+            var CurrentYear = the_date.getFullYear();
+            var CurrentMonth = month[the_date.getMonth()];
+            
             //Code for updating the users Portfolio value, rent etc...
             for (var i = 0; i < founduser.properties.length; i++) {
                 if (typeof founduser.properties[i].estimatedValue !== 'undefined') {
                     if (typeof founduser.properties[i].estimatedValue[founduser.properties[i].estimatedValue.length - 1].price !== 'undefined') {
                         portfolio_total = portfolio_total + founduser.properties[i].estimatedValue[founduser.properties[i].estimatedValue.length - 1].price;
                         console.log(portfolio_total);
-                        CurrentYear = founduser.properties[0].estimatedValue[founduser.properties[i].estimatedValue.length - 1].year;
-                        CurrentMonth = founduser.properties[0].estimatedValue[founduser.properties[i].estimatedValue.length - 1].month;
                     }
                 } else {
                     console.log("estimated value for this property is undefined");
@@ -144,6 +157,7 @@ function update_portfolio(user_id, next) {
                 month: CurrentMonth,
                 value: portfolio_total
             }
+            console.log(CurrentMonth);
 
             founduser.PortfolioValue.push(CurrentPortFolioValue);
 
@@ -196,6 +210,7 @@ function prop_val_update(propid, next) {
             month[10] = "November";
             month[11] = "December";
             var themonth = month[d.getMonth()];
+            console.log(themonth)
             console.log(foundProperty)
             var theyear = d.getFullYear();
 
@@ -274,8 +289,8 @@ function prop_val_update(propid, next) {
 //===========================================================
 
 //         Scheduler        (Second, minute, hour, day_of_month, month, day_of_week)   
-//Call the schedule at 2:00 every Sunday                  
-var j = schedule.scheduleJob({hour: 14, minute:0, dayOfWeek:0}, function () {
+//Call the schedule at 2:00 every first day of the month                  
+var j = schedule.scheduleJob({hour: 14, minute:0, dayOfMonth:0}, function () {
     //for all users, Calculate the prop_val_updat
     console.log("Completing update of values");
     User.find({}, function (err, users) {
@@ -310,3 +325,4 @@ module.exports.prop_val_update = prop_val_update;
 module.exports.update_portfolio = update_portfolio;
 module.exports.update_rent_total_income = update_rent_total_income;
 module.exports.prop_rent_val_update = prop_rent_val_update;
+module.exports.j = j;
