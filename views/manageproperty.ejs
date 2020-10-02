@@ -96,7 +96,8 @@
 
 
         </form>
-        <canvas style="background-color:white;" id="myChart"></canvas>
+        <canvas style="background-color:white;margin-bottom:20px" id="myChart"></canvas>
+        Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect" onchange="">
         <button style="margin-top:20px;" class="btn btn-primary" onclick="showTable()">Show Table</button>
         <button style="margin-top:20px;display:none;" id="csvbutton" class="btn btn-warning" onclick="">Create
           CSV/Spreadsheet</button>
@@ -126,7 +127,8 @@
         <p>Rent amount PCM: £650</p>
         <input class="form-control w-50" style="margin-top:20px;display:inline-block;" name="rentamount"
           value="<%=property.price%>" id="rentamount" type="number" placeholder="Rent per month">
-        <canvas style="background-color:white;margin-top:20px" id="myRentChart"></canvas>
+        <canvas style="background-color:white;margin-top:20px;margin-bottom:20px;" id="myRentChart"></canvas>        
+        Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
 
 
       </div>
@@ -184,6 +186,13 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
+    $(document).ready(function () {
+    $('#yearselect').val(new Date().getFullYear());
+    $('#yearselectrent').val(new Date().getFullYear());
+  });
+
+
+
     $(function () {
       $('#myTab li:last-child a').tab('show')
     })

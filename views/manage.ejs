@@ -354,13 +354,10 @@
   function recalculate(user_id) {
 
     //Send an AJAX call to server calling the update portfolio function
-
     $.post("/recalculate",
       {
         id: user_id
       })
-
-
   }
 
   function calulate_rent(user_id) {
