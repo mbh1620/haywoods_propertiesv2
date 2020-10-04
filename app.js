@@ -25,6 +25,7 @@ app.set('views', './views');
 
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(__dirname + "/public"));
+app.use('/scripts', express.static(__dirname + "/views/manageproperties"));
 
 //=====================================================
 //                 Database connection

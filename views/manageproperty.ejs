@@ -192,38 +192,32 @@
   });
 
 
+  //The data for the property estimated value
+
+  var estimatedValueData = [<% for (var i = 0; i < property.estimatedValue.length; i++) { %>
+                //While the year is correct and month is Jan,Feb,etc....
+                <%if (property.estimatedValue[i].price != null) {%>
+    {
+      value:<%= property.estimatedValue[i].price %>,
+      month: '<%= property.estimatedValue[i].month %>',
+      year:<%= property.estimatedValue[i].year %>},
+                <%}%>
+              <% } %>
+              ]
+
+
 
     $(function () {
       $('#myTab li:last-child a').tab('show')
     })
   </script>
+  <script src="/scripts/valueGraphFuncs.js">
+  //===========================================
+  //       Function for value graph
+  //===========================================
+  </script>
   <script>
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var ctxrent = document.getElementById('myRentChart').getContext('2d');
-    var chart = new Chart(ctx, {
-      // The type of chart we want to create
-      type: 'line',
-
-      // The data for our dataset
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        datasets: [{
-          fill: false,
-          label: 'House price',
-          lineTension: 0,
-          backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgb(255, 99, 132)',
-          data: [<% for(var i = 0; i<property.estimatedValue.length; i++) { %>
-                  <%= property.estimatedValue[i].price %>,
-                  <% } %>
-            ]
-          }]
-        },
-
-    // Configuration options go here
-    options: {
-    }
-      });
+    
 
 
     var chart2 = new Chart(ctxrent, {
@@ -263,6 +257,9 @@
       $("#valueTable").toggle();
       $("#csvbutton").toggle();
     }
+  //===========================================
+  //       Function for total rent graph
+  //===========================================
 
   </script>
 </div>
