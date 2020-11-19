@@ -1,10 +1,19 @@
+//=====================================================
+//
+//              Haywood's Properties app.js
+//                
+//=====================================================
+
+//author: Matthew Haywood
+
+// Module Imports
 var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 
-// ROUTE IMPORTS 
+// Route Imports 
 var propertyroutes = require('./routes/propertyroutes');
 var tenantroutes = require('./routes/tenantroutes');
 var usersroutes = require('./routes/usersroutes');
