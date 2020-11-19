@@ -60,4 +60,9 @@ app.get("/", function (req, res) {
     res.render("home.ejs");
 });
 
+// 404 - Error Route
+app.get("/*", function (req, res){
+    res.render("error.ejs");
+})
+
 app.listen("8080");
