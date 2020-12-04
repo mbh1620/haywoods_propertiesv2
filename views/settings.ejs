@@ -2,9 +2,11 @@
 
 <link rel="stylesheet" href="../../style.css">
 <div class="container">
-<div class='jumbotron'>
+<div class='jumbotron' style="margin-top: 100px;">
 <h3>Account Settings</h3>
-<p> Username: <%= user.username %></p>
+<p style="margin-top:20px"> Username: <%= user.username %></p>
+<p> Name: <%user.firstname%></p>
+<p> Surname: <%user.lastname%></p>
 <p> Email: <%= user.email %></p>
 </div>
 </div>
