@@ -116,9 +116,9 @@ function createNewProperty(req, res, next) {
         lat: lat,
         long: long,
         author: {
-            id: currentUser,
+            id:currentUser._id,
             username: currentUser.username
-        },
+        }
     }
 
     Property.create(newProperty, function (err, _property) {
@@ -140,7 +140,6 @@ function createNewProperty(req, res, next) {
         })
     });
 }
-
 
 router.post("/properties/new", createNewProperty, upload_mult.array('images', 5), function (req, res) {
     Property.findByIdAndUpdate(req.property._id, req.body.property, function (err, updatedProperty) {
@@ -229,7 +228,6 @@ router.get("/properties/:id", function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
         var images = []
         if (err) {
-            console.log("this error");
             console.log(err);
         } else {
             fs.readdir("uploads/" + req.params.id, (err, files) => {
@@ -242,67 +240,96 @@ router.get("/properties/:id", function (req, res) {
                         images.push(file);
                     }
                 }
-
                 res.render("show.ejs", { property: foundProperty, images: images })
             })
         }
     })
 })
 
-//EDIT ROUTE
+//EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE)
 
-router.get("/properties/:id/edit", function (req, res) {
+router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
-        res.render("edit.ejs", { property: foundProperty })
-    })
-})
-
-//MANAGE ROUTE
-
-router.get("/properties/:id/manage", function (req, res) {
-    Property.findById(req.params.id, function (err, foundProperty) {
-        res.render("manage.ejs", { property: foundProperty })
-    })
-})
-
-//UPDATE ROUTE
-
-router.put("/properties/:id", function (req, res) {
-    Property.findByIdAndUpdate(req.params.id, req.body.property, function (err, updatedProperty) {
-        if (err) {
-            console.log("error has occurred");
-            console.log(err);
+        if(req.user.id == foundProperty.author.id){
+            res.render("edit.ejs", { property: foundProperty })
         } else {
-            console.log(req.body.property);
-            console.log(req.body);
-            //console.log(updatedProperty);
-            res.redirect("/properties");
+            res.redirect("/error");
+        }      
+    })
+})
+
+//MANAGE ROUTE - ADD MIDDLEWARE and author checking (DONE)
+
+router.get("/properties/:id/manage", middleware.isLoggedIn, function (req, res) {
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if(req.user.id == foundProperty.author.id){
+            res.render("manage.ejs", { property: foundProperty })
+        } else {
+            res.redirect("/error");
         }
     })
 })
 
-//DESTROY ROUTE
+//UPDATE ROUTE - middleware DONE
 
-router.delete("/properties/:id", function (req, res) {
-    Property.findByIdAndRemove(req.params.id, function (err) {
-        if (err) {
-            console.log(err)
+router.put("/properties/:id", middleware.isLoggedIn, function (req, res) {
+
+    Property.findById(req.params.id, function(err, foundProperty){
+        if(err){
+            console.log(err);
         } else {
-            // Check to see if the file exists before deleting it
-            if (fs.existsSync("uploads/" + req.params.id)) {
-                fs.readdir("uploads/" + req.params.id, (err, files) => {
-                    if (err) throw err;
-
-                    for (const file of files) {
-                        fs.unlinkSync("uploads/" + req.params.id + "/" + file)
+            if(foundProperty.author.id == req.user.id){
+                Property.findByIdAndUpdate(req.params.id, req.body.property, function (err, updatedProperty) {
+                    if (err) {
+                        console.log("error has occurred");
+                        console.log(err);
+                    } else {
+                        console.log(req.body.property);
+                        console.log(req.body);
+                        //console.log(updatedProperty);
+                        res.redirect("/properties");
                     }
-                    fs.rmdirSync("uploads/" + req.params.id);
                 })
-
-
+            } else { 
+                res.redirect("/properties");
             }
-            res.redirect("/properties");
+        }
+    })
 
+    
+})
+
+//DESTROY ROUTE - middleware DONE
+
+router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
+    //if user id is equal to property owner id then delete
+    Property.findById(req.params.id).exec(function(err, _property){
+        if(err){
+            console.log(err);
+        } else {
+            //If author id is equal to currentUserid then proceed with deletion
+            if(_property.author.id == req.user.id){
+                Property.findByIdAndRemove(req.params.id, function (err) {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        // Check to see if the file exists before deleting it
+                        if (fs.existsSync("uploads/" + req.params.id)) {
+                            fs.readdir("uploads/" + req.params.id, (err, files) => {
+                                if (err) throw err;
+            
+                                for (const file of files) {
+                                    fs.unlinkSync("uploads/" + req.params.id + "/" + file)
+                                }
+                                fs.rmdirSync("uploads/" + req.params.id);
+                            })
+                        }
+                        res.redirect("/properties");
+                    }
+                })
+            } else {
+                res.redirect("/properties");
+            }
         }
     })
 });

@@ -2,6 +2,7 @@
 
 var express = require('express');
 var router = express.Router();
+var middleware = require("../middleware");
 var LocalStrategy = require("passport-local");
 var passport = require("passport");
 var passportLocalMongoose = require("passport-local-mongoose");
@@ -39,7 +40,7 @@ router.post("/register", function (req, res) {
         if (err) {
             console.log(err);
             return res.render("register.ejs");
-        } 
+        }
 
         //Create empty portfolio values from January until present month
 
@@ -47,12 +48,12 @@ router.post("/register", function (req, res) {
         var d = new Date();
 
         var current_month = d.getMonth();
-        
+
         //We now need to make a loop for how many months we have passed since january 
 
-        for(var i = 0; i < current_month; i++){ 
+        for (var i = 0; i < current_month; i++) {
             //fill these months with empty values for portfolio value
-            
+
             //Clean up later by adding in year and month but not neccesary at this point.
             var PortFolioValue = {
                 year: null,
@@ -67,23 +68,23 @@ router.post("/register", function (req, res) {
             }] */
 
             var totalRentIncomeData = {
-                year: null, 
-                month: null, 
-                value:null
+                year: null,
+                month: null,
+                value: null
             }
 
             user.PortfolioValue.push(PortFolioValue);
             user.totalRentIncomeData.push(totalRentIncomeData);
         }
 
-        User.findByIdAndUpdate(user._id, user, function(err, updatedUser){
-            if(err){
+        User.findByIdAndUpdate(user._id, user, function (err, updatedUser) {
+            if (err) {
                 console.log(err);
             } else {
                 passport.authenticate("local")(req, res, function () {
-                    update_portfolio(user._id, function(){
+                    update_portfolio(user._id, function () {
                         res.redirect("/");
-                    }) 
+                    })
                 })
             }
         })
@@ -108,138 +109,148 @@ router.post("/logout", function (req, res) {
     res.redirect("/");
 })
 
-//Account Settings routes
+//Account Settings routes - Middleware (DONE)
 
-router.get("/user/:id", function (req, res) {
+router.get("/user/:id", middleware.isLoggedIn, function (req, res) {
     var userid = req.params.id
-    User.findById(req.params.id, function (err, founduser) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("settings.ejs", { user: founduser })
-        }
-    })
+    if (req.user.id == userid) {
+        User.findById(req.params.id, function (err, founduser) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("settings.ejs", { user: founduser })
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
 
 })
 
-//Route for showing the main manage dash for user
+//Route for showing the main manage dash for user - Middleware (DONE)
 
-router.get("/user/:id/manage", function (req, res) {
-
-    User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("manage.ejs", { property: founduser.properties });
-        }
-    })
+router.get("/user/:id/manage", middleware.isLoggedIn, function (req, res) {
+    if(req.user.id == req.params.id){
+        User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("manage.ejs", { property: founduser.properties });
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
+   
 })
 
-//Route for getting the manage page for property
+//Route for getting the manage page for property - Middleware (DONE)
 
-router.get("/user/:id/manage/:propid", function (req, res) {
+router.get("/user/:id/manage/:propid", middleware.isLoggedIn, function (req, res) {
     var userid = req.params.id
     var propid = req.params.propid;
     var images = []
     var currentPrice;
     var url = 'https://www.zoopla.co.uk/property/';
 
-
-
-    Property.findById(propid).populate("Tenants").exec(function (err, foundProperty) {
-        if (err) {
-            console.log(err);
-        } else {
-            fs.readdir("uploads/" + req.params.propid, (err, files) => {
-                if (err) {
-                    console.log(err);
-                    res.render("show.ejs", { property: foundProperty, images: images })
-                }
-                if (files !== undefined) {
-                    for (const file of files) {
-                        images.push(file);
+    if(req.user.id = userid){
+        Property.findById(propid).populate("Tenants").exec(function (err, foundProperty) {
+            if (err) {
+                console.log(err);
+            } else {
+                fs.readdir("uploads/" + req.params.propid, (err, files) => {
+                    if (err) {
+                        console.log(err);
+                        res.render("show.ejs", { property: foundProperty, images: images })
                     }
-                }
-
-
-                var d = new Date();
-                var month = new Array();
-                month[0] = "January";
-                month[1] = "February";
-                month[2] = "March";
-                month[3] = "April";
-                month[4] = "May";
-                month[5] = "June";
-                month[6] = "July";
-                month[7] = "August";
-                month[8] = "September";
-                month[9] = "October";
-                month[10] = "November";
-                month[11] = "December";
-                var themonth = month[d.getMonth()];
-                console.log(foundProperty)
-                var theyear = d.getFullYear();
-
-                console.log(foundProperty.estimatedValue.length)
-                if (foundProperty.estimatedValue[0] === undefined || foundProperty.estimatedValue === 0 || foundProperty.estimatedValue[foundProperty.estimatedValue.length - 1].month !== themonth) {
-                    url = url + foundProperty.zoopla_id;
-                    console.log(url);
-                    axios(url)
-                        .then(response => {
-                            const html = response.data;
-                            const $ = cheerio.load(html);
-                            const estimatedPrice = $('.pdp-estimate__price');
-                            console.log("Scraped from Zoopla")
-                            currentPrice = estimatedPrice.text();
-                            console.log(currentPrice);
-
-                            //If the property does not have a m in the string then do the following
-
-
-
-                            //If the property is valued at 1m or above
-                            currentPrice = currentPrice.substr(currentPrice.indexOf('£') + 1, currentPrice.indexOf('m'));
-                            currentPrice = currentPrice.split('m')[0];
-
-                            console.log(currentPrice);
-                            currentPrice = currentPrice.replace(',', '');
-                            currentPrice = currentPrice.replace(',', '');
-                            currentPrice = currentPrice * 1E6;
-
-
-
-                            console.log(currentPrice);
-
-                            function pushNewprop(callback) {
-                                foundProperty.estimatedValue.push({
-                                    year: theyear,
-                                    month: themonth,
-                                    price: currentPrice
+                    if (files !== undefined) {
+                        for (const file of files) {
+                            images.push(file);
+                        }
+                    }
+    
+    
+                    var d = new Date();
+                    var month = new Array();
+                    month[0] = "January";
+                    month[1] = "February";
+                    month[2] = "March";
+                    month[3] = "April";
+                    month[4] = "May";
+                    month[5] = "June";
+                    month[6] = "July";
+                    month[7] = "August";
+                    month[8] = "September";
+                    month[9] = "October";
+                    month[10] = "November";
+                    month[11] = "December";
+                    var themonth = month[d.getMonth()];
+                    console.log(foundProperty)
+                    var theyear = d.getFullYear();
+    
+                    console.log(foundProperty.estimatedValue.length)
+                    if (foundProperty.estimatedValue[0] === undefined || foundProperty.estimatedValue === 0 || foundProperty.estimatedValue[foundProperty.estimatedValue.length - 1].month !== themonth) {
+                        url = url + foundProperty.zoopla_id;
+                        console.log(url);
+                        axios(url)
+                            .then(response => {
+                                const html = response.data;
+                                const $ = cheerio.load(html);
+                                const estimatedPrice = $('.pdp-estimate__price');
+                                console.log("Scraped from Zoopla")
+                                currentPrice = estimatedPrice.text();
+                                console.log(currentPrice);
+    
+                                //If the property does not have a m in the string then do the following
+    
+    
+    
+                                //If the property is valued at 1m or above
+                                currentPrice = currentPrice.substr(currentPrice.indexOf('£') + 1, currentPrice.indexOf('m'));
+                                currentPrice = currentPrice.split('m')[0];
+    
+                                console.log(currentPrice);
+                                currentPrice = currentPrice.replace(',', '');
+                                currentPrice = currentPrice.replace(',', '');
+                                currentPrice = currentPrice * 1E6;
+    
+    
+    
+                                console.log(currentPrice);
+    
+                                function pushNewprop(callback) {
+                                    foundProperty.estimatedValue.push({
+                                        year: theyear,
+                                        month: themonth,
+                                        price: currentPrice
+                                    })
+                                    callback();
+                                }
+    
+                                pushNewprop(function (err) {
+                                    Property.findByIdAndUpdate(propid, foundProperty, { new: true }, function (err, updatedProperty) {
+                                        if (err) {
+                                            console.log(err)
+                                        } else {
+                                            console.log("PROPERTY UPDATED!!!!")
+                                            console.log(updatedProperty)
+                                            res.render("manageproperty.ejs", { property: updatedProperty, images: images });
+                                        }
+                                    })
                                 })
-                                callback();
-                            }
-
-                            pushNewprop(function (err) {
-                                Property.findByIdAndUpdate(propid, foundProperty, { new: true }, function (err, updatedProperty) {
-                                    if (err) {
-                                        console.log(err)
-                                    } else {
-                                        console.log("PROPERTY UPDATED!!!!")
-                                        console.log(updatedProperty)
-                                        res.render("manageproperty.ejs", { property: updatedProperty, images: images });
-                                    }
-                                })
+    
                             })
-
-                        })
-
-                } else {
-                    res.render("manageproperty.ejs", { property: foundProperty, images: images });
-                }
-
-            })
-        }
-    })
+    
+                    } else {
+                        res.render("manageproperty.ejs", { property: foundProperty, images: images });
+                    }
+    
+                })
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
 })
 
 //Route for updating the estimated value and rent
@@ -286,26 +297,30 @@ router.put("/user/:id/properties/:propid/job", function (req, res) {
     })
 })
 
-//Router for displaying users properties
-router.get("/user/:id/properties", function (req, res) {
+//Router for displaying users properties - Middleware (DONE)
+router.get("/user/:id/properties", middleware.isLoggedIn, function (req, res) {
     var userid = req.params.id
     //Add populate function HERE!!!!
-    User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render("usersproperties.ejs", { founduser: founduser });
-        }
-    })
+    if( req.user.id == userid){
+        User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("usersproperties.ejs", { founduser: founduser });
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
 })
 
-//Router for management projection tool
-router.get("/user/:id/projection", function(req,res){
+//Router for management projection tool - account checking has been left for now
+router.get("/user/:id/projection", middleware.isLoggedIn, function (req, res) {
     User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
         if (err) {
             console.log(err);
         } else {
-            res.render("projection.ejs", { currentUser: founduser, property:founduser.properties});
+            res.render("projection.ejs", { currentUser: founduser, property: founduser.properties });
         }
     })
 })
