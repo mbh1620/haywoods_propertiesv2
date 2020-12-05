@@ -104,9 +104,6 @@ function createNewProperty(req, res, next) {
     var long = req.body.long;
     var currentUser = req.user;
 
-
-
-
     console.log(name);
 
     var newProperty = {
@@ -129,8 +126,6 @@ function createNewProperty(req, res, next) {
         var the_User = req.user;
         the_User.properties.push(_property);
 
-
-        // 
         the_User.save(function (err, data) {
             if (err) {
                 console.log(err)
@@ -207,7 +202,6 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                                                     res.redirect("/properties");
                                                 }
                                             })
-                                            
                                         }
                                     })
                                 }
@@ -215,13 +209,11 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                         }
                     })
                 }
-
-
             })
-
         }
     })
 });
+
 //SHOW ROUTE
 
 router.get("/properties/:id", function (req, res) {
@@ -246,34 +238,34 @@ router.get("/properties/:id", function (req, res) {
     })
 })
 
-//EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE)
+//EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE) 
 
 router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
+        var images = []
         if(req.user.id == foundProperty.author.id){
-            res.render("edit.ejs", { property: foundProperty })
+            fs.readdir("uploads/" + req.params.id, (err, files) => {
+                if (err) {
+                    console.log(err);
+                    res.render("edit.ejs", { property: foundProperty, images: images })
+                }
+                if (files !== undefined) {
+                    for (const file of files) {
+                        images.push(file);
+                    }
+                }
+                res.render("edit.ejs", { property: foundProperty, images: images })
+            })
         } else {
             res.redirect("/error");
         }      
     })
 })
 
-//MANAGE ROUTE - ADD MIDDLEWARE and author checking (DONE)
-
-router.get("/properties/:id/manage", middleware.isLoggedIn, function (req, res) {
-    Property.findById(req.params.id, function (err, foundProperty) {
-        if(req.user.id == foundProperty.author.id){
-            res.render("manage.ejs", { property: foundProperty })
-        } else {
-            res.redirect("/error");
-        }
-    })
-})
-
-//UPDATE ROUTE - middleware DONE
+//UPDATE ROUTE - MIDDLEWARE DONE
 
 router.put("/properties/:id", middleware.isLoggedIn, function (req, res) {
-
+    //Need to add if certain photos need to be deleted or added and reordered
     Property.findById(req.params.id, function(err, foundProperty){
         if(err){
             console.log(err);
@@ -299,7 +291,19 @@ router.put("/properties/:id", middleware.isLoggedIn, function (req, res) {
     
 })
 
-//DESTROY ROUTE - middleware DONE
+//MANAGE ROUTE - ADD MIDDLEWARE and author checking (DONE)
+
+router.get("/properties/:id/manage", middleware.isLoggedIn, function (req, res) {
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if(req.user.id == foundProperty.author.id){
+            res.render("manage.ejs", { property: foundProperty })
+        } else {
+            res.redirect("/error");
+        }
+    })
+})
+
+//DESTROY ROUTE - MIDDLEWARE DONE
 
 router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
     //if user id is equal to property owner id then delete

@@ -48,11 +48,17 @@
     </br clear="left">
   <div id="button-container" style="display:inline-block;width:400px; height:60px">
     <a style="display:inline-block;float:left;" href="/properties" class="btn btn-primary">Back</a>
+
+    <!-- Add logic for displaying edit and delete buttons here -->
+    <% if (currentUser){ %>
+    <% if (currentUser.id == property.author.id) { %>
     <form action="/properties/<%= property._id %>?_method=DELETE" style="float:left" method="POST">
-      <input style="display:inline-block" type="submit" class="btn btn-danger" style="float:left" value="Delete">
+    <input style="display:inline-block" type="submit" class="btn btn-danger" style="float:left" value="Delete">
     </form>
     <a style="display:inline-block" href="/properties/<%= property._id %>/edit" class="btn btn-warning">Edit</a>
+    <% }} %>
   </div>
+    
   <div style="display:block" class="jumbotron">
   <p>Contact Details:</p>
   <p><%= property.author.username %></p>
