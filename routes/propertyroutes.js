@@ -139,6 +139,7 @@ function createNewProperty(req, res, next) {
 router.post("/properties/new", createNewProperty, upload_mult.array('images', 5), function (req, res) {
     Property.findByIdAndUpdate(req.property._id, req.body.property, function (err, updatedProperty) {
         if (err) {
+            console.log(err);
             console.log("error has occurred");
             res.redirect("/properties");
         } else {

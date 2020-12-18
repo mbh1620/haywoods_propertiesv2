@@ -51,12 +51,35 @@
         <input type="file" name="image">
         <div style="height:100%;width:100%;">
         <% images.forEach(function(image, index){ %>
-          <div style="height:auto; width:200px;display:block;float:left;margin-top:20px; margin-right:20px;">
+          <div class="image-div" onmouseover="show_button('button-<%=index%>')" onmouseout="hide_button('button-<%=index%>')">
             <img src="../../uploads/<%= property._id %>/<%= image %>" class="d-block w-100" alt="...">
+            <button id="button-<%=index%>" class="btn btn-sm btn-danger button" style="transform: translate(120%, -250%);display:none;" onclick="delete_photo()">Delete</button>
           </div>
         <% }) %>
         </div>
       </div>
+      <style>
+      .image-div {
+        height:auto;
+        width:200px;
+        display:block;
+        float:left;
+        margin-top:20px;
+        margin-right:20px;
+      }
+      </style>
+      <script>
+        function show_button(button_id){
+          var button = "#" + button_id;
+          $(button).css("display", "");
+        }
+
+        function hide_button(button_id){
+          var button = "#" + button_id;
+          $(button).css("display", "none");
+        }
+
+      </script>
       
       <label class="form-check-label" for="exampleCheck1" style="margin-top:20px;">Choose location</label>
       <div id="mapid" style="height:400px;margin-top: 20px;"></div>
