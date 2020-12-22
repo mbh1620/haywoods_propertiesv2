@@ -339,4 +339,7 @@ router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
     })
 });
 
+//AJAX PHOTO ROUTES - ADD, DELETE, REORDER
+
+
 module.exports = router;

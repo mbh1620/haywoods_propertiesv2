@@ -53,7 +53,7 @@
         <% images.forEach(function(image, index){ %>
           <div class="image-div" onmouseover="show_button('button-<%=index%>')" onmouseout="hide_button('button-<%=index%>')">
             <img src="../../uploads/<%= property._id %>/<%= image %>" class="d-block w-100" alt="...">
-            <button id="button-<%=index%>" class="btn btn-sm btn-danger button" style="transform: translate(120%, -250%);display:none;" onclick="delete_photo()">Delete</button>
+            <input type="button" id="button-<%=index%>" class="btn btn-sm btn-danger button" style="transform: translate(120%, -250%);display:none;" onclick="delete_photo('<%= image %>')" value="Delete">
           </div>
         <% }) %>
         </div>
@@ -77,6 +77,11 @@
         function hide_button(button_id){
           var button = "#" + button_id;
           $(button).css("display", "none");
+        }
+
+        function delete_photo(photo_id){
+          //AJAX CALL TO REMOVE Photo woth the photo id etc...
+          
         }
 
       </script>
