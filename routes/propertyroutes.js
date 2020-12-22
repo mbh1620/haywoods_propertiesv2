@@ -4,6 +4,7 @@ var router = express.Router();
 var middleware = require("../middleware");
 var multer = require("multer");
 var fs = require("fs");
+var sharp = require('sharp');
 var graphingroutes = require("./graphingroutes");
 var prop_val_update = graphingroutes.prop_val_update;
 var update_portfolio = graphingroutes.update_portfolio;
@@ -200,7 +201,10 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                                                 if(err) {
                                                     console.log(err);
                                                 } else {
-                                                    res.redirect("/properties");
+                                                    sharp("uploads/" + req.property._id + "/"+files[0]).resize({width:650}).toFile("uploads/" + req.property._id + "/resized_for_share.png")
+                                                    .then(() => {
+                                                        res.redirect("/properties");
+                                                    })
                                                 }
                                             })
                                         }
