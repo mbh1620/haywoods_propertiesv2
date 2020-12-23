@@ -201,7 +201,7 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                                                 if(err) {
                                                     console.log(err);
                                                 } else {
-                                                    sharp("uploads/" + req.property._id + "/"+files[0]).resize({width:650}).toFile("uploads/" + req.property._id + "/resized_for_share.png")
+                                                    sharp("uploads/" + req.property._id + "/"+files[0]).resize({width:650}).toFile("uploads/" + req.property._id + "/thumbnails/resized_for_share.png")
                                                     .then(() => {
                                                         res.redirect("/properties");
                                                     })
