@@ -344,6 +344,12 @@ router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
 });
 
 //AJAX PHOTO ROUTES - ADD, DELETE, REORDER
+// router.
 
+//AJAX route for deleting a photo from a property
+// router.delete("/properties/:id/photos/:photo_number", function(req,res){
+//     //first scan the property directory
+//     //find the photo and delete
+// })
 
 module.exports = router;
