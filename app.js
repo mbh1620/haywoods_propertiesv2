@@ -40,7 +40,7 @@ app.use('/scripts', express.static(__dirname + "/views/manageproperties"));
 //                 Database connection
 //====================================================
 
-mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties?retryWrites=true&w=majority", { useNewUrlParser: true, useFindAndModify: false });
+mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
 app.use(bodyParser.urlencoded({ extended: true }));
 
 

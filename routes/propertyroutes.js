@@ -48,6 +48,7 @@ var store_multiple = multer.diskStorage({
             var dest = "./uploads/" + request.property._id.toString();
             if (!fs.existsSync(dest)) {
                 fs.mkdirSync(dest);
+                fs.mkdirSync(dest + "/thumbnails");
             }
             return callback(null, dest);
 
@@ -328,7 +329,11 @@ router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
                                 if (err) throw err;
             
                                 for (const file of files) {
-                                    fs.unlinkSync("uploads/" + req.params.id + "/" + file)
+                                    if(fs.lstatSync("uploads/" + req.params.id + "/" + file).isDirectory()){
+                                        fs.rmdirSync("uploads/" + req.params.id + "/" + file, {recursive: true});
+                                    } else {
+                                        fs.unlinkSync("uploads/" + req.params.id + "/" + file);
+                                    }
                                 }
                                 fs.rmdirSync("uploads/" + req.params.id);
                             })
