@@ -379,6 +379,4 @@ router.delete("/properties/:id/photo/:photoId", middleware.isLoggedIn, function(
     
 // })
 
-
-
 module.exports = router;

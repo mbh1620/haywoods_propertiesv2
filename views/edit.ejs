@@ -156,10 +156,6 @@
               mymap.removeLayer(marker);
             }
 
-
-
-
-
             marker = new L.marker(e.latlng, { draggable: true }).addTo(mymap);
             var lat = document.getElementById("lat");
             var long = document.getElementById("long");
@@ -167,11 +163,8 @@
             lat.value = e.latlng.lat.toFixed(8);
             long.value = e.latlng.lng.toFixed(8);
 
-
           }
-
-
-
+          
           mymap.on('click', onMapClick);
 
         </script>
