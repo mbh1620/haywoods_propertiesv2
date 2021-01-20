@@ -104,6 +104,8 @@ router.post("/login", passport.authenticate("local", {
 
 });
 
+//NEED TO ADD a Login to redirect user to what they were orignally doing before needing to sign in.
+
 router.post("/logout", function (req, res) {
     req.logout();
     res.redirect("/");

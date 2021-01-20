@@ -53,6 +53,7 @@ var store_multiple = multer.diskStorage({
             return callback(null, dest);
 
         } else {
+            console.log("there is an error!");
             return 0;
         }
     },
@@ -233,11 +234,11 @@ router.get("/properties/:id", function (req, res) {
                     console.log(err);
                     res.render("show.ejs", { property: foundProperty, images: images })
                 }
-                if (files !== undefined) {
-                    for (const file of files) {
-                        images.push(file);
-                    }
+                for (const file of files) {
+                if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
+                    images.push(file);
                 }
+            }
                 res.render("show.ejs", { property: foundProperty, images: images })
             })
         }
@@ -255,8 +256,8 @@ router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
                     console.log(err);
                     res.render("edit.ejs", { property: foundProperty, images: images })
                 }
-                if (files !== undefined) {
-                    for (const file of files) {
+                for (const file of files) {
+                    if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
                         images.push(file);
                     }
                 }
@@ -349,12 +350,35 @@ router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
 });
 
 //AJAX PHOTO ROUTES - ADD, DELETE, REORDER
-// router.
 
-//AJAX route for deleting a photo from a property
-// router.delete("/properties/:id/photos/:photo_number", function(req,res){
-//     //first scan the property directory
-//     //find the photo and delete
+function findProp(req,res,next){
+    Property.findById(req.params.id, function(err, found){
+        req.property = found;
+        next();
+    })
+}
+
+//Add Photo AJAX route
+router.post("/properties/:id/photo", middleware.isLoggedIn, findProp, upload_mult.array('file', 5), function(req,res){
+    //If the photos have been successful then re-scan the directory and then send the images back so that the page updates showing newly uploaded photos.
+    //scan the properties files and send them back so that new thumbnails can be added
+    res.end('{"success" : "Updated Successfully", "status" : 200}');
+    console.log("uploaded");
+});
+
+//Delete photo route
+router.delete("/properties/:id/photo/:photoId", middleware.isLoggedIn, function(req, res){
+    // Use the photo id to delete the photo
+    fs.unlinkSync("uploads/" + req.params.id + "/" + req.params.photoId);
+    // Then if photo has been deleted successfully send back a success response to the ajax
+    res.end('{"success" : "Updated Successfully", "status" : 200}');
+});
+
+//Reorder photos
+// router.put("/properties/:id/photo/reorder", middleware.isLoggedIn, function(req,res){
+    
 // })
+
+
 
 module.exports = router;

@@ -1,145 +1,189 @@
 <% include ./partials/header.ejs %>
 
-<head>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin="" />
-</head>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin="" />
+  </head>
 
-<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-  crossorigin=""></script>
-  
-<div class="container w-50 p-3">
-  <div class="jumbotron">
-    <h1 class="text-center">Edit <%= property.name %></h1>
-    <form action="/properties/<%= property._id%>?_method=PUT" method="POST">
-      <div class="form-group">
-        <label for="exampleInputEmail1">Property Name</label>
-        <input type="text" name="property[name]" value="<%= property.name %>" class="form-control" id="exampleInputEmail1"
-          aria-describedby="emailHelp" placeholder="Name">
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+    integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+    crossorigin=""></script>
 
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">Price</label>
-        <input type="number" class="form-control" id="exampleInputPassword1" name="property[price]" value="<%= property.price %>" placeholder="Price">
-      </div>
-      <div class="form-group">
-        <label for="exampleFormControlTextarea1">Description</label>
-        <textarea class="form-control" id="exampleFormControlTextarea1" name="property[description]" rows="3"
-          placeholder=""><%= property.description %></textarea>
-      </div>
-      <div class="form-group form-check" style="height:50px;margin-top:50px">
-        <!-- <input name="property[test]" hidden> -->
-        <input type="hidden" id="other" name="property[show_on_main]" value="<%=property.show_on_main%>"><input id="value_input" type="checkbox" onclick="the_switch()" <% if(property.show_on_main == true){ %>
+  <div class="container w-50 p-3">
+    <div class="jumbotron">
+      <h1 class="text-center">Edit <%= property.name %>
+      </h1>
+      <form id="edit-form" action="/properties/<%= property._id%>?_method=PUT" method="POST">
+        <div class="form-group">
+          <label for="exampleInputEmail1">Property Name</label>
+          <input type="text" name="property[name]" value="<%= property.name %>" class="form-control"
+            id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Name">
+
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Price</label>
+          <input type="number" class="form-control" id="exampleInputPassword1" name="property[price]"
+            value="<%= property.price %>" placeholder="Price">
+        </div>
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Description</label>
+          <textarea class="form-control" id="exampleFormControlTextarea1" name="property[description]" rows="3"
+            placeholder=""><%= property.description %></textarea>
+        </div>
+        <div class="form-group form-check" style="height:50px;margin-top:50px">
+          <!-- <input name="property[test]" hidden> -->
+          <input type="hidden" id="other" name="property[show_on_main]" value="<%=property.show_on_main%>"><input
+            id="value_input" type="checkbox" onclick="the_switch()" <% if(property.show_on_main==true){ %>
           checked
           <%}%>
-          >
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
-        <script>
-          function the_switch(){
-            if($("#value_input").is(':checked')){
-              $("#other").val("true");
-            } else {
-              $("#other").val("false");
-            } 
-          }
-        </script>
-        <label class="form-check-label" for="exampleCheck1">Display property on properties page</label>
-      </div>
-      <div id="thumbnail-photos" style="height:350px;">
-        <input type="file" name="image">
-        <div style="height:100%;width:100%;">
-        <% images.forEach(function(image, index){ %>
-          <div class="image-div" onmouseover="show_button('button-<%=index%>')" onmouseout="hide_button('button-<%=index%>')">
-            <img src="../../uploads/<%= property._id %>/<%= image %>" class="d-block w-100" alt="...">
-            <input type="button" id="button-<%=index%>" class="btn btn-sm btn-danger button" style="transform: translate(120%, -250%);display:none;" onclick="delete_photo('<%= image %>')" value="Delete">
-          </div>
-        <% }) %>
+            >
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.js"
+              integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
+            <script>
+              function the_switch() {
+                if ($("#value_input").is(':checked')) {
+                  $("#other").val("true");
+                } else {
+                  $("#other").val("false");
+                }
+              }
+            </script>
+            <label class="form-check-label" for="exampleCheck1">Display property on properties page</label>
         </div>
-      </div>
-      <style>
-      .image-div {
-        height:auto;
-        width:200px;
-        display:block;
-        float:left;
-        margin-top:20px;
-        margin-right:20px;
-      }
-      </style>
-      <script>
-        function show_button(button_id){
-          var button = "#" + button_id;
-          $(button).css("display", "");
-        }
+        <div id="thumbnail-photos" style="height:350px;">
 
-        function hide_button(button_id){
-          var button = "#" + button_id;
-          $(button).css("display", "none");
-        }
+          <input type="file" id="images" name="fileElem" multiple onchange="upload_photos(this.files)">
 
-        function delete_photo(photo_id){
-          //AJAX CALL TO REMOVE Photo woth the photo id etc...
-          
-        }
+          <div style="height:100%;width:100%;">
+            <% images.forEach(function(image, index){ %>
+              <div class="image-div" id="image-<%=index%>-div" onmouseover="show_button('button-<%=index%>')"
+                onmouseout="hide_button('button-<%=index%>')">
+                <img src="../../uploads/<%= property._id %>/<%= image %>" class="d-block w-100" alt="...">
+                <input type="button" id="button-<%=index%>" class="btn btn-sm btn-danger button"
+                  style="transform: translate(120%, -250%);display:none;"
+                  onclick="delete_photo('<%= image %>', '<%=index%>')" value="Delete">
+              </div>
+              <% }) %>
+          </div>
+        </div>
+        <style>
+          .image-div {
+            height: auto;
+            width: 200px;
+            display: block;
+            float: left;
+            margin-top: 20px;
+            margin-right: 20px;
+          }
+        </style>
+        <script>
+          function show_button(button_id) {
+            var button = "#" + button_id;
+            $(button).css("display", "");
+          }
 
-      </script>
+          function hide_button(button_id) {
+            var button = "#" + button_id;
+            $(button).css("display", "none");
+          }
+
+          function delete_photo(photo_id, index) {
+            //AJAX CALL TO REMOVE Photo with the photo id etc...
+            div_id = '#image-' + index + '-div';
+
+            $.ajax({
+              url: '/properties/<%= property._id %>/photo/' + photo_id,
+              type: 'delete',
+              success: function (result) {
+                $(div_id).remove();
+              }
+            })
+
+          }
+          // /properties/<%= property._id %>/photo
+          function upload_photos() {
+
+            var fd = new FormData();
+            var files = $('#images')[0].files;
+
+            fd.append('file', files[0]);
+            fd.append('file', files[1]);
+            fd.append('file', files[2]);
+            fd.append('file', files[3]);
+            fd.append('file', files[4]);
       
-      <label class="form-check-label" for="exampleCheck1" style="margin-top:20px;">Choose location</label>
-      <div id="mapid" style="height:400px;margin-top: 20px;"></div>
-      <input type="hidden" name="property[lat]" value="<%= property.lat %>" id="lat" value="0" step="0.000000001">
-      <input type="hidden" name="property[long]" value="<%= property.long %>" id="long" value="0" step="0.000000001">
-      
-      <script>
+            $.ajax({
+              url: '/properties/<%=property._id%>/photo',
+              type: 'post',
+              data: fd,
+              contentType: false,
+              processData: false,
+              success: function (response) {
+                console.log("uploaded successfully");
+              },
+              error: function () {
+                console.log("There was an error");
+              }
+            })
+          }
 
-        var ltlng = [<%= property.lat %>, <%= property.long %>];
+        </script>
 
-        var mymap = L.map('mapid').setView(ltlng, 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-          maxZoom: 18,
-          id: 'mapbox.streets',
-          accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
-        }).addTo(mymap);
+        <label class="form-check-label" for="exampleCheck1" style="margin-top:20px;">Choose location</label>
+        <div id="mapid" style="height:400px;margin-top: 20px;"></div>
+        <input type="hidden" name="property[lat]" value="<%= property.lat %>" id="lat" value="0" step="0.000000001">
+        <input type="hidden" name="property[long]" value="<%= property.long %>" id="long" value="0" step="0.000000001">
 
-        
-        
-        var marker = L.marker(ltlng,{draggable:true}).addTo(mymap);
+        <script>
 
-        function onMapClick(e) {
-         if(marker != undefined){
-          mymap.removeLayer(marker);
-         }
-          
-          
-         
+          var ltlng = [<%= property.lat %>, <%= property.long %>];
 
-
-          marker = new L.marker(e.latlng,{draggable:true}).addTo(mymap);
-          var lat = document.getElementById("lat");
-          var long = document.getElementById("long");
-          console.log(e.latlng.lat);
-          lat.value = e.latlng.lat.toFixed(8);
-          long.value = e.latlng.lng.toFixed(8);
-
-          
-        }
-
-        
-
-        mymap.on('click', onMapClick);
-
-      </script>
+          var mymap = L.map('mapid').setView(ltlng, 15);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
+          }).addTo(mymap);
 
 
-      <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Submit</button>
-    </form>
+
+          var marker = L.marker(ltlng, { draggable: true }).addTo(mymap);
+
+          function onMapClick(e) {
+            if (marker != undefined) {
+              mymap.removeLayer(marker);
+            }
+
+
+
+
+
+            marker = new L.marker(e.latlng, { draggable: true }).addTo(mymap);
+            var lat = document.getElementById("lat");
+            var long = document.getElementById("long");
+            console.log(e.latlng.lat);
+            lat.value = e.latlng.lat.toFixed(8);
+            long.value = e.latlng.lng.toFixed(8);
+
+
+          }
+
+
+
+          mymap.on('click', onMapClick);
+
+        </script>
+
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Submit</button>
+      </form>
+    </div>
   </div>
-</div>
 
 
-<!-- Make sure you put this AFTER Leaflet's CSS -->
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
 
 
-<% include ./partials/footer.ejs %>
+  <% include ./partials/footer.ejs %>
