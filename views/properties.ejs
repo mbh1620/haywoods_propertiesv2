@@ -93,8 +93,9 @@
         accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
     }).addTo(mymap);
             <% properties.forEach(function (property) { %>
+                <% if(property.show_on_main){ %>
             var marker = new L.marker([<%= property.lat %>, <%= property.long %>]).addTo(mymap);
-            <% }); %>
+            <% }}); %>
 
 </script>
 
