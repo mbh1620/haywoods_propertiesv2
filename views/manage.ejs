@@ -207,7 +207,7 @@
   console.log($("#yearselect").val());
   console.log("val");
   for (var i = 0; i < portfoliodata.length; i++) {
-    if (portfoliodata[i].year === 2020) {
+    if (portfoliodata[i].year === (new Date().getFullYear())) {
       //Append to the graph data array
       correctYear.push(portfoliodata[i]);
       //console.log(portfoliodata[i].year + " = 2020");
@@ -241,7 +241,7 @@
   var yearSelectRent = $("#yearselect2").val();
   var correctYearRent = [];
   for (var i = 0; i < rentdata.length; i++) {
-    if (rentdata[i].year === 2020) {
+    if (rentdata[i].year === (new Date().getFullYear())) {
       //Append to the graph data array
       correctYearRent.push(rentdata[i]);
       //console.log(portfoliodata[i].year + " = 2020");
@@ -322,7 +322,7 @@
     var yearSelectRent = $("#yearselectrent").val();
     var correctYear = [];
     for (var i = 0; i < rentdata.length; i++) {
-      if (portfoliodata[i].year == yearSelectRent) {
+      if (rentdata[i].year == yearSelectRent) {
         //Append to the graph data array
         correctYear.push(rentdata[i]);
         //console.log(portfoliodata[i].year + " = 2020");
