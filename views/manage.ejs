@@ -45,12 +45,9 @@
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
                 <canvas id="myAreaChartRent" style="height:500px;width:700px;margin: 0 auto;"></canvas>Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
-                <p style="margin-top:20px;">Year Total:
-                  <% var total = 0; %>
-                  <% for(var i = 0; i<currentUser.totalRentIncomeData.length; i++) { %>
-                  <% total = total + currentUser.totalRentIncomeData[i].value %>
-                  <% } %>
-                  £<%= total %></p>
+                <p id="yearly-total-rent" style="margin-top:20px;">Year Total:
+
+                </p>
                 <button style="" class="btn btn-primary" onclick="calulate_rent('<%= currentUser._id %>')">Calulate
                   Rent</button>
               </div>
@@ -266,6 +263,7 @@
     }
   }
   chart2.update();
+  calculate_yearly_rent_total();
 
   //===========================================
   //    Function for changing portfolio graph year
@@ -347,6 +345,7 @@
       }
     }
     chart2.update();
+    calculate_yearly_rent_total();
   })
 
 
@@ -365,6 +364,14 @@
       {
         id: user_id
       })
+  }
+
+  function calculate_yearly_rent_total(){
+    total = 0;
+    for(var i = 0; i < chart2.data.datasets[0].data.length; i ++){
+      total += chart2.data.datasets[0].data[i];
+    }
+    $("#yearly-total-rent").html("Year Total: £"+total);
   }
 
 </script>
