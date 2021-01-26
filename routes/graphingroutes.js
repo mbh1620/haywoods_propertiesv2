@@ -53,7 +53,7 @@ function prop_rent_val_update(propid, next) {
 }
 
 //Function for updating total rent income
-function update_rent_total_income(user_id, next){
+function update_rent_total_income(user_id, pop_flag, next){
     User.findByIdAndUpdate(user_id).populate('properties').exec(function (err, founduser){
         if(err){
             console.log(err);
@@ -91,6 +91,10 @@ function update_rent_total_income(user_id, next){
                 value: total_rent_income
             }
 
+            if(pop_flag == true){
+                founduser.totalRentIncomeData.pop();
+            }
+
             founduser.totalRentIncomeData.push(totalRentIncomeData);
 
             User.findByIdAndUpdate(founduser._id, founduser, function(err, updatedUser){
@@ -105,8 +109,8 @@ function update_rent_total_income(user_id, next){
 }
 
 //Route for recalculating Rent Value 
-router.post("/calculate_rent", function (req,res){
-    update_rent_total_income(req.body.id, function(){
+router.post("/calculate_rent", function (req, res){
+    update_rent_total_income(req.body.id, true, function(){
         res.redirect("/user/" + req.body.id + "/manage");
     })
 })
@@ -116,7 +120,7 @@ router.post("/calculate_rent", function (req,res){
 //     Portfolio Value Graph Routes and Functions
 //================================================
 
-//Function for updating PortFolio Value 
+//Function for updating PortFolio Value. pop_flag is set to true if the last item is to be replaced by the new one.
 function update_portfolio(user_id, pop_flag, next) {
     User.findById(user_id).populate('properties').exec(function (err, founduser) {
         if (err) {
@@ -180,8 +184,7 @@ function update_portfolio(user_id, pop_flag, next) {
 }
 
 //Route for recalculating PortFolio Value
-//Need to add in the correct month by deleting the previously populated current month.
-router.post("/recalculate", function (req,res){
+router.post("/recalculate", function (req, res){
     console.log(req.body.id)
 
     //Need to search for current month and year and then delete.
