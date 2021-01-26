@@ -40,9 +40,17 @@ app.use('/scripts', express.static(__dirname + "/views/manageproperties"));
 //                 Database connection
 //====================================================
 
-mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
-app.use(bodyParser.urlencoded({ extended: true }));
+if(process.env.NODE_ENV === 'production'){
+    //Connect to Production Database
+    mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
+} else if (process.env.NODE_ENV === 'development'){
+    //Connect to Development Database
+    mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties_development?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
+} else {
+    mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties_development?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });    
+}
 
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //=====================================================
 //
