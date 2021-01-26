@@ -159,7 +159,7 @@ function update_portfolio(user_id, pop_flag, next) {
             }
             console.log(CurrentMonth);
 
-            if (pop_flag = true){
+            if (pop_flag == true){
                 founduser.PortfolioValue.pop();
             }
 
