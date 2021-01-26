@@ -117,7 +117,7 @@ router.post("/calculate_rent", function (req,res){
 //================================================
 
 //Function for updating PortFolio Value 
-function update_portfolio(user_id, next) {
+function update_portfolio(user_id, pop_flag, next) {
     User.findById(user_id).populate('properties').exec(function (err, founduser) {
         if (err) {
             console.log(err)
@@ -159,6 +159,10 @@ function update_portfolio(user_id, next) {
             }
             console.log(CurrentMonth);
 
+            if (pop_flag = true){
+                founduser.PortfolioValue.pop();
+            }
+
             founduser.PortfolioValue.push(CurrentPortFolioValue);
 
             console.log(founduser)
@@ -180,7 +184,9 @@ function update_portfolio(user_id, next) {
 router.post("/recalculate", function (req,res){
     console.log(req.body.id)
 
-    update_portfolio(req.body.id, function(){
+    //Need to search for current month and year and then delete.
+
+    update_portfolio(req.body.id, true, function(){
         res.redirect("/user/" + req.body.id + "/manage");
     })
 })
@@ -309,7 +315,7 @@ var j = schedule.scheduleJob({hour: 14, minute:0, dayOfMonth:0}, function () {
                     }
                 });
             }
-            update_portfolio(user._id, function (err, data) {
+            update_portfolio(user._id, false, function (err, data) {
                 if (err) {
                     console.log(err);
                 } else {
