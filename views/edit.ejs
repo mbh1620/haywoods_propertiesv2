@@ -55,7 +55,7 @@
 
           <input type="file" id="images" name="fileElem" multiple onchange="upload_photos(this.files)">
 
-          <div style="height:100%;width:100%;">
+          <div id="thumbnail_div" style="height:100%;width:100%;">
             <% images.forEach(function(image, index){ %>
               <div class="image-div" id="image-<%=index%>-div" onmouseover="show_button('button-<%=index%>')"
                 onmouseout="hide_button('button-<%=index%>')">
@@ -121,11 +121,31 @@
               processData: false,
               success: function (response) {
                 console.log("uploaded successfully");
+                //If photo is uploaded successfully then we need to create new thumbnails with the response data
+                //This means we call
+                console.log(response.images.length-1);
+                
+                add_edit_thumbnail(response.images[response.images.length-1],response.images.length-1)
               },
               error: function () {
                 console.log("There was an error");
               }
             })
+          }
+
+          function add_edit_thumbnail(image_id,index){
+            //Add a new thumnail to the div
+            var image_url = '../../uploads/<%= property._id %>/'+image_id;
+            var text =`<div class="image-div" id="image-`+index+`-div" onmouseover="show_button('button-`+index+`')"
+                onmouseout="hide_button('button-`+index+`')">
+                <img src="` + image_url +`" class="d-block w-100" alt="...">
+                <input type="button" id="button-`+index+`" class="btn btn-sm btn-danger button"
+                  style="transform: translate(120%, -250%);display:none;"
+                  onclick="delete_photo('`+image_id+`', '`+index+`')" value="Delete">
+              </div>`
+            
+            $('#thumbnail_div').append(text);
+
           }
 
         </script>

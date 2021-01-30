@@ -116,7 +116,7 @@ function createNewProperty(req, res, next) {
         lat: lat,
         long: long,
         author: {
-            id:currentUser._id,
+            id: currentUser._id,
             username: currentUser.username
         }
     }
@@ -160,7 +160,7 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                             res.redirect("/properties");
                         } else {
                             //Add in empty property values from january until the current month
-                            
+
                             //first get current month 
 
                             var d = new Date();
@@ -168,7 +168,7 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
 
                             //now add a loop for the 
 
-                            for(var i = 0; i < curr_month; i++){
+                            for (var i = 0; i < curr_month; i++) {
 
 
                                 //Clean up later however year and month not needed.
@@ -180,8 +180,8 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                                 }
 
                                 var rentData = {
-                                    year: null, 
-                                    month: null, 
+                                    year: null,
+                                    month: null,
                                     price: null
                                 }
 
@@ -190,23 +190,23 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
 
                             }
 
-                            Property.findByIdAndUpdate(updatedProperty._id, updatedProperty, function(err, data){
-                                if(err){
+                            Property.findByIdAndUpdate(updatedProperty._id, updatedProperty, function (err, data) {
+                                if (err) {
                                     console.log(err);
-                                }else{
+                                } else {
                                     prop_val_update(updatedProperty._id, function (err, data) {
-                                        
+
                                         if (err) {
                                             console.log(err);
                                         } else {
-                                            prop_rent_val_update(updatedProperty._id, function (err, data){
-                                                if(err) {
+                                            prop_rent_val_update(updatedProperty._id, function (err, data) {
+                                                if (err) {
                                                     console.log(err);
                                                 } else {
-                                                    sharp("uploads/" + req.property._id + "/"+files[0]).resize({width:650}).toFile("uploads/" + req.property._id + "/thumbnails/resized_for_share.png")
-                                                    .then(() => {
-                                                        res.redirect("/properties");
-                                                    })
+                                                    sharp("uploads/" + req.property._id + "/" + files[0]).resize({ width: 650 }).toFile("uploads/" + req.property._id + "/thumbnails/resized_for_share.png")
+                                                        .then(() => {
+                                                            res.redirect("/properties");
+                                                        })
                                                 }
                                             })
                                         }
@@ -235,10 +235,10 @@ router.get("/properties/:id", function (req, res) {
                     res.render("show.ejs", { property: foundProperty, images: images })
                 }
                 for (const file of files) {
-                if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
-                    images.push(file);
+                    if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
+                        images.push(file);
+                    }
                 }
-            }
                 res.render("show.ejs", { property: foundProperty, images: images })
             })
         }
@@ -250,7 +250,7 @@ router.get("/properties/:id", function (req, res) {
 router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
         var images = []
-        if(req.user.id == foundProperty.author.id){
+        if (req.user.id == foundProperty.author.id) {
             fs.readdir("uploads/" + req.params.id, (err, files) => {
                 if (err) {
                     console.log(err);
@@ -265,7 +265,7 @@ router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
             })
         } else {
             res.redirect("/error");
-        }      
+        }
     })
 })
 
@@ -273,11 +273,11 @@ router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
 
 router.put("/properties/:id", middleware.isLoggedIn, function (req, res) {
     //Need to add if certain photos need to be deleted or added and reordered
-    Property.findById(req.params.id, function(err, foundProperty){
-        if(err){
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if (err) {
             console.log(err);
         } else {
-            if(foundProperty.author.id == req.user.id){
+            if (foundProperty.author.id == req.user.id) {
                 Property.findByIdAndUpdate(req.params.id, req.body.property, function (err, updatedProperty) {
                     if (err) {
                         console.log("error has occurred");
@@ -289,20 +289,20 @@ router.put("/properties/:id", middleware.isLoggedIn, function (req, res) {
                         res.redirect("/properties");
                     }
                 })
-            } else { 
+            } else {
                 res.redirect("/properties");
             }
         }
     })
 
-    
+
 })
 
 //MANAGE ROUTE - ADD MIDDLEWARE and author checking (DONE)
 
 router.get("/properties/:id/manage", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
-        if(req.user.id == foundProperty.author.id){
+        if (req.user.id == foundProperty.author.id) {
             res.render("manage.ejs", { property: foundProperty })
         } else {
             res.redirect("/error");
@@ -314,12 +314,12 @@ router.get("/properties/:id/manage", middleware.isLoggedIn, function (req, res) 
 
 router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
     //if user id is equal to property owner id then delete
-    Property.findById(req.params.id).exec(function(err, _property){
-        if(err){
+    Property.findById(req.params.id).exec(function (err, _property) {
+        if (err) {
             console.log(err);
         } else {
             //If author id is equal to currentUserid then proceed with deletion
-            if(_property.author.id == req.user.id){
+            if (_property.author.id == req.user.id) {
                 Property.findByIdAndRemove(req.params.id, function (err) {
                     if (err) {
                         console.log(err)
@@ -328,10 +328,10 @@ router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
                         if (fs.existsSync("uploads/" + req.params.id)) {
                             fs.readdir("uploads/" + req.params.id, (err, files) => {
                                 if (err) throw err;
-            
+
                                 for (const file of files) {
-                                    if(fs.lstatSync("uploads/" + req.params.id + "/" + file).isDirectory()){
-                                        fs.rmdirSync("uploads/" + req.params.id + "/" + file, {recursive: true});
+                                    if (fs.lstatSync("uploads/" + req.params.id + "/" + file).isDirectory()) {
+                                        fs.rmdirSync("uploads/" + req.params.id + "/" + file, { recursive: true });
                                     } else {
                                         fs.unlinkSync("uploads/" + req.params.id + "/" + file);
                                     }
@@ -351,23 +351,37 @@ router.delete("/properties/:id", middleware.isLoggedIn, function (req, res) {
 
 //AJAX PHOTO ROUTES - ADD, DELETE, REORDER
 
-function findProp(req,res,next){
-    Property.findById(req.params.id, function(err, found){
+function findProp(req, res, next) {
+    Property.findById(req.params.id, function (err, found) {
         req.property = found;
         next();
     })
 }
 
 //Add Photo AJAX route
-router.post("/properties/:id/photo", middleware.isLoggedIn, findProp, upload_mult.array('file', 5), function(req,res){
+router.post("/properties/:id/photo", middleware.isLoggedIn, findProp, upload_mult.array('file', 5), function (req, res) {
     //If the photos have been successful then re-scan the directory and then send the images back so that the page updates showing newly uploaded photos.
     //scan the properties files and send them back so that new thumbnails can be added
-    res.end('{"success" : "Updated Successfully", "status" : 200}');
-    console.log("uploaded");
+    //Send the url of the newly uploaded photo for the thumbnail to display
+    //we need to scan the property directory
+    fs.readdir("uploads/" + req.params.id, (err, files) => {
+        if (err) {
+            console.log(err);
+        }
+        var images = [];
+        for (const file of files) {
+            if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
+                images.push(file);
+            }
+        }
+        res.send({images: images});
+        res.end('{"success" : "Updated Successfully", "status" : 200}');
+        console.log("uploaded");
+    })
 });
 
 //Delete photo route
-router.delete("/properties/:id/photo/:photoId", middleware.isLoggedIn, function(req, res){
+router.delete("/properties/:id/photo/:photoId", middleware.isLoggedIn, function (req, res) {
     // Use the photo id to delete the photo
     fs.unlinkSync("uploads/" + req.params.id + "/" + req.params.photoId);
     // Then if photo has been deleted successfully send back a success response to the ajax
@@ -376,7 +390,7 @@ router.delete("/properties/:id/photo/:photoId", middleware.isLoggedIn, function(
 
 //Reorder photos
 // router.put("/properties/:id/photo/reorder", middleware.isLoggedIn, function(req,res){
-    
+
 // })
 
 module.exports = router;
