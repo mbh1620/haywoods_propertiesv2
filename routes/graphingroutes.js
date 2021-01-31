@@ -6,6 +6,8 @@ var cheerio = require('cheerio');
 var schedule = require('node-schedule');
 var User = require("../models/user");
 var Property = require("../models/property");
+var excel = require("exceljs");
+
 
 //================================================
 //           Rent Graph Routes and Functions
@@ -16,8 +18,8 @@ function prop_rent_val_update(propid, next) {
 
     //first find prop by id
 
-    Property.findById(propid, function(err, foundProperty){
-        if(err){
+    Property.findById(propid, function (err, foundProperty) {
+        if (err) {
             console.log();
         } else {
             var d = new Date();
@@ -37,13 +39,13 @@ function prop_rent_val_update(propid, next) {
 
             var rentData = {
                 year: year,
-                month:month,
-                price:rent
+                month: month,
+                price: rent
             }
 
             foundProperty.rentData.push(rentData);
 
-            Property.findByIdAndUpdate(foundProperty._id,foundProperty, function(){
+            Property.findByIdAndUpdate(foundProperty._id, foundProperty, function () {
                 next();
             })
 
@@ -53,9 +55,9 @@ function prop_rent_val_update(propid, next) {
 }
 
 //Function for updating total rent income
-function update_rent_total_income(user_id, pop_flag, next){
-    User.findByIdAndUpdate(user_id).populate('properties').exec(function (err, founduser){
-        if(err){
+function update_rent_total_income(user_id, pop_flag, next) {
+    User.findByIdAndUpdate(user_id).populate('properties').exec(function (err, founduser) {
+        if (err) {
             console.log(err);
         } else {
             //Total all the current months rent income from each house and then sum it and push to total rent data.
@@ -71,12 +73,12 @@ function update_rent_total_income(user_id, pop_flag, next){
             CurrentMonth = d.getMonth();
 
             var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            
-            for(var i = 0; i < founduser.properties.length; i++){
-                if(!isNaN(founduser.properties[i].price))
-                total_rent_income = total_rent_income + founduser.properties[i].price;
+
+            for (var i = 0; i < founduser.properties.length; i++) {
+                if (!isNaN(founduser.properties[i].price))
+                    total_rent_income = total_rent_income + founduser.properties[i].price;
             }
-            
+
             /* 
             totalRentIncomeData: [{
                 year: String, 
@@ -91,14 +93,14 @@ function update_rent_total_income(user_id, pop_flag, next){
                 value: total_rent_income
             }
 
-            if(pop_flag == true){
+            if (pop_flag == true) {
                 founduser.totalRentIncomeData.pop();
             }
 
             founduser.totalRentIncomeData.push(totalRentIncomeData);
 
-            User.findByIdAndUpdate(founduser._id, founduser, function(err, updatedUser){
-                if(err){
+            User.findByIdAndUpdate(founduser._id, founduser, function (err, updatedUser) {
+                if (err) {
                     console.log(err);
                 } else {
                     next();
@@ -109,8 +111,8 @@ function update_rent_total_income(user_id, pop_flag, next){
 }
 
 //Route for recalculating Rent Value 
-router.post("/calculate_rent", function (req, res){
-    update_rent_total_income(req.body.id, true, function(){
+router.post("/calculate_rent", function (req, res) {
+    update_rent_total_income(req.body.id, true, function () {
         res.redirect("/user/" + req.body.id + "/manage");
     })
 })
@@ -143,7 +145,7 @@ function update_portfolio(user_id, pop_flag, next) {
             month[11] = "December";
             var CurrentYear = the_date.getFullYear();
             var CurrentMonth = month[the_date.getMonth()];
-            
+
             //Code for updating the users Portfolio value, rent etc...
             for (var i = 0; i < founduser.properties.length; i++) {
                 if (typeof founduser.properties[i].estimatedValue !== 'undefined') {
@@ -163,7 +165,7 @@ function update_portfolio(user_id, pop_flag, next) {
             }
             console.log(CurrentMonth);
 
-            if (pop_flag == true){
+            if (pop_flag == true) {
                 founduser.PortfolioValue.pop();
             }
 
@@ -184,12 +186,12 @@ function update_portfolio(user_id, pop_flag, next) {
 }
 
 //Route for recalculating PortFolio Value
-router.post("/recalculate", function (req, res){
+router.post("/recalculate", function (req, res) {
     console.log(req.body.id)
 
     //Need to search for current month and year and then delete.
 
-    update_portfolio(req.body.id, true, function(){
+    update_portfolio(req.body.id, true, function () {
         res.redirect("/user/" + req.body.id + "/manage");
     })
 })
@@ -299,7 +301,7 @@ function prop_val_update(propid, next) {
 
 //         Scheduler        (Second, minute, hour, day_of_month, month, day_of_week)   
 //Call the schedule at 2:00 every first day of the month                  
-var j = schedule.scheduleJob({hour: 14, minute:0, dayOfMonth:0}, function () {
+var j = schedule.scheduleJob({ hour: 14, minute: 0, dayOfMonth: 0 }, function () {
     //for all users, Calculate the prop_val_updat
     console.log("Completing update of values");
     User.find({}, function (err, users) {
@@ -328,6 +330,47 @@ var j = schedule.scheduleJob({hour: 14, minute:0, dayOfMonth:0}, function () {
         })
     })
 })
+
+//===========================================================
+//             Routes for creating XLSX sheets
+//===========================================================
+
+router.post('/create_spreadsheet', function(){
+    //Create a full spreadsheet for all users properties value and rent
+    var worksheet = workbook.addWorksheet('Year Total');
+
+    worksheet.colums = [
+        { header:'Property', key: 'property.name' },
+        { header:'January' },
+        { header:'February' },
+        { header:'March' },
+        { header:'April' },
+        { header:'May' },
+        { header:'June' },
+        { header:'July' },
+        { header:'August' },
+        { header:'September' },
+        { header:'October' },
+        { header:'November' },
+        { header:'December' },
+        { header:'Rent Total' },
+        { header:'Expenses Total' },
+    ]
+
+    //Force columns to be as long as header rows 
+
+    worksheet.columns.forEach(column => {
+        column.width = column.header.length < 12 ? 12 : column.header.length
+    })
+
+    //Make the header bold
+    worksheet.getrow(1).font = {bold:true}
+
+    //get user and then get total rent and total expenses 
+
+});
+
+
 
 module.exports.router = router;
 module.exports.prop_val_update = prop_val_update;
