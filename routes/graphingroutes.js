@@ -335,39 +335,80 @@ var j = schedule.scheduleJob({ hour: 14, minute: 0, dayOfMonth: 0 }, function ()
 //             Routes for creating XLSX sheets
 //===========================================================
 
-router.post('/create_spreadsheet', function(){
+router.post('/user/:id/create_spreadsheet', function (req, res) {
     //Create a full spreadsheet for all users properties value and rent
-    var worksheet = workbook.addWorksheet('Year Total');
+    var year = req.body.year;
+    var workbook = new excel.Workbook();
+    var worksheet = workbook.addWorksheet('Year Total ' + year );
 
-    worksheet.colums = [
-        { header:'Property', key: 'property.name' },
-        { header:'January' },
-        { header:'February' },
-        { header:'March' },
-        { header:'April' },
-        { header:'May' },
-        { header:'June' },
-        { header:'July' },
-        { header:'August' },
-        { header:'September' },
-        { header:'October' },
-        { header:'November' },
-        { header:'December' },
-        { header:'Rent Total' },
-        { header:'Expenses Total' },
+    worksheet.columns = [
+        { header: 'Property Name', key: 'property_name' },
+        { header: 'January', key: 'January' },
+        { header: 'February', key: 'February' },
+        { header: 'March', key: 'March' },
+        { header: 'April', key: 'April' },
+        { header: 'May', key: 'May' },
+        { header: 'June', key: 'June' },
+        { header: 'July', key: 'July' },
+        { header: 'August', key: 'August' },
+        { header: 'September', key: 'September' },
+        { header: 'October', key: 'October' },
+        { header: 'November', key: 'November' },
+        { header: 'December', key: 'December' },
+        { header: 'Rent Total', key: 'Rent Total' },
+        { header: 'Expenses Total', key: 'Expenses Total' },
     ]
-
-    //Force columns to be as long as header rows 
 
     worksheet.columns.forEach(column => {
         column.width = column.header.length < 12 ? 12 : column.header.length
-    })
+      })
+
+    //Force columns to be as long as header rows
 
     //Make the header bold
-    worksheet.getrow(1).font = {bold:true}
+    worksheet.getRow(1).font = { bold: true }
 
-    //get user and then get total rent and total expenses 
+    //get user and then get total rent and total expenses
+    //Only get data for the current year from jan to dec
+    var months = {
+        'January': 0,
+        'February': 1,
+        'March': 2,
+        'April': 3,
+        'May': 4,
+        'June': 5,
+        'July': 6,
+        'August': 7,
+        'September': 8,
+        'October': 9,
+        'November': 10,
+        'December': 11
+    }
 
+    var date = new Date();
+    var currentYear = date.getFullYear();
+    User.findById(req.params.id, function (err, foundUser) {
+        rows = {}
+        for (var z = 0; z < 12; z++) {
+            for (var i = 0; i < foundUser.totalRentIncomeData.length; i++) {
+
+                console.log(months[foundUser.totalRentIncomeData[i].month]);
+                //Makesure that foundUser.totalRentIncomeData[i].year == currentYear and that .month is the next month in order
+                if (months[foundUser.totalRentIncomeData[i].month] == z && foundUser.totalRentIncomeData[i].year == currentYear) {
+                    //Add a row to the worksheet
+                    rows[foundUser.totalRentIncomeData[i].month] = foundUser.totalRentIncomeData[i].value;
+                }
+            }
+
+        }
+        
+        async function writeFile(){
+            worksheet.addRow(rows);
+            await workbook.xlsx.writeFile(foundUser.username + '_' + currentYear + '_RentData.xlsx');
+            console.log("File is Written");
+        }
+        writeFile();
+    })
 });
 
 

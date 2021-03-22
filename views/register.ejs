@@ -4,6 +4,15 @@
     <div class="jumbotron">
         <h1 class="text-center">Register</h1>
         <form action="/register" method="POST">
+            
+            <div class="container w-75">
+                <label for="exampleInputEmail1">Advertise or Rent?</label>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+
+                <link rel="stylesheet" href="./switch_style.css">
             <div class="form-group">
                 <label for="exampleInputEmail1">User Name</label>
                 <input type="text" name="username" class="form-control" id="exampleInputEmail1"
@@ -33,8 +42,9 @@
                     aria-describedby="emailHelp" placeholder="Password">
 
             </div>
-
             <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Submit</button>
+            </div>
+
         </form>
     </div>
 </div>

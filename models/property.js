@@ -41,7 +41,11 @@ var propertySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tenant"
     }],
-    show_on_main: Boolean
+    show_on_main: Boolean,
+    Enquiries: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Enquiry"
+    }]
 });
 
 module.exports = mongoose.model("Property", propertySchema);

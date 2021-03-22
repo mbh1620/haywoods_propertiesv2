@@ -79,6 +79,7 @@ var upload = multer({ storage: storage });
 
 var Property = require("../models/property");
 var User = require("../models/user");
+var Enquiry = require("../models/enquiry");
 
 //INDEX ROUTE
 
@@ -244,6 +245,10 @@ router.get("/properties/:id", function (req, res) {
         }
     })
 })
+
+//CREATE ENQUIRY ROUTE
+
+
 
 //EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE) 
 

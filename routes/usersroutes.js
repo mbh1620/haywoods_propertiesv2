@@ -1,5 +1,4 @@
 // Routes for Users, Login, Create, Delete, Edit etc...
-
 var express = require('express');
 var router = express.Router();
 var middleware = require("../middleware");
@@ -10,8 +9,10 @@ var fs = require("fs");
 var axios = require('axios');
 var cheerio = require('cheerio');
 
+//Model imports
 var User = require("../models/user");
-var Property = require("../models/property")
+var Property = require("../models/property");
+
 
 //PASSPORT SETUP
 router.use(passport.initialize());

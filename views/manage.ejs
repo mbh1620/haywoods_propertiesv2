@@ -34,7 +34,7 @@
                 <button style="margin-top:20px;" class="btn btn-primary"
                   onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
                 <button style="margin-top:20px;" class="btn btn-primary" onclick="">Compare Years</button>
-                <button style="margin-top:20px;" class="btn btn-warning" onclick="">Create Yearly Spreadsheet</button>
+                <button style="margin-top:20px;" class="btn btn-warning" onclick="createSpreadsheet('<%=currentUser.id%>')">Create Yearly Spreadsheet <i class="fas fa-table"></i></button>
               </div>
 
             </div>
@@ -364,6 +364,18 @@
     $.post("/calculate_rent",
       {
         id: user_id
+      })
+  }
+
+  //=====================================================
+  //  Function for AJAX request for excel spreadsheet
+  //=====================================================
+
+  function createSpreadsheet(userId){
+    console.log("creating spreadsheet");
+    $.post("/user/"+userId+"/create_spreadsheet",
+      {
+       year: $('#yearselectrent').val()
       })
   }
 

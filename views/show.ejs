@@ -15,12 +15,12 @@
 </div>
 
 <div class="container">
-  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" style="width:60%;height:660px;margin:0 auto;">
+  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" style="width:85%;height:660px;margin:0 auto;overflow:hidden">
     <div class="carousel-inner">
       <!-- This section needs to be a foreach for each photo in the directory -->
       <% images.forEach(function(image, index){ %>
         <div id="<%= index %>" class="carousel-item">
-          <img src="../uploads/<%= property._id %>/<%= image %>" style="width:100%;height:auto" class="d-block w-100" alt="...">
+          <img src="../uploads/<%= property._id %>/<%= image %>" style="width:100%;height:auto;" class="d-block w-100" alt="...">
         </div>
       <% }) %>
       <script>
