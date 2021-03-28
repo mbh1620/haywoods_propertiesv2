@@ -7,6 +7,7 @@
 //author: Matthew Haywood
 
 // Module Imports
+var dotenv = require("dotenv").config();
 var express = require("express");
 var app = express();
 var mongoose = require("mongoose");
@@ -42,13 +43,11 @@ app.use('/scripts', express.static(__dirname + "/views/manageproperties"));
 
 if(process.env.NODE_ENV === 'production'){
     //Connect to Production Database
-    mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
+    mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@cluster0.drwm0.mongodb.net/Haywoods_properties?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
 } else if (process.env.NODE_ENV === 'development'){
     //Connect to Development Database
-    mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties_development?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
-} else {
-    mongoose.connect("mongodb+srv://matthew01:haywood@cluster0.drwm0.mongodb.net/Haywoods_properties_development?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });    
-}
+    mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@cluster0.drwm0.mongodb.net/Haywoods_properties_development?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
+} 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
