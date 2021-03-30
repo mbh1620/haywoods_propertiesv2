@@ -8,14 +8,9 @@
     <meta property="og:url" content="haywoods-properties.azurewebsites.net" />
     <meta property="og:image" content="../uploads/<%= property.id %>/thumbnails/resized_for_share.png" />
     <% } %>
-      <meta name="description" content="Haywood's Homes, finding the perfect home for you in and around Leicester.">
-      <meta name="keywords"
-        content="Rent, Homes for rent, Houses for let, Houses for rent, Houses for rent in Leicester, letting, Letting, Leicester, Leicester, Haywood, Rental, Properties, Property, terraced houses, city center">
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css"
-        integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-HGSKV5XQK1"></script>
+
+    <% if( typeof(property) =='undefined'){ %>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-HGSKV5XQK1"></script>
         <script>
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
@@ -23,6 +18,17 @@
         
           gtag('config', 'G-HGSKV5XQK1');
         </script>
+    <% } %>
+
+
+      <meta name="description" content="Haywood's Homes, finding the perfect home for you in and around Leicester.">
+      <meta name="keywords"
+        content="Rent, Homes for rent, Houses for let, Houses for rent, Houses for rent in Leicester, letting, Letting, Leicester, Leicester, Haywood, Rental, Properties, Property, terraced houses, city center">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css"
+        integrity="sha384-i1LQnF23gykqWXg6jxC2ZbCbUMxyw5gLZY6UiUS98LYV5unm8GWmfkIS6jqJfb4E" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        
 </head>
 
 <body>
