@@ -84,7 +84,7 @@ var Enquiry = require("../models/enquiry");
 //INDEX ROUTE
 
 router.get("/properties", function (req, res) {
-    var page = "Properties for Let, Leicester";
+    var page = "Properties for Let in Leicester";
     Property.find({}, function (err, allProperties) {
         if (err) {
             console.log(err);
