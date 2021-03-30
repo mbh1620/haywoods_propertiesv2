@@ -33,7 +33,8 @@ router.use(function (req, res, next) {
 //USERS SIGNUP/Login/Logout ROUTES
 
 router.get("/register", function (req, res) {
-    res.render("register.ejs");
+    var page = "Sign up for an Account"
+    res.render("register.ejs", {page:page});
 });
 
 router.post("/register", function (req, res) {
@@ -93,7 +94,8 @@ router.post("/register", function (req, res) {
 });
 
 router.get("/login", function (req, res) {
-    res.render("login.ejs");
+    var page = "Login to Account"
+    res.render("login.ejs", {page:page});
 })
 
 router.post("/login", passport.authenticate("local", {
@@ -133,12 +135,13 @@ router.get("/user/:id", middleware.isLoggedIn, function (req, res) {
 //Route for showing the main manage dash for user - Middleware (DONE)
 
 router.get("/user/:id/manage", middleware.isLoggedIn, function (req, res) {
+    var page = "User Dashboard";
     if(req.user.id == req.params.id){
         User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
             if (err) {
                 console.log(err);
             } else {
-                res.render("manage.ejs", { property: founduser.properties });
+                res.render("manage.ejs", { property: founduser.properties, page:page });
             }
         })
     } else {
@@ -303,13 +306,15 @@ router.put("/user/:id/properties/:propid/job", function (req, res) {
 //Router for displaying users properties - Middleware (DONE)
 router.get("/user/:id/properties", middleware.isLoggedIn, function (req, res) {
     var userid = req.params.id
+    
     //Add populate function HERE!!!!
     if( req.user.id == userid){
         User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
             if (err) {
                 console.log(err);
             } else {
-                res.render("usersproperties.ejs", { founduser: founduser });
+                var page = founduser.username+"'s Properties";
+                res.render("usersproperties.ejs", { founduser: founduser, page:page });
             }
         })
     } else {

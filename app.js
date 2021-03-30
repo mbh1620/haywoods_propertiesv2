@@ -64,12 +64,14 @@ app.use("/",tenantroutes);
 
 // Index route
 app.get("/", function (req, res) {
-    res.render("home.ejs");
+    var page = "Home"
+    res.render("home.ejs", {page:page});
 });
 
 // 404 - Error Route
 app.get("/*", function (req, res){
-    res.render("error.ejs");
+    var page = "404 Error"
+    res.render("error.ejs", {page:page});
 })
 
 app.listen("8080");

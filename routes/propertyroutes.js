@@ -84,11 +84,12 @@ var Enquiry = require("../models/enquiry");
 //INDEX ROUTE
 
 router.get("/properties", function (req, res) {
+    var page = "Properties for Let, Leicester";
     Property.find({}, function (err, allProperties) {
         if (err) {
             console.log(err);
         } else {
-            res.render("properties.ejs", { properties: allProperties });
+            res.render("properties.ejs", { properties: allProperties, page: page});
         }
     })
 })
@@ -96,7 +97,8 @@ router.get("/properties", function (req, res) {
 //NEW PROPERTIES FORM ROUTE
 
 router.get("/properties/new", middleware.isLoggedIn, function (req, res) {
-    res.render("new_properties.ejs");
+    var page = "Create a new Property"
+    res.render("new_properties.ejs", {page:page});
 })
 
 //CREATE ROUTE
