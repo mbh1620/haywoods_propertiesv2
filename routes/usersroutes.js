@@ -117,13 +117,14 @@ router.post("/logout", function (req, res) {
 //Account Settings routes - Middleware (DONE)
 
 router.get("/user/:id", middleware.isLoggedIn, function (req, res) {
+    var page = "Account Settings";
     var userid = req.params.id
     if (req.user.id == userid) {
         User.findById(req.params.id, function (err, founduser) {
             if (err) {
                 console.log(err);
             } else {
-                res.render("settings.ejs", { user: founduser })
+                res.render("settings.ejs", { user: founduser, page:page })
             }
         })
     } else {
@@ -324,11 +325,12 @@ router.get("/user/:id/properties", middleware.isLoggedIn, function (req, res) {
 
 //Router for management projection tool - account checking has been left for now
 router.get("/user/:id/projection", middleware.isLoggedIn, function (req, res) {
+    var page = "Projection Tool"
     User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
         if (err) {
             console.log(err);
         } else {
-            res.render("projection.ejs", { currentUser: founduser, property: founduser.properties });
+            res.render("projection.ejs", { currentUser: founduser, property: founduser.properties, page:page});
         }
     })
 })
