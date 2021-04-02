@@ -13,6 +13,69 @@ var excel = require("exceljs");
 //           Rent Graph Routes and Functions
 //================================================
 
+//Function for updating total rent income
+function update_rent_total_income(user_id, pop_flag, next) {
+    User.findByIdAndUpdate(user_id).populate('properties').exec(function (err, founduser) {
+        if (err) {
+            console.log(err);
+        } else {
+            //Total all the current months rent income from each house and then sum it and push to total rent data.
+            var total_rent_income = 0;
+            var CurrentYear;
+            var CurrentMonth;
+
+            console.log(founduser);
+
+            var d = new Date();
+
+            CurrentYear = d.getFullYear();
+            CurrentMonth = d.getMonth();
+
+            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            for (var i = 0; i < founduser.properties.length; i++) {
+                if (!isNaN(founduser.properties[i].price))
+                    total_rent_income = total_rent_income + founduser.properties[i].price;
+            }
+
+            /* 
+            totalRentIncomeData: [{
+                year: String, 
+                month: String, 
+                value: Number
+            }]
+            */
+
+            var totalRentIncomeData = {
+                year: CurrentYear,
+                month: months[CurrentMonth],
+                value: total_rent_income
+            }
+
+            if (pop_flag == true && founduser.totalRentIncomeData[founduser.totalRentIncomeData.length-1].month == CurrentMonth) {
+                founduser.totalRentIncomeData.pop();
+            }
+
+            founduser.totalRentIncomeData.push(totalRentIncomeData);
+
+            User.findByIdAndUpdate(founduser._id, founduser, function (err, updatedUser) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    next();
+                }
+            })
+        }
+    })
+}
+
+//Route for recalculating Rent Value 
+router.post("/calculate_rent", function (req, res) {
+    update_rent_total_income(req.body.id, true, function () {
+        res.redirect("/user/" + req.body.id + "/manage");
+    })
+})
+
 //Function used for updating property rent value data 
 function prop_rent_val_update(propid, next) {
 
@@ -53,70 +116,6 @@ function prop_rent_val_update(propid, next) {
     })
 
 }
-
-//Function for updating total rent income
-function update_rent_total_income(user_id, pop_flag, next) {
-    User.findByIdAndUpdate(user_id).populate('properties').exec(function (err, founduser) {
-        if (err) {
-            console.log(err);
-        } else {
-            //Total all the current months rent income from each house and then sum it and push to total rent data.
-            var total_rent_income = 0;
-            var CurrentYear;
-            var CurrentMonth;
-
-            console.log(founduser);
-
-            var d = new Date();
-
-            CurrentYear = d.getFullYear();
-            CurrentMonth = d.getMonth();
-
-            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-            for (var i = 0; i < founduser.properties.length; i++) {
-                if (!isNaN(founduser.properties[i].price))
-                    total_rent_income = total_rent_income + founduser.properties[i].price;
-            }
-
-            /* 
-            totalRentIncomeData: [{
-                year: String, 
-                month: String, 
-                value: Number
-            }]
-            */
-
-            var totalRentIncomeData = {
-                year: CurrentYear,
-                month: months[CurrentMonth],
-                value: total_rent_income
-            }
-
-            if (pop_flag == true) {
-                founduser.totalRentIncomeData.pop();
-            }
-
-            founduser.totalRentIncomeData.push(totalRentIncomeData);
-
-            User.findByIdAndUpdate(founduser._id, founduser, function (err, updatedUser) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    next();
-                }
-            })
-        }
-    })
-}
-
-//Route for recalculating Rent Value 
-router.post("/calculate_rent", function (req, res) {
-    update_rent_total_income(req.body.id, true, function () {
-        res.redirect("/user/" + req.body.id + "/manage");
-    })
-})
-
 
 //================================================
 //     Portfolio Value Graph Routes and Functions
@@ -165,7 +164,7 @@ function update_portfolio(user_id, pop_flag, next) {
             }
             console.log(CurrentMonth);
 
-            if (pop_flag == true) {
+            if (pop_flag == true && founduser.PortfolioValue[founduser.PortfolioValue.length-1].month == CurrentMonth) {
                 founduser.PortfolioValue.pop();
             }
 
