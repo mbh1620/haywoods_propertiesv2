@@ -234,7 +234,7 @@ function prop_val_update(propid, next) {
                 .then(response => {
                     const html = response.data;
                     const $ = cheerio.load(html);
-                    const estimatedPrice = $('.pdp-estimate__price');
+                    const estimatedPrice = $('.css-1tz04i5-Text-StyledEstimatedPriceText');
                     console.log("Scraped from Zoopla")
                     currentPrice = estimatedPrice.text();
                     console.log(currentPrice);
