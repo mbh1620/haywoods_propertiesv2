@@ -10,7 +10,7 @@
   integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
   crossorigin=""></script>
 
-<div class="jumbotron w-50" style="margin: 0 auto">
+<div class="jumbotron w-50" style="margin: 0 auto;padding-bottom:30px">
   <div class="container">
   <h1 style="margin-bottom:50px;font-family: Helvetica, sans-serif;"><%= property.name %></h1>
 
@@ -40,14 +40,15 @@
 
 
   </div>
+  <div class="jumbotron bg-light" style="margin-top:50px;padding-top:20px;height:auto">
   <p style="margin-top:20px;">This was listed by: <em><%= property.author.username %></em></p>
   <p style="margin-top:20px;">Price: £<%= property.price %> pcm</p>
   <p style="margin-top:20px;">Location:</p>
-  <div id="map-desc" style="width:100% height:300px;"></div>
+  
     <div id="mapid" style="float:left;height:400px;width:400px; display:block; margin-right:20px; margin-bottom:20px;"></div>
     <p style="display:block;white-space: pre-wrap;"><%= property.description %></p>
     </br clear="left">
-  <div id="button-container" style="display:inline-block;width:400px; height:60px">
+    <div id="button-container" style="display:inline-block;width:400px; height:250px">
     <a style="display:inline-block;float:left;" href="/properties" class="btn btn-primary">Back</a>
 
     <!-- Add logic for displaying edit and delete buttons here -->
@@ -59,8 +60,7 @@
     <a style="display:inline-block" href="/properties/<%= property._id %>/edit" class="btn btn-warning">Edit</a>
     <% }} %>
   </div>
-    
-  <div style="display:block" class="jumbotron">
+      
   <p>Contact Details:</p>
   <p><%= property.author.username %></p>
 
