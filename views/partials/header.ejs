@@ -8,13 +8,14 @@
     <meta property="og:title" content="<%= property.name %>" />
     <meta property="og:url" content="haywoods-properties.azurewebsites.net" />
     <meta property="og:image" content="../uploads/<%= property.id %>/thumbnails/resized_for_share.png" />
-    
     <% } else if(typeof(property) !=='undefined' && typeof(page) !== 'undefined'){ %>
-
       <title>Haywood's Homes: <%= page %></title>
-
     <%} else if( typeof(property)==='undefined' && typeof(page) !== 'undefined'){ %>
-    <title> Haywood's Homes: <%= page %></title>
+      <% if (page === "Home") { %>
+        <title>Haywood's Homes</title>
+      <% } else { %>
+        <title>Haywood's Homes: <%= page %></title>
+      <% } %>
     
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-HGSKV5XQK1"></script>
         <script>
