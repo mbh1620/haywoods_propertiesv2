@@ -226,7 +226,7 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
 
 //SHOW ROUTE
 
-router.get("/properties/:id", function (req, res) {
+router.get("/properties/:id", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
         var images = []
         if (err) {
