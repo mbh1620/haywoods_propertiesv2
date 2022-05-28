@@ -132,6 +132,8 @@ function createNewProperty(req, res, next) {
         var the_User = req.user;
         the_User.properties.push(_property);
 
+        fs.mkdirSync("./uploads/" + req.property._id.toString())
+
         the_User.save(function (err, data) {
             if (err) {
                 console.log(err)
@@ -206,10 +208,14 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                                                 if (err) {
                                                     console.log(err);
                                                 } else {
-                                                    sharp("uploads/" + req.property._id + "/" + files[0]).resize({ width: 650 }).toFile("uploads/" + req.property._id + "/thumbnails/resized_for_share.png")
+                                                    if(fs.existsSync("uploads/" + req.property._id + "/") && files.length > 0){
+                                                        sharp("uploads/" + req.property._id + "/" + files[0]).resize({ width: 650 }).toFile("uploads/" + req.property._id + "/thumbnails/resized_for_share.png")
                                                         .then(() => {
                                                             res.redirect("/properties");
                                                         })
+                                                    } else {
+                                                        res.redirect('/properties')
+                                                    }
                                                 }
                                             })
                                         }
@@ -237,11 +243,13 @@ router.get("/properties/:id", middleware.isLoggedIn, function (req, res) {
                     console.log(err);
                     res.render("show.ejs", { property: foundProperty, images: images })
                 }
-                for (const file of files) {
-                    if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
-                        images.push(file);
+                if(files != undefined){
+                    for (const file of files) {
+                        if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
+                            images.push(file);
+                        }
                     }
-                }
+                } 
                 res.render("show.ejs", { property: foundProperty, images: images })
             })
         }
