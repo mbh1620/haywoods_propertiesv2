@@ -49,16 +49,19 @@
     <p style="display:block;white-space: pre-wrap;"><%= property.description %></p>
     </br clear="left">
     <div id="button-container" style="display:inline-block;width:400px; height:250px">
-    <a style="display:inline-block;float:left;" href="/properties" class="btn btn-primary">Back</a>
+    
 
     <!-- Add logic for displaying edit and delete buttons here -->
     <% if (currentUser){ %>
     <% if (currentUser.id == property.author.id) { %>
-    <form action="/properties/<%= property._id %>?_method=DELETE" style="float:left" method="POST">
-    <input style="display:inline-block" type="submit" class="btn btn-danger" style="float:left" value="Delete">
+    <form action="/properties/<%= property._id %>?_method=DELETE" style="float:left" method="POST" id="deleteForm">
+    <input type="button" style="display:inline-block" class="btn btn-danger" style="float:left;" onclick="deleteProperty()" value="Delete">
     </form>
     <a style="display:inline-block" href="/properties/<%= property._id %>/edit" class="btn btn-warning">Edit</a>
+    <% }else { %>
+      <a style="display:inline-block" href="/properties/<% property._id %>/enquire" class="btn btn-primary">Enquire about property</a>
     <% }} %>
+      <a style="display:inline-block;" href="/properties" class="btn btn-danger">Back</a>
   </div>
       
   <p>Contact Details:</p>
@@ -81,6 +84,14 @@
   }).addTo(mymap);
 
   var marker = L.marker([<%= property.lat %>, <%= property.long %>]).addTo(mymap);
+
+  function deleteProperty(){
+    if(confirm("Are you sure you would like to delete this property? All data belonging to this property will be removed.")){
+      $('#deleteForm').submit();
+    } else {
+      
+    }
+  }
 
 
 </script>

@@ -6,6 +6,9 @@ var LocalStrategy = require("passport-local");
 var passport = require("passport");
 var passportLocalMongoose = require("passport-local-mongoose");
 var fs = require("fs");
+var graphingroutes = require("./graphingroutes");
+var update_portfolio = graphingroutes.update_portfolio;
+var update_rent_total_income = graphingroutes.update_rent_total_income;
 var axios = require('axios');
 var cheerio = require('cheerio');
 
@@ -133,6 +136,11 @@ router.get("/user/:id", middleware.isLoggedIn, function (req, res) {
 
 })
 
+//Routes for updating user account settings
+router.post("/user/:id/update/password", middleware.isLoggedIn, function (req, res) {
+    //Code for updating password
+})
+
 //Route for showing the main manage dash for user - Middleware (DONE)
 
 router.get("/user/:id/manage", middleware.isLoggedIn, function (req, res) {
@@ -220,9 +228,7 @@ router.get("/user/:id/manage/:propid", middleware.isLoggedIn, function (req, res
                                 currentPrice = currentPrice.replace(',', '');
                                 currentPrice = currentPrice.replace(',', '');
                                 currentPrice = currentPrice * 1E6;
-    
-    
-    
+                                
                                 console.log(currentPrice);
     
                                 function pushNewprop(callback) {
@@ -273,13 +279,50 @@ router.put("/user/:id/manage/:propid", function (req, res) {
         }
     })
 })
+//Route for setting job status to completed - Need to add middleware to check the correct user is making changes
+router.post("/user/:id/manage/:propid/jobupdate/:jobid/completed", function(req, res){
+    Property.findById(req.params.propid, function (err, updatedProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            updatedProperty.maintenance_item[req.params.jobid].Done = true
+            console.log()
+            
+            Property.findByIdAndUpdate(req.params.propid, updatedProperty, function (err, updatedProperty) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.sendStatus(200);
+                }
+            })
+        }
+    })
+})
 
-//Route for adding a maintenance job to the house
+//Route for setting job status to not completed - Need to add middleware to check the correct user is making changes
+router.post("/user/:id/manage/:propid/jobupdate/:jobid/notcompleted", function(req, res){
+    Property.findById(req.params.propid, function (err, updatedProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            updatedProperty.maintenance_item[req.params.jobid].Done = false
+            
+            Property.findByIdAndUpdate(req.params.propid, updatedProperty, function (err, updatedProperty) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.sendStatus(200);
+                }
+            })
+        }
+    })
+})
+
+//Route for adding a maintenance job to the house - Need to add middleware to check the correct user is making changes
 router.put("/user/:id/properties/:propid/job", function (req, res) {
     jobname = req.body.jobname;
     jobbody = req.body.jobbody;
     jobdate = req.body.jobdate;
-
 
     id = req.params.id;
     Property.findById(req.params.propid, function (err, updatedProperty) {
@@ -289,7 +332,8 @@ router.put("/user/:id/properties/:propid/job", function (req, res) {
             updatedProperty.maintenance_item.push({
                 Name: jobname,
                 Detail: jobbody,
-                Finish_Date: req.body.jobdate
+                Finish_Date: req.body.jobdate,
+                Done: false
             })
             console.log(updatedProperty);
             Property.findByIdAndUpdate(req.params.propid, updatedProperty, function (err, updatedProperty) {

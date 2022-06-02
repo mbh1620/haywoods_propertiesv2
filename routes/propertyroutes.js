@@ -258,10 +258,16 @@ router.get("/properties/:id", middleware.isLoggedIn, function (req, res) {
 
 //CREATE ENQUIRY ROUTE
 
+router.get("/properties/:id/enquire", middleware.isLoggedIn, function (req,res){
+    res.render("enquire.ejs", )
+})
 
+router.post("/properties/:id/enquire", middleware.isLoggedIn, function(req,res){
+    //Add enquiry to the property
+    res.sendStatus(200);
+})
 
 //EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE) 
-
 router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
         var images = []
@@ -285,7 +291,6 @@ router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
 })
 
 //UPDATE ROUTE - MIDDLEWARE DONE
-
 router.put("/properties/:id", middleware.isLoggedIn, function (req, res) {
     //Need to add if certain photos need to be deleted or added and reordered
     Property.findById(req.params.id, function (err, foundProperty) {
