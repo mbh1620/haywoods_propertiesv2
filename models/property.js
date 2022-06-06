@@ -45,7 +45,10 @@ var propertySchema = new mongoose.Schema({
     Enquiries: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Enquiry"
-    }]
+    }],
+    gasSafety: Date,
+    electricalSafety: Date,
+    propertyInsurance: Date,
 });
 
 module.exports = mongoose.model("Property", propertySchema);

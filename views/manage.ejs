@@ -22,6 +22,16 @@
         <div class="col-xl-8 col-lg-7">
 
           <!-- Area Chart -->
+          <div class="card shadow mb-4" style="height:200px">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Updates and Reminders</h6>
+            </div>
+            <div class="card-body" style="height:550px;">
+              <% for(var i = 0; i < property.length; i++) { %>
+              <p><em>16/12/22</em> - renew gas certificate on <%= property[i].name %> in 20 days</p>
+              <% } %>
+            </div>
+          </div>
           <div class="card shadow mb-4" style="height:720px">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Total net value</h6>
