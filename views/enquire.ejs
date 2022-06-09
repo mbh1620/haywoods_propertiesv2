@@ -1,0 +1,19 @@
+<% include ./partials/header.ejs %>
+
+    <div style="height:88.5vh" class="container w-50 p-3">
+        <div style="margin-top:20px" class="jumbotron">
+            <h1 class="text-center">Leave a Message</h1>
+            <form action="/properties/<%=propertyId%>/enquire/send" method="POST">
+                <label>Message Title</label>
+                <input id="titleInput" name="title" type="input" style="font-size: 16pt;margin-bottom: 20px;" class="form-control">
+                <label>Message Body</label>
+                <textarea id="bodyInput" name="body" class="form-control" rows="20" style="font-size: 16pt;"></textarea>
+                <input type="submit" class="btn btn-md btn-primary" style="margin-top:20px" value="Send Message">
+            </form>
+        </div>
+    </div>
+    <script>
+
+    </script>
+
+    <% include ./partials/footer.ejs %>

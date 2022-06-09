@@ -64,15 +64,15 @@
               <input class="form-control" type="text" name="email" placeholder="Email">
               <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
               <input class="form-control" type="text" name="house_number" placeholder="Home Number">
-              <input class="form-control" type="submit">
+              <input class="form-control" class="btn btn-primary" type="submit">
             </form>
           </div>
 
 
         </div>
         <h4 style="margin-top:20px">Tenant History</h4>
-        <textarea style="width:500px;height:200px;" readonly>
-
+        <textarea class="form-control" style="width:500px;height:200px;background-color: white;" readonly>
+Patrick Surname 12/07/2020 -> N/a
         </textarea>
 
 
@@ -135,14 +135,14 @@
     </div>
     <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
       <div class="jumbotron">
-        <% if(property.enquiry_item != undefined) {%>
-        <% for (var i = 0; i < property.enquiry_item.length; i++) { %>
-          <div class="card w-25">
-            
-          </div>
+        <div class="container">
+        <% if(property.Enquiries != undefined) {%>
+        <% for (var i = 0; i < property.Enquiries.length; i++) { %>
+          <li onclick="showEnquiry('<%= property._id %>','<%= property.Enquiries[i]._id %>')" class="list-group-item list-group-item-action" style="height:55px"><p style="display: inline-block;"><%= property.Enquiries[i].Title %></p><p style="float:right;display: inline-block;"><%= property.Enquiries[i].User.username %><button onclick="deleteEnquiry()" class="btn btn-sm btn-danger" style="margin-left:20px">Delete</button></p></li>
         <%}} else {%>
         <p>Currently no enquiries</p>
         <% } %>
+      </div>
       </div>
     </div>
     <div class="tab-pane" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
@@ -154,12 +154,12 @@
               
                 <li id='<%=i%>' onclick="showJobInfo()" class="list-group-item list-group-item-action" <% if(property.maintenance_item[i].Done==true){ %>style="text-decoration-line: line-through;" <%}%> ><%= property.maintenance_item[i].Name %><span
                   style="float:right;margin-right:30px"><%= property.maintenance_item[i].Finish_Date %><input type="hidden" id="other" name="property.maintenance_item[i][done]" value="<%=property.maintenance_item[i].Done%>">
-                <input id="value_input-<%=i%>" type="checkbox" onclick="the_switch('<%=i%>')" <% if(property.maintenance_item[i].Done==true){ %>checked<%}%>></span></li>
+                <input id="value_input-<%=i%>" type="checkbox" onclick="the_switch('<%=i%>')" <% if(property.maintenance_item[i].Done==true){ %>checked<%}%>><button id="<%=i%>-delete" style="float:right; margin-left:20px" onclick="deleteJob('<%=i%>')" class="btn btn-sm btn-danger">Delete</button></span></li>
                   
             <% } %>
           </ul>
           <button onclick="showInput()" class="btn btn-primary">Add new Job</button>
-          <button style="float:right;" onclick="DeleteJob()" class="btn btn-danger">Delete Job</button>
+          
           <form class="form-group" style="display:none;" id="jobId"
             action="/user/<%=currentUser._id%>/properties/<%= property._id%>/job?_method=PUT" method="POST">
             <div class="container w-50">
@@ -179,6 +179,20 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.js"
               integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
             <script>
+              function deleteJob(itemName){
+                console.log(itemName)
+                $.post(
+                  url="/user/<%=currentUser._id%>/manage/<%= property._id%>/job/"+itemName+"/delete",
+                  success=function(){console.log("deleted job")}
+                )
+
+              }
+
+              function showEnquiry(PropertyId, EnquiryId){
+                console.log("/properties/" + PropertyId + "/enquiry/" + EnquiryId + "/view")
+                window.location = "/properties/" + PropertyId + "/enquiry/" + EnquiryId + "/view"
+              }
+
               function the_switch(itemName) {
                 if ($("#value_input-"+itemName).is(':checked')) {
                   $("#other").val("true");
@@ -200,7 +214,7 @@
               }
 
                 function showJobInfo(){
-                  console.log("test");
+                  // console.log("test");
                 }
   </script>
   

@@ -6,6 +6,7 @@ var multer = require("multer");
 var fs = require("fs");
 var sharp = require('sharp');
 var graphingroutes = require("./graphingroutes");
+var Enquiry = require("../models/enquiry");
 var prop_val_update = graphingroutes.prop_val_update;
 var update_portfolio = graphingroutes.update_portfolio;
 var update_rent_total_income = graphingroutes.update_rent_total_income;
@@ -259,12 +260,68 @@ router.get("/properties/:id", middleware.isLoggedIn, function (req, res) {
 //CREATE ENQUIRY ROUTE
 
 router.get("/properties/:id/enquire", middleware.isLoggedIn, function (req,res){
-    res.render("enquire.ejs", )
+    res.render("enquire.ejs", {propertyId: req.params.id});
 })
 
-router.post("/properties/:id/enquire", middleware.isLoggedIn, function(req,res){
-    //Add enquiry to the property
-    res.sendStatus(200);
+router.post("/properties/:id/enquire/send", middleware.isLoggedIn, function(req,res){
+
+    //Create a new enquiry and attach to the property
+    //Will also need to add some security such as limit one enquiry per user and sanitization
+    var title = req.body.title;
+    var Message = req.body.body;
+    var number_Occupants = 0;
+    var pets = false;
+    var date = Date.now();
+    
+    User.findById(req.user._id, function(err, foundUser){
+        if(err){
+            console.log(err);
+        }else{
+            var enquiry = {
+                User: foundUser,
+                Title: title,
+                Message: Message,
+                number_Occupants: number_Occupants,
+                pets: pets,
+                messageTitle: title,
+                date: date,
+                Property: {
+                    id: req.params.id
+                }
+            }
+            Enquiry.create(enquiry, function(err, newEnquiry){
+                if(err){
+                    console.log(err);
+                }else{
+                    Property.findById(req.params.id, function (err, updatedProperty) {
+                        if (err) {
+                            console.log("error has occurred");
+                        } else {
+                            updatedProperty.Enquiries.push(newEnquiry)
+                            updatedProperty.save();
+                            res.redirect("/properties");
+                        }
+                    })
+                }
+            })
+        }
+    })
+})
+
+router.get("/properties/:id/enquiry/:enquiryId/view", middleware.isLoggedIn, function(req,res){
+    Enquiry.findById(req.params.enquiryId, function(err,foundEnquiry){
+        if(err){
+            console.log(err)
+        } else {
+            Property.findById(req.params.id, function(err, foundProperty){
+                if(err){
+                    console.log(err)
+                } else{
+                    res.render("viewEnquiry.ejs", {enquiry:foundEnquiry, property: foundProperty});
+                }
+            })
+        }
+    })
 })
 
 //EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE) 

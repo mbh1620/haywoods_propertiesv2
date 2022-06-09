@@ -16,9 +16,17 @@ var enquirySchema = new mongoose.Schema({
     },
     username: String
     },
+    date: Date,
+    Property: {
+        id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Property"
+    },
+},
     number_Occupants: Number, 
     pets: Boolean, 
     Message: String,
+    Title: String
 })
 
 module.exports = mongoose.model("Enquiry", enquirySchema);

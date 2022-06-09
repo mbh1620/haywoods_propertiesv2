@@ -40,7 +40,7 @@
               <div class="chart-area">
 
                 <canvas style="height:500px;width:700px;margin:0 auto;" id="myAreaChart"></canvas>
-                Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect" onchange="">
+                Select Year to Display: <input class="form-control w-25" style="display:block" type="number" id="yearselect" name="yearselect" onchange="">
                 <button style="margin-top:20px;" class="btn btn-primary"
                   onclick="recalculate('<%= currentUser._id %>')">Recalculate current month</button>
                 <button style="margin-top:20px;" class="btn btn-primary" onclick="">Compare Years</button>
@@ -55,7 +55,7 @@
             </div>
             <div class="card-body" style="height:500px;">
               <div class="chart-area">
-                <canvas id="myAreaChartRent" style="height:500px;width:700px;margin: 0 auto;"></canvas>Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
+                <canvas id="myAreaChartRent" style="height:500px;width:700px;margin: 0 auto;"></canvas>Select Year to Display: <input class="form-control w-25" style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
                 <p id="yearly-total-rent" style="margin-top:20px;">Year Total:
 
                 </p>

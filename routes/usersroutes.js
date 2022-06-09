@@ -16,7 +16,6 @@ var cheerio = require('cheerio');
 var User = require("../models/user");
 var Property = require("../models/property");
 
-
 //PASSPORT SETUP
 router.use(passport.initialize());
 router.use(passport.session());
@@ -169,7 +168,7 @@ router.get("/user/:id/manage/:propid", middleware.isLoggedIn, function (req, res
     var url = 'https://www.zoopla.co.uk/property/';
 
     if(req.user.id = userid){
-        Property.findById(propid).populate("Tenants").exec(function (err, foundProperty) {
+        Property.findById(propid).populate("Tenants").populate("Enquiries").exec(function (err, foundProperty) {
             if (err) {
                 console.log(err);
             } else {
@@ -295,6 +294,25 @@ router.post("/user/:id/manage/:propid/jobupdate/:jobid/completed", function(req,
                     res.sendStatus(200);
                 }
             })
+        }
+    })
+})
+
+router.post("/user/:id/manage/:propid/job/:jobid/delete", function(req,res){
+    Property.findById(req.params.propid, function (err, updatedProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            updatedProperty.maintenance_item.splice(req.params.jobid,1);
+
+            Property.findByIdAndUpdate(req.params.propid, updatedProperty, function (err, updatedProperty) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.sendStatus(200);
+                }
+            })
+
         }
     })
 })

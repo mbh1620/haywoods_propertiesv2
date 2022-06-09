@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+var Property = require("../models/property");
 var Tenant = require("../models/tenant");
 
 function createNewTenant(req, res, next) {
@@ -52,7 +53,7 @@ function createNewTenant(req, res, next) {
 
 // Create Tenant
 router.post("/properties/:id/new-tenant", createNewTenant, function (req, res) {
-    res.render("home.ejs");
+    res.redirect("/properties");
 })
 
 // Delete Tenant

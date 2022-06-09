@@ -1,0 +1,16 @@
+<% include ./partials/header.ejs %>
+
+    <div style="height:88.5vh" class="container w-50 p-3">
+        <div style="margin-top:200px" class="jumbotron">
+            <h4 class="text-left">Message Left from <%= enquiry.User.username %> on property <%= property.name%></h4>
+            <h5><%= String(enquiry.date).split('G')[0] %></h5>
+            <p><a href="#">← Back to manage</a></p>
+            <textarea class="form-control" style="background-color: white;margin-top:30px" readonly><%= enquiry.Message %></textarea>
+            
+        </div>
+    </div>
+    <script>
+
+    </script>
+
+    <% include ./partials/footer.ejs %>
