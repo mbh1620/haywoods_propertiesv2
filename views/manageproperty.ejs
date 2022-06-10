@@ -142,7 +142,7 @@
           <li onclick="showEnquiry('<%= property._id %>','<%= property.Enquiries[i]._id %>')" class="list-group-item list-group-item-action" style="height:55px"><p style="display: inline-block;"><%= property.Enquiries[i].Title %></p><p style="float:right;display: inline-block;"><%= property.Enquiries[i].User.username %><button onclick="deleteEnquiry()" class="btn btn-sm btn-danger" style="margin-left:20px">Delete</button></p></li>
         <%}} else {%>
         <p>Currently no enquiries</p>
-        <% }} else {
+        <% }} else { %>
         <p>Currently no enquiries</p>
         <% } %>
       </div>
