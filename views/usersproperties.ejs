@@ -93,11 +93,10 @@
             titleText = title.innerHTML;
 
             if(titleText.toUpperCase().indexOf(filter) > -1){
-                elements.eq(i).attr("style","display:normal");
+                elements.eq(i).attr("style","display:flex");
             } else {
                 elements.eq(i).attr("style","display:none");
             }
-
         }
     }
 
