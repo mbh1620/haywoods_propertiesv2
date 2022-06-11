@@ -86,14 +86,14 @@
     function searchFunction(key){
         var input = $('#searchInput').val();
         var filter = input.toUpperCase();
-        var elements = $('.cards');
+        var elements = $('.card');
         var title
         for( i = 0; i < elements.length; i++){
             title = elements[i].getElementsByClassName('title')[0];
             titleText = title.innerHTML;
 
             if(titleText.toUpperCase().indexOf(filter) > -1){
-                elements.eq(i).attr("style","display:flex");
+                elements.eq(i).attr("style","display:flex;height:450px;");
             } else {
                 elements.eq(i).attr("style","display:none");
             }
