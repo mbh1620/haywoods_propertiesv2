@@ -20,7 +20,7 @@
 <div class="container container-fluid">
     <div id="mapid" style="height:400px;margin-top: 20px;"></div>
     <label style="margin-top:30px">Search: </label>
-    <input class="form-control" type="text" style="margin-top:5px" placeholder="Search for properties">
+    <input class="form-control" id="searchInput" onkeyup="searchFunction()" type="text" style="margin-top:5px" placeholder="Search for properties">
 </div>
 
 <div class="container container-fluid">
@@ -36,8 +36,8 @@
     <% x++ %>
 
         <div class="mt-5 col-md-6 col-lg-4 col-xl-3">
-            <div class="card w-100 p-3 p-3 bg-light" style="height:450px;">
-                <div class="card-header bg-dark text-light"><%= property.name %></div>
+            <div class="card w-100 p-3 p-3 bg-light cards" style="height:450px;" id="<%=x%>-card">
+                <div class="card-header bg-dark text-light title"><%= property.name %></div>
                 <img class="card-img-top" src="../../uploads/<%= property._id%>/<%= property.first%>"></img>
                 <!-- <img src="<%= property.image %>"> -->
             
@@ -82,6 +82,24 @@
             <% founduser.properties.forEach(function (property) { %>
             var marker = new L.marker([<%= property.lat %>, <%= property.long %>]).addTo(mymap);
             <% }); %>
+
+    function searchFunction(key){
+        var input = $('#searchInput').val();
+        var filter = input.toUpperCase();
+        var elements = $('.cards');
+        var title
+        for( i = 0; i < elements.length; i++){
+            title = elements[i].getElementsByClassName('title')[0];
+            titleText = title.innerHTML;
+
+            if(titleText.toUpperCase().indexOf(filter) > -1){
+                elements.eq(i).attr("style","display:normal");
+            } else {
+                elements.eq(i).attr("style","display:none");
+            }
+
+        }
+    }
 
 </script>
 

@@ -59,11 +59,17 @@
 
           <div class="container w-50">
             <form id="tenantform" style="display:none" action="/properties/<%=property._id%>/new-tenant" method="POST">
+              <label class="">Firstname</label>
               <input class="form-control" type="text" name="firstname" placeholder="Firstname">
+              <label class="">Lastname</label>
               <input class="form-control" type="text" name="lastname" placeholder="Lastname">
+              <label class="">Email</label>
               <input class="form-control" type="text" name="email" placeholder="Email">
+              <label class="">Mobile Number</label>
               <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
+              <label class="">Home Number</label>
               <input class="form-control" type="text" name="house_number" placeholder="Home Number">
+              
               <input class="form-control" class="btn btn-primary" type="submit">
             </form>
           </div>
