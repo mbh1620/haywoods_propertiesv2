@@ -33,6 +33,10 @@
       <a class="nav-link" id="maintenance-tab" data-toggle="tab" href="#maintenance" role="tab"
         aria-controls="maintenance" aria-selected="false">Maintenance</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" id="reminders-tab" data-toggle="tab" href="#reminders" role="tab"
+        aria-controls="reminders" aria-selected="false">Reminders</a>
+    </li>
   </ul>
 
   <div class="tab-content">
@@ -47,15 +51,18 @@
             <p>Last Name: <%= property.Tenants[i].lastname %></p>
             <p>Email: <%= property.Tenants[i].email %></p>
             <p>Animals: </p>
-            <p>Number: </p>
-            <p>Moved in: </p>
-            <form action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE"
+            <p>Number: <%= property.Tenants[i].mobile_number %></p>
+            <p>Moved in: <%= property.Tenants[i].date_moved_in%></p>
+            <form style="display:inline-block" action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE"
               method="POST">
+              <input type="hidden" value="<%= currentUser._id%>" name="userId">
               <button class="btn btn-danger">Remove Tenant</button>
             </form>
+            <button style="display:inline" class="btn btn-success" onclick="moveOut()">Move Out</button>
+
           </li>
           <% } %>
-          <button onclick="showtenantform()" class="btn btn-primary">Add Tenant</button>
+          <button style="margin-top:20px" onclick="showtenantform()" class="btn btn-primary">Add Tenant</button>
 
           <div class="container w-50">
             <form id="tenantform" style="display:none" action="/properties/<%=property._id%>/new-tenant" method="POST">
@@ -69,7 +76,9 @@
               <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
               <label class="">Home Number</label>
               <input class="form-control" type="text" name="house_number" placeholder="Home Number">
-              
+              <label class="">Move In Date</label>
+              <input class="form-control" type="date" name="date_moved_in" placeholder="Date Moved In">
+              <input type="hidden" value="<%= currentUser._id%>" name="userId">
               <input class="form-control" class="btn btn-primary" type="submit">
             </form>
           </div>
@@ -77,9 +86,13 @@
 
         </div>
         <h4 style="margin-top:20px">Tenant History</h4>
-        <textarea class="form-control" style="width:500px;height:200px;background-color: white;" readonly>
-
-        </textarea>
+        <select class='form-control' style="width:500px;white-space: pre;" size="10">
+          <option>Patrick Kovac 16/07/20 N/A</option>
+          <option>John 16/07/20 N/A</option>
+          <option>Dave 16/07/20 N/A</option>
+          <option>Jannet 16/07/20 N/A</option>
+          <option>Jane 16/07/20 N/A</option>
+        </select>
 
 
       </div>
@@ -182,6 +195,31 @@
           </form>
         </div>
       </div>
+      
+    </div>
+    <div class="tab-pane" id="reminders" role="tabpanel" aria-labelledby="reminders-tab">
+      <div class="jumbotron">
+
+        <div class="container">
+          <h3>Gas Safety</h3>
+          <input class="form-control" style="width:auto" type="date">
+          <label>Active</label>
+          <input  type="checkbox">
+          <label>Completed</label>
+          <input  type="checkbox">
+          <label>Next Renewal Date</label>
+          <h3>Electrical Safety</h3>
+          <input class="form-control" style="width:auto" type="date">
+          <label>Active</label>
+          <input type="checkbox">
+          <h3>Property Insurance</h3>
+          <input class="form-control" style="width:auto" type="date">
+          <label>Active</label>
+          <input type="checkbox">
+          
+        </div>
+      </div>
+      
     </div>
 
   </div>

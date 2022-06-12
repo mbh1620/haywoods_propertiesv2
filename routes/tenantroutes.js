@@ -13,7 +13,9 @@ function createNewTenant(req, res, next) {
     var home_number = req.body.house_number;
     var animals = req.body.animals;
     var propid = req.params.id;
+    var date_moved_in = req.body.date_moved_in;
 
+    console.log(date_moved_in)
 
     var newTenant = {
         firstname: firstname,
@@ -23,6 +25,7 @@ function createNewTenant(req, res, next) {
         home_number: home_number,
         animals: animals,
         property: propid,
+        date_moved_in: date_moved_in,
         CurrentTenant: true,
 
     }
@@ -53,13 +56,14 @@ function createNewTenant(req, res, next) {
 
 // Create Tenant
 router.post("/properties/:id/new-tenant", createNewTenant, function (req, res) {
-    res.redirect("/properties");
+    res.redirect("/user/"+req.body.userId + "/manage/" + req.params.id);
 })
 
 // Delete Tenant
 router.delete("/properties/:id/new-tenant/:tid", function (req, res) {
+    console.log(req.body.userId)
     Tenant.findByIdAndRemove(req.params.tid, function (err) {
-        res.redirect("/properties");
+        res.redirect("/user/"+req.body.userId + "/manage/" + req.params.id);
     })
 
 })
