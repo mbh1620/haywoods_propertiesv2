@@ -158,6 +158,53 @@ router.get("/user/:id/manage", middleware.isLoggedIn, function (req, res) {
    
 })
 
+//Route for showing the Renewal Reminders
+
+router.get("/user/:id/manage/renewal-reminder/gas", function(req,res){
+    var page = "Gas Safety Renewal";
+    if(req.user.id == req.params.id){
+        User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("./renewals/gas.ejs", { property: founduser.properties, page:page });
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
+})
+
+router.get("/user/:id/manage/renewal-reminder/electrical", function(req,res){
+    var page = "Electrical Safety Renewal";
+    if(req.user.id == req.params.id){
+        User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("./renewals/electrical.ejs", { property: founduser.properties, page:page });
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
+})
+
+router.get("/user/:id/manage/renewal-reminder/insurance", function(req,res){
+    var page = "Insurance Renewal";
+    if(req.user.id == req.params.id){
+        User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("./renewals/insurance.ejs", { property: founduser.properties, page:page });
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
+})
+
 //Route for getting the manage page for property - Middleware (DONE)
 
 router.get("/user/:id/manage/:propid", middleware.isLoggedIn, function (req, res) {

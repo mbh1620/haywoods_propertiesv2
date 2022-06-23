@@ -1,0 +1,84 @@
+<% include ../partials/header.ejs %>
+    <link rel="stylesheet" href="../../../../style2.css">
+    <link href="../../../../sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Landlord Dashboard sidebar -->
+    <% include ../partials/landlord-dashboard.ejs %>
+
+
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Begin Page Content -->
+                <div class="container-fluid" style="margin-top:20px;">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Property Insurance Renewal</h1>
+                    <p class="mb-4"></p>
+
+                    <!-- Content Row -->
+                    <div class="row">
+
+                        <div class="col-xl-10 col-lg-7 container-fluid">
+
+                            <!-- Area Chart -->
+                            <div class="card shadow mb-4" style="height:1000px">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Property Insurance Renewal</h6>
+                                </div>
+                                <div class="card-body" style="height:550px;">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Property</th>
+                                                <th scope="col">Gas Safety Certificate Done</th>
+                                                <th scope="col">Gas Safety Certificate Date Done</th>
+                                                <th scope="col">Next Renewal Date</th>
+                                                <th scope="col">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% for(var i=0; i < property.length;i++){ %>
+                                                <tr>
+                                                    <th scope="row">
+                                                        <%= property[i].name %>
+                                                    </th>
+                                                    <td scope="row" style="text-align:center"><input type="checkbox"></td>
+                                                    <td scope="row" style="text-align:center"><input type="date" readonly></td>
+                                                    <td scope="row" style="text-align:center"><input type="date" value="<%=property[i].propertyInsuranceRenewal%>" readonly></td>
+                                                    <td class="statusBoxes" scope="row" style="text-align:center;background-color: greenyellow;color:black"><%= property[i].propertyInsuranceStatus %></td>
+                                                </tr>
+                                                <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.container-fluid -->
+
+                </div>
+                <!-- End of Main Content -->
+            </div>
+        </div>
+
+
+
+        <% include ../partials/footer.ejs %>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script>
+                for(var i = 0; i < $('.statusBoxes').length; i++){
+                    console.log("test")
+                    console.log($('.statusBoxes').eq(i).html())
+                    //for every property
+                    if($('.statusBoxes').eq(i).html() == "Completed"){
+                        $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: greenyellow;color:black")
+                    } else if ($('.statusBoxes').eq(i).html() == "Due for Renewal"){
+                        $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: yellow;color:black")
+                    } else if ($('.statusBoxes').eq(i).html() == "Past Deadline! Needs Renewing Now!") {
+                        $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: red;color:black")
+                    }
+                }
+            </script>

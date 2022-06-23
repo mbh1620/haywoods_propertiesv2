@@ -81,6 +81,7 @@ var upload = multer({ storage: storage });
 var Property = require("../models/property");
 var User = require("../models/user");
 var Enquiry = require("../models/enquiry");
+const property = require('../models/property');
 
 //INDEX ROUTE
 
@@ -90,7 +91,7 @@ router.get("/properties", function (req, res) {
         if (err) {
             console.log(err);
         } else {
-            res.render("properties.ejs", { properties: allProperties, page: page});
+            res.render("properties.ejs", { properties: allProperties, page: page });
         }
     })
 })
@@ -99,7 +100,7 @@ router.get("/properties", function (req, res) {
 
 router.get("/properties/new", middleware.isLoggedIn, function (req, res) {
     var page = "Create a new Property"
-    res.render("new_properties.ejs", {page:page});
+    res.render("new_properties.ejs", { page: page });
 })
 
 //CREATE ROUTE
@@ -209,11 +210,11 @@ router.post("/properties/new", createNewProperty, upload_mult.array('images', 5)
                                                 if (err) {
                                                     console.log(err);
                                                 } else {
-                                                    if(fs.existsSync("uploads/" + req.property._id + "/") && files.length > 0){
+                                                    if (fs.existsSync("uploads/" + req.property._id + "/") && files.length > 0) {
                                                         sharp("uploads/" + req.property._id + "/" + files[0]).resize({ width: 650 }).toFile("uploads/" + req.property._id + "/thumbnails/resized_for_share.png")
-                                                        .then(() => {
-                                                            res.redirect("/properties");
-                                                        })
+                                                            .then(() => {
+                                                                res.redirect("/properties");
+                                                            })
                                                     } else {
                                                         res.redirect('/properties')
                                                     }
@@ -244,13 +245,13 @@ router.get("/properties/:id", middleware.isLoggedIn, function (req, res) {
                     console.log(err);
                     res.render("show.ejs", { property: foundProperty, images: images })
                 }
-                if(files != undefined){
+                if (files != undefined) {
                     for (const file of files) {
                         if (files !== undefined && !fs.lstatSync("./uploads/" + req.params.id + "/" + file).isDirectory()) {
                             images.push(file);
                         }
                     }
-                } 
+                }
                 res.render("show.ejs", { property: foundProperty, images: images })
             })
         }
@@ -259,11 +260,11 @@ router.get("/properties/:id", middleware.isLoggedIn, function (req, res) {
 
 //CREATE ENQUIRY ROUTE
 
-router.get("/properties/:id/enquire", middleware.isLoggedIn, function (req,res){
-    res.render("enquire.ejs", {propertyId: req.params.id});
+router.get("/properties/:id/enquire", middleware.isLoggedIn, function (req, res) {
+    res.render("enquire.ejs", { propertyId: req.params.id });
 })
 
-router.post("/properties/:id/enquire/send", middleware.isLoggedIn, function(req,res){
+router.post("/properties/:id/enquire/send", middleware.isLoggedIn, function (req, res) {
 
     //Create a new enquiry and attach to the property
     //Will also need to add some security such as limit one enquiry per user and sanitization
@@ -272,11 +273,11 @@ router.post("/properties/:id/enquire/send", middleware.isLoggedIn, function(req,
     var number_Occupants = 0;
     var pets = false;
     var date = Date.now();
-    
-    User.findById(req.user._id, function(err, foundUser){
-        if(err){
+
+    User.findById(req.user._id, function (err, foundUser) {
+        if (err) {
             console.log(err);
-        }else{
+        } else {
             var enquiry = {
                 User: foundUser,
                 Title: title,
@@ -289,10 +290,10 @@ router.post("/properties/:id/enquire/send", middleware.isLoggedIn, function(req,
                     id: req.params.id
                 }
             }
-            Enquiry.create(enquiry, function(err, newEnquiry){
-                if(err){
+            Enquiry.create(enquiry, function (err, newEnquiry) {
+                if (err) {
                     console.log(err);
-                }else{
+                } else {
                     Property.findById(req.params.id, function (err, updatedProperty) {
                         if (err) {
                             console.log("error has occurred");
@@ -308,18 +309,96 @@ router.post("/properties/:id/enquire/send", middleware.isLoggedIn, function(req,
     })
 })
 
-router.get("/properties/:id/enquiry/:enquiryId/view", middleware.isLoggedIn, function(req,res){
-    Enquiry.findById(req.params.enquiryId, function(err,foundEnquiry){
-        if(err){
+router.get("/properties/:id/enquiry/:enquiryId/view", middleware.isLoggedIn, function (req, res) {
+    Enquiry.findById(req.params.enquiryId, function (err, foundEnquiry) {
+        if (err) {
             console.log(err)
         } else {
-            Property.findById(req.params.id, function(err, foundProperty){
-                if(err){
+            Property.findById(req.params.id, function (err, foundProperty) {
+                if (err) {
                     console.log(err)
-                } else{
-                    res.render("viewEnquiry.ejs", {enquiry:foundEnquiry, property: foundProperty});
+                } else {
+                    res.render("viewEnquiry.ejs", { enquiry: foundEnquiry, property: foundProperty });
                 }
             })
+        }
+    })
+})
+
+//PROPERTY RENEWAL REMINDER ROUTES
+//Reminder routes are all AJAX calls
+router.post("/properties/:id/gasReminder", function (req, res) {
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            foundProperty.gasSafetyRenewal = req.body.gasDate
+            foundProperty.gasSafetyStatus = calculateStatus(req.body.gasDate)
+            foundProperty.save();
+            res.sendStatus(200);
+        }
+    })
+})
+
+router.post("/properties/:id/gasCompletion", function(req,res){
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            foundProperty.gasSafetyCompletion = req.body.gasCompletion
+            foundProperty.save();
+            res.sendStatus(200);
+        }
+    })
+})
+
+router.post("/properties/:id/electricalReminder", function (req, res) {
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            foundProperty.electricalSafetyRenewal = req.body.electricalDate
+            foundProperty.electricalSafetyStatus = calculateStatus(req.body.electricalDate)
+            foundProperty.save();
+            res.sendStatus(200);
+        }
+    })
+
+})
+
+router.post("/properties/:id/electricalCompletion", function(req,res){
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            foundProperty.electricalSafetyCompletion = req.body.electricalCompletion
+            foundProperty.save();
+            res.sendStatus(200);
+        }
+    })
+})
+
+router.post("/properties/:id/insuranceReminder", function (req, res) {
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            foundProperty.propertyInsuranceRenewal = req.body.insuranceDate
+            foundProperty.propertyInsuranceStatus = calculateStatus(req.body.insuranceDate)
+            foundProperty.save();
+            res.sendStatus(200);
+        }
+    })
+})
+
+router.post("/properties/:id/insuranceCompletion", function(req,res){
+    Property.findById(req.params.id, function (err, foundProperty) {
+        if (err) {
+            console.log("error has occurred");
+        } else {
+            foundProperty.propertyInsuranceCompletion = req.body.insuranceCompletion
+            foundProperty.save();
+            res.sendStatus(200);
         }
     })
 })
@@ -451,7 +530,7 @@ router.post("/properties/:id/photo", middleware.isLoggedIn, findProp, upload_mul
                 images.push(file);
             }
         }
-        res.send({images: images});
+        res.send({ images: images });
         res.end('{"success" : "Updated Successfully", "status" : 200}');
         console.log("uploaded");
     })
@@ -469,5 +548,28 @@ router.delete("/properties/:id/photo/:photoId", middleware.isLoggedIn, function 
 // router.put("/properties/:id/photo/reorder", middleware.isLoggedIn, function(req,res){
 
 // })
+
+function calculateStatus(renewalDateInput) {
+    var renewalDate = new Date(renewalDateInput)
+    var todaysDate = new Date()
+
+    var status;
+
+    var difference_in_millis = renewalDate.getTime() - todaysDate.getTime();
+    var difference_in_days = Math.ceil(difference_in_millis / (1000 * 3600 * 24));
+
+    if (difference_in_days <= 30 && difference_in_days > 0) {
+        //Change Status to "Due for renewal"
+        status = "Due for Renewal"
+    } else if (difference_in_days <= 0) {
+        //Change Status to "Past Deadline! needs renewing now!"
+        status = "Past Deadline! Needs Renewing Now!"
+    } else {
+        //Change Status to "Completed"
+        status = "Completed"
+    }
+    //Work out status
+    return status
+}
 
 module.exports = router;

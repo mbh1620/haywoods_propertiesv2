@@ -46,9 +46,20 @@ var propertySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Enquiry"
     }],
-    gasSafety: Date,
-    electricalSafety: Date,
-    propertyInsurance: Date,
+    gasSafetyRenewal: String,
+    gasSafetyCompleted: Boolean,
+    gasSafetyCompletedDate: String,
+    gasSafetyStatus: String,
+    
+    electricalSafetyRenewal: String,
+    electricalSafetyCompleted: Boolean,
+    electricalSafetyCompletedDate: String,
+    electricalSafetyStatus: String,
+
+    propertyInsuranceRenewal: String,
+    propertyInsuranceCompleted: Boolean,
+    propertyInsuranceCompletedDate: String,
+    propertyInsuranceStatus: String
 });
 
 module.exports = mongoose.model("Property", propertySchema);

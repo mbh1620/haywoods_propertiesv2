@@ -1,322 +1,438 @@
 <% include ./partials/header.ejs %>
 
-<link rel="stylesheet" href="/../../style3.css">
+  <link rel="stylesheet" href="/../../style3.css">
 
 
-<div class="container" style="margin-bottom:50px;margin-top:50px">
-  <h2><%= property.name %> </h2>
+  <div class="container" style="margin-bottom:50px;margin-top:50px">
+    <h2>
+      <%= property.name %>
+    </h2>
 
-  <img src="../../../uploads/<%= property._id %>/<%= images[0] %>" class="d-block w-25" alt="...">
-  <a style="padding-top:20px" href="/user/<%=currentUser._id%>/manage"> ← Back to manage panel</a>
-</div>
+    <img src="../../../uploads/<%= property._id %>/<%= images[0] %>" class="d-block w-25" alt="...">
+    <a style="padding-top:20px" href="/user/<%=currentUser._id%>/manage"> ← Back to manage panel</a>
+  </div>
 
-<div class="container">
+  <div class="container">
 
-  <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
-        aria-selected="true">Tenant Info</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-        aria-selected="false">Property Info</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages"
-        aria-selected="false">Rent</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings"
-        aria-selected="false">Enquiries</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="maintenance-tab" data-toggle="tab" href="#maintenance" role="tab"
-        aria-controls="maintenance" aria-selected="false">Maintenance</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="reminders-tab" data-toggle="tab" href="#reminders" role="tab"
-        aria-controls="reminders" aria-selected="false">Reminders</a>
-    </li>
-  </ul>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+          aria-selected="true">Tenant Info</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+          aria-selected="false">Property Info</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages"
+          aria-selected="false">Rent</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings"
+          aria-selected="false">Enquiries</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="maintenance-tab" data-toggle="tab" href="#maintenance" role="tab"
+          aria-controls="maintenance" aria-selected="false">Maintenance</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="reminders-tab" data-toggle="tab" href="#reminders" role="tab" aria-controls="reminders"
+          aria-selected="false">Reminders</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="propertyExpenses-tab" data-toggle="tab" href="#propertyExpenses" role="tab"
+          aria-controls="reminders" aria-selected="false">Property Expenses</a>
+      </li>
+    </ul>
 
-  <div class="tab-content">
-    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
-      <div class="jumbotron">
-        <div class="container">
-          <h4 style="margin-top:-20px;margin-bottom:20px;">Current Tenants</h4>
-          <% for(var i = 0; i < property.Tenants.length; i++) { %>
-          <li class="list-group-item list-group-item-action w-50">
+    <div class="tab-content">
+      <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="jumbotron">
+          <div class="container">
+            <h4 style="margin-top:-20px;margin-bottom:20px;">Current Tenants</h4>
+            <% for(var i=0; i < property.Tenants.length; i++) { %>
+              <li class="list-group-item list-group-item-action w-50">
 
-            <p style="margin-top:10px;">First Name: <%= property.Tenants[i].firstname %></p>
-            <p>Last Name: <%= property.Tenants[i].lastname %></p>
-            <p>Email: <%= property.Tenants[i].email %></p>
-            <p>Animals: </p>
-            <p>Number: <%= property.Tenants[i].mobile_number %></p>
-            <p>Moved in: <%= property.Tenants[i].date_moved_in%></p>
-            <form style="display:inline-block" action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE"
-              method="POST">
-              <input type="hidden" value="<%= currentUser._id%>" name="userId">
-              <button class="btn btn-danger">Remove Tenant</button>
-            </form>
-            <button style="display:inline" class="btn btn-success" onclick="moveOut()">Move Out</button>
+                <p style="margin-top:10px;">First Name: <%= property.Tenants[i].firstname %>
+                </p>
+                <p>Last Name: <%= property.Tenants[i].lastname %>
+                </p>
+                <p>Email: <%= property.Tenants[i].email %>
+                </p>
+                <p>Animals: </p>
+                <p>Number: <%= property.Tenants[i].mobile_number %>
+                </p>
+                <p>Moved in: <%= property.Tenants[i].date_moved_in%>
+                </p>
+                <form style="display:inline-block"
+                  action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE"
+                  method="POST">
+                  <input type="hidden" value="<%= currentUser._id%>" name="userId">
+                  <button class="btn btn-danger">Remove Tenant</button>
+                </form>
+                <button style="display:inline" class="btn btn-success" onclick="moveOut()">Move Out</button>
 
-          </li>
-          <% } %>
-          <button style="margin-top:20px" onclick="showtenantform()" class="btn btn-primary">Add Tenant</button>
+              </li>
+              <% } %>
+                <button style="margin-top:20px" onclick="showtenantform()" class="btn btn-primary">Add Tenant</button>
 
-          <div class="container w-50">
-            <form id="tenantform" style="display:none" action="/properties/<%=property._id%>/new-tenant" method="POST">
-              <label class="">Firstname</label>
-              <input class="form-control" type="text" name="firstname" placeholder="Firstname">
-              <label class="">Lastname</label>
-              <input class="form-control" type="text" name="lastname" placeholder="Lastname">
-              <label class="">Email</label>
-              <input class="form-control" type="text" name="email" placeholder="Email">
-              <label class="">Mobile Number</label>
-              <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
-              <label class="">Home Number</label>
-              <input class="form-control" type="text" name="house_number" placeholder="Home Number">
-              <label class="">Move In Date</label>
-              <input class="form-control" type="date" name="date_moved_in" placeholder="Date Moved In">
-              <input type="hidden" value="<%= currentUser._id%>" name="userId">
-              <input class="form-control" class="btn btn-primary" type="submit">
+                <div class="container w-50">
+                  <form id="tenantform" style="display:none" action="/properties/<%=property._id%>/new-tenant"
+                    method="POST">
+                    <label class="">Firstname</label>
+                    <input class="form-control" type="text" name="firstname" placeholder="Firstname">
+                    <label class="">Lastname</label>
+                    <input class="form-control" type="text" name="lastname" placeholder="Lastname">
+                    <label class="">Email</label>
+                    <input class="form-control" type="text" name="email" placeholder="Email">
+                    <label class="">Mobile Number</label>
+                    <input class="form-control" type="text" name="mobile_number" placeholder="Mobile Number">
+                    <label class="">Home Number</label>
+                    <input class="form-control" type="text" name="house_number" placeholder="Home Number">
+                    <label class="">Move In Date</label>
+                    <input class="form-control" type="date" name="date_moved_in" placeholder="Date Moved In">
+                    <input type="hidden" value="<%= currentUser._id%>" name="userId">
+                    <input class="form-control" class="btn btn-primary" type="submit">
+                  </form>
+                </div>
+
+
+          </div>
+          <h4 style="margin-top:20px">Tenant History</h4>
+          <select class='form-control' style="width:500px;white-space: pre;" size="10">
+            <option>Tenant 1</option>
+            <option>Tenant 2</option>
+            <option>Tenant 3</option>
+            <option>Jannet 16/07/20 N/A</option>
+            <option>Jane 16/07/20 N/A</option>
+          </select>
+
+
+        </div>
+      </div>
+      <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="jumbotron">
+          <h2 style="margin-top:-30px;margin-bottom:20px;">Property Information</h2>
+          <p>Zoopla ID:</p>
+          <input style="margin-bottom:20px;" class="form-control w-25" value="<%= property.zoopla_id %>" type="text">
+          <p>Zoopla Link:</p>
+          <a href="https://www.zoopla.co.uk/property/uprn/<%=property.zoopla_id%>/">https://www.zoopla.co.uk/property/uprn/
+            <%=property.zoopla_id%>/</a>
+
+          <p style="margin-top:20px">Property type:</p>
+          <select style="margin-bottom:20px;" class="form-control w-25" id="property-type" name="property-type">
+            <option value="Terraced">Terraced</option>
+            <option value="End of Terrace">End of Terrace</option>
+            <option value="Semi-detached">Semi-detached</option>
+            <option value="Detached">Detached</option>
+          </select>
+          <p>Price bought: £120000</p>
+
+          <form action="/user/<%=currentUser._id%>/manage/<%=property._id%>?_method=PUT" method="POST">
+
+
+          </form>
+          <canvas style="background-color:white;margin-bottom:20px" id="myChart"></canvas>
+          Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect"
+            onchange="">
+          <button style="margin-top:20px;" class="btn btn-primary" onclick="showTable()">Show Table</button>
+          <button style="margin-top:20px;display:none;" id="csvbutton" class="btn btn-warning" onclick="">Create
+            CSV/Spreadsheet</button>
+          <table style="display:none;margin-top:20px;" id="valueTable">
+            <tr>
+              <th></th>
+              <% for(var i=0; i < property.estimatedValue.length/12 ; i++) { %>
+
+                <th>
+                  <%= property.estimatedValue[i].year %>
+                </th>
+
+                <% } %>
+            </tr>
+            <% for(var i=0; i < property.estimatedValue.length ; i++) { %>
+              <tr>
+                <td>
+                  <%= property.estimatedValue[i].month %>
+                </td>
+                <td>
+                  <%= property.estimatedValue[i].price %>
+                </td>
+              </tr>
+              <% } %>
+          </table>
+
+
+        </div>
+      </div>
+      <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+        <div class="jumbotron">
+          <h3>Rent</h3>
+          <p>Rent amount PCM: £650</p>
+          <input class="form-control w-50" style="margin-top:20px;display:inline-block;" name="rentamount"
+            value="<%=property.price%>" id="rentamount" type="number" placeholder="Rent per month">
+          <canvas style="background-color:white;margin-top:20px;margin-bottom:20px;" id="myRentChart"></canvas>
+          Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent"
+            onchange="">
+
+
+        </div>
+      </div>
+      <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="jumbotron">
+          <div class="container">
+            <% if(property.Enquiries !=undefined) {%>
+              <% if(property.Enquiries.length> 0) {%>
+                <% for (var i=0; i < property.Enquiries.length; i++) { %>
+                  <li onclick="showEnquiry('<%= property._id %>','<%= property.Enquiries[i]._id %>')"
+                    class="list-group-item list-group-item-action" style="height:55px">
+                    <p style="display: inline-block;">
+                      <%= property.Enquiries[i].Title %>
+                    </p>
+                    <p style="float:right;display: inline-block;">
+                      <%= property.Enquiries[i].User.username %><button onclick="deleteEnquiry()"
+                          class="btn btn-sm btn-danger" style="margin-left:20px">Delete</button>
+                    </p>
+                  </li>
+                  <%}} else {%>
+                    <p>Currently no enquiries</p>
+                    <% }} else { %>
+                      <p>Currently no enquiries</p>
+                      <% } %>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
+        <div class="jumbotron">
+
+          <div class="container">
+            <ul style="padding:0;">
+              <% for(var i=0; i < property.maintenance_item.length ; i++) { %>
+
+                <li id='<%=i%>' onclick="showJobInfo()" class="list-group-item list-group-item-action" <%
+                  if(property.maintenance_item[i].Done==true){ %>style="text-decoration-line: line-through;" <%}%> ><%=
+                      property.maintenance_item[i].Name %><span style="float:right;margin-right:30px">
+                        <%= property.maintenance_item[i].Finish_Date %><input type="hidden" id="other"
+                            name="property.maintenance_item[i][done]" value="<%=property.maintenance_item[i].Done%>">
+                          <input id="value_input-<%=i%>" type="checkbox" onclick="the_switch('<%=i%>')" <%
+                            if(property.maintenance_item[i].Done==true){ %>checked<%}%>><button id="<%=i%>-delete"
+                              style="float:right; margin-left:20px" onclick="deleteJob('<%=i%>')"
+                              class="btn btn-sm btn-danger">Delete</button>
+                      </span></li>
+
+                <% } %>
+            </ul>
+            <button onclick="showInput()" class="btn btn-primary">Add new Job</button>
+
+            <form class="form-group" style="display:none;" id="jobId"
+              action="/user/<%=currentUser._id%>/properties/<%= property._id%>/job?_method=PUT" method="POST">
+              <div class="container w-50">
+                <input class="form-control w-50" style="margin-top:20px;display:inline-block;" name="jobname"
+                  id="jobIdname" type="text" placeholder="Name">
+                <input class="form-control w-25" style="margin-top:20px;display:inline;float:right;" name="jobdate"
+                  id="jobDate" type="date" placeholder="Date">
+                <textarea class="form-control" style="margin-top:20px;" name="jobbody" id="jobBody" rows="3"></textarea>
+                <input class="btn btn-primary" style="margin-top: 20px;" type="submit">
+              </div>
             </form>
           </div>
-
-
         </div>
-        <h4 style="margin-top:20px">Tenant History</h4>
-        <select class='form-control' style="width:500px;white-space: pre;" size="10">
-          <option>Patrick Kovac 16/07/20 N/A</option>
-          <option>John 16/07/20 N/A</option>
-          <option>Dave 16/07/20 N/A</option>
-          <option>Jannet 16/07/20 N/A</option>
-          <option>Jane 16/07/20 N/A</option>
-        </select>
-
 
       </div>
-    </div>
-    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-      <div class="jumbotron">
-        <h2 style="margin-top:-30px;margin-bottom:20px;">Property Information</h2>
-        <p>Zoopla ID:</p>
-        <input style="margin-bottom:20px;" class="form-control w-25" value="<%= property.zoopla_id %>" type="text">
-        <p>Property type: Semi-detached</p>
-        <select style="margin-bottom:20px;" class="form-control w-25" id="property-type" name="property-type">
-          <option value="Terraced">Terraced</option>
-          <option value="End of Terrace">End of Terrace</option>
-          <option value="Semi-detached">Semi-detached</option>
-          <option value="Detached">Detached</option>
-        </select>
-        <p>Price bought: £120000</p>
+      <div class="tab-pane" id="reminders" role="tabpanel" aria-labelledby="reminders-tab">
+        <div class="jumbotron">
 
-        <form action="/user/<%=currentUser._id%>/manage/<%=property._id%>?_method=PUT" method="POST">
+          <div class="container">
+            <div style="height:200px;width:45%;margin:0 auto;">
+              <h3>Gas Safety</h3>
+              <div style="height:150px;display:inline-block;margin-right:100px">
+                <label style="margin-top:30px">Completion Date:</label>
+                <input class="form-control" id="gasCompletedDate" style="width:auto" type="date"
+                  value="<%= property.gasSafetyCompletion %>">
 
+              </div>
+              <div style="height:150px;display:inline-block">
+                <label style="margin-top:30px">Next Renewal Date:</label>
+                <input class="form-control" id="gasDate" style="width:auto"
+                  onchange="updateGasRenewalDate('<%= property._id %>')" type="date"
+                  value="<%= property.gasSafetyRenewal %>">
 
-        </form>
-        <canvas style="background-color:white;margin-bottom:20px" id="myChart"></canvas>
-        Select Year to Display: <input style="display:block" type="number" id="yearselect" name="yearselect" onchange="">
-        <button style="margin-top:20px;" class="btn btn-primary" onclick="showTable()">Show Table</button>
-        <button style="margin-top:20px;display:none;" id="csvbutton" class="btn btn-warning" onclick="">Create
-          CSV/Spreadsheet</button>
-        <table style="display:none;margin-top:20px;" id="valueTable">
-          <tr>
-            <th></th>
-            <% for(var i = 0; i < property.estimatedValue.length/12 ; i++) { %>
-
-            <th><%= property.estimatedValue[i].year %></th>
-
-            <% } %>
-          </tr>
-          <% for(var i = 0; i < property.estimatedValue.length ; i++) { %>
-          <tr>
-            <td><%= property.estimatedValue[i].month %></td>
-            <td><%= property.estimatedValue[i].price %></td>
-          </tr>
-          <% } %>
-        </table>
-
-
-      </div>
-    </div>
-    <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">
-      <div class="jumbotron">
-        <h3>Rent</h3>
-        <p>Rent amount PCM: £650</p>
-        <input class="form-control w-50" style="margin-top:20px;display:inline-block;" name="rentamount"
-          value="<%=property.price%>" id="rentamount" type="number" placeholder="Rent per month">
-        <canvas style="background-color:white;margin-top:20px;margin-bottom:20px;" id="myRentChart"></canvas>        
-        Select Year to Display: <input style="display:block" type="number" id="yearselectrent" name="yearselectrent" onchange="">
-
-
-      </div>
-    </div>
-    <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-      <div class="jumbotron">
-        <div class="container">
-        <% if(property.Enquiries != undefined) {%>
-        <% if(property.Enquiries.length > 0) {%>
-        <% for (var i = 0; i < property.Enquiries.length; i++) { %>
-          <li onclick="showEnquiry('<%= property._id %>','<%= property.Enquiries[i]._id %>')" class="list-group-item list-group-item-action" style="height:55px"><p style="display: inline-block;"><%= property.Enquiries[i].Title %></p><p style="float:right;display: inline-block;"><%= property.Enquiries[i].User.username %><button onclick="deleteEnquiry()" class="btn btn-sm btn-danger" style="margin-left:20px">Delete</button></p></li>
-        <%}} else {%>
-        <p>Currently no enquiries</p>
-        <% }} else { %>
-        <p>Currently no enquiries</p>
-        <% } %>
-      </div>
-      </div>
-    </div>
-    <div class="tab-pane" id="maintenance" role="tabpanel" aria-labelledby="maintenance-tab">
-      <div class="jumbotron">
-
-        <div class="container">
-          <ul style="padding:0;">
-            <% for(var i = 0; i < property.maintenance_item.length ; i++) { %>
-              
-                <li id='<%=i%>' onclick="showJobInfo()" class="list-group-item list-group-item-action" <% if(property.maintenance_item[i].Done==true){ %>style="text-decoration-line: line-through;" <%}%> ><%= property.maintenance_item[i].Name %><span
-                  style="float:right;margin-right:30px"><%= property.maintenance_item[i].Finish_Date %><input type="hidden" id="other" name="property.maintenance_item[i][done]" value="<%=property.maintenance_item[i].Done%>">
-                <input id="value_input-<%=i%>" type="checkbox" onclick="the_switch('<%=i%>')" <% if(property.maintenance_item[i].Done==true){ %>checked<%}%>><button id="<%=i%>-delete" style="float:right; margin-left:20px" onclick="deleteJob('<%=i%>')" class="btn btn-sm btn-danger">Delete</button></span></li>
-                  
-            <% } %>
-          </ul>
-          <button onclick="showInput()" class="btn btn-primary">Add new Job</button>
-          
-          <form class="form-group" style="display:none;" id="jobId"
-            action="/user/<%=currentUser._id%>/properties/<%= property._id%>/job?_method=PUT" method="POST">
-            <div class="container w-50">
-              <input class="form-control w-50" style="margin-top:20px;display:inline-block;" name="jobname"
-                id="jobIdname" type="text" placeholder="Name">
-              <input class="form-control w-25" style="margin-top:20px;display:inline;float:right;" name="jobdate"
-                id="jobDate" type="date" placeholder="Date">
-              <textarea class="form-control" style="margin-top:20px;" name="jobbody" id="jobBody" rows="3"></textarea>
-              <input class="btn btn-primary" style="margin-top: 20px;" type="submit">
+              </div>
             </div>
-          </form>
-        </div>
-      </div>
+
+            <div style="height:200px;width:45%;margin:0 auto;">
+            <h3>Electrical Safety</h3>
+            <div style="height:150px;display:inline-block;margin-right:100px">
+              <label style="margin-top:30px">Completion Date:</label>
+              <input class="form-control" id="gasCompletedDate" style="width:auto" type="date"
+                value="<%= property.gasSafetyCompletion %>">
+
+            </div>
+            <div style="height:150px;display:inline-block">
+            <label style="margin-top:30px">Next Renewal Date:</label>
+            <input class="form-control" style="width:auto" type="date" id="electricalDate" onchange="updateElectricalRenewalDate('<%= property._id %>')"
+              value="<%= property.electricalSafetyRenewal %>">
+            </div>
+            </div>
       
-    </div>
-    <div class="tab-pane" id="reminders" role="tabpanel" aria-labelledby="reminders-tab">
-      <div class="jumbotron">
+            <div style="height:200px;width:45%;margin:0 auto;">
+            <h3>Property Insurance</h3>
+            <div style="height:150px;display:inline-block;margin-right:100px">
+              <label style="margin-top:30px">Completion Date:</label>
+              <input class="form-control" id="gasCompletedDate" style="width:auto" type="date"
+                value="<%= property.gasSafetyCompletion %>">
 
-        <div class="container">
-          <h3>Gas Safety</h3>
-          <input class="form-control" style="width:auto" type="date">
-          <label>Active</label>
-          <input  type="checkbox">
-          <label>Completed</label>
-          <input  type="checkbox">
-          <label>Next Renewal Date</label>
-          <h3>Electrical Safety</h3>
-          <input class="form-control" style="width:auto" type="date">
-          <label>Active</label>
-          <input type="checkbox">
-          <h3>Property Insurance</h3>
-          <input class="form-control" style="width:auto" type="date">
-          <label>Active</label>
-          <input type="checkbox">
-          
+            </div>
+            <div style="height:150px;display:inline-block">
+            <label style="margin-top:30px">Next Renewal Date:</label>
+            <input class="form-control" style="width:auto" type="date" id="insuranceDate"
+              value="<%= property.propertyInsuranceRenewal %>" onchange="updateInsuranceRenewalDate('<%= property._id %>')">
+            </div>
+          </div>
+          </div>
         </div>
+
       </div>
-      
+      <div class="tab-pane" id="propertyExpenses" role="tabpanel" aria-labelledby="propertyExpenses-tab">
+        <div class="jumbotron">
+
+          <div class="container">
+            <h3>Property Expenses</h3>
+            <button class="btn btn-primary">Add New Expense</button>
+          </div>
+        </div>
+
+      </div>
+
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.js"
+      integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
+    <script>
+      function deleteJob(itemName) {
+        console.log(itemName)
+        $.post(
+          url = "/user/<%=currentUser._id%>/manage/<%= property._id%>/job/" + itemName + "/delete",
+          success = function () { console.log("deleted job") }
+        )
 
-  </div>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.js"
-              integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
-            <script>
-              function deleteJob(itemName){
-                console.log(itemName)
-                $.post(
-                  url="/user/<%=currentUser._id%>/manage/<%= property._id%>/job/"+itemName+"/delete",
-                  success=function(){console.log("deleted job")}
-                )
+      }
 
-              }
+      function showEnquiry(PropertyId, EnquiryId) {
+        console.log("/properties/" + PropertyId + "/enquiry/" + EnquiryId + "/view")
+        window.location = "/properties/" + PropertyId + "/enquiry/" + EnquiryId + "/view"
+      }
 
-              function showEnquiry(PropertyId, EnquiryId){
-                console.log("/properties/" + PropertyId + "/enquiry/" + EnquiryId + "/view")
-                window.location = "/properties/" + PropertyId + "/enquiry/" + EnquiryId + "/view"
-              }
+      function the_switch(itemName) {
+        if ($("#value_input-" + itemName).is(':checked')) {
+          $("#other").val("true");
+          $("#" + itemName).css("text-decoration-line", 'line-through');
+          //Call route to change job to completed
+          $.post(
+            url = "/user/<%=currentUser._id%>/manage/<%= property._id%>/jobupdate/" + itemName + "/completed",
+            success = function () { console.log("Updated Job Status") }
+          )
+        } else {
+          $("#other").val("false");
+          $("#" + itemName).css("text-decoration-line", 'none');
+          //Call route to change job to uncompleted
+          $.post(
+            url = "/user/<%=currentUser._id%>/manage/<%= property._id%>/jobupdate/" + itemName + "/notcompleted",
+            success = function () { console.log("Updated Job Status") }
+          )
+        }
+      }
 
-              function the_switch(itemName) {
-                if ($("#value_input-"+itemName).is(':checked')) {
-                  $("#other").val("true");
-                  $("#"+itemName).css("text-decoration-line", 'line-through');
-                  //Call route to change job to completed
-                  $.post(
-                    url="/user/<%=currentUser._id%>/manage/<%= property._id%>/jobupdate/"+itemName+"/completed",
-                    success=function(){console.log("Updated Job Status")}
-                  )
-                } else {
-                  $("#other").val("false");
-                  $("#"+itemName).css("text-decoration-line", 'none');
-                  //Call route to change job to uncompleted
-                  $.post(
-                    url="/user/<%=currentUser._id%>/manage/<%= property._id%>/jobupdate/"+itemName+"/notcompleted",
-                    success=function(){console.log("Updated Job Status")}
-                  )
-                }
-              }
+      function showJobInfo() {
+        // console.log("test");
+      }
 
-                function showJobInfo(){
-                  // console.log("test");
-                }
-  </script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script>
-    $(document).ready(function () {
-    $('#yearselect').val(new Date().getFullYear());
-    $('#yearselectrent').val(new Date().getFullYear());
-  });
+      function updateGasRenewalDate(propertyId) {
+        var date = $('#gasDate').val()
+        console.log(date)
+
+        $.post(
+          url = "/properties/" + propertyId + "/gasReminder",
+          { gasDate: date },
+          success = function () {
+            console.log("Success")
+          }
+        )
+      }
+
+      function updateElectricalRenewalDate(propertyId) {
+        var date = $('#electricalDate').val()
+        $.post(
+          url = "/properties/" + propertyId + "/electricalReminder",
+          { electricalDate: date },
+          success = function () {
+            console.log("Success")
+          }
+        )
+      }
+
+      function updateInsuranceRenewalDate(propertyId) {
+        var date = $('#insuranceDate').val()
+        $.post(
+          url = "/properties/" + propertyId + "/insuranceReminder",
+          { insuranceDate: date },
+          success = function () {
+            console.log("Success")
+          }
+        )
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $('#yearselect').val(new Date().getFullYear());
+        $('#yearselectrent').val(new Date().getFullYear());
+      });
 
 
 
-  //The data for the property estimated value
+      //The data for the property estimated value
 
-  var estimatedValueData = [<% for (var i = 0; i < property.estimatedValue.length; i++) { %>
+      var estimatedValueData = [<% for (var i = 0; i < property.estimatedValue.length; i++) { %>
                 //While the year is correct and month is Jan,Feb,etc....
                 <%if (property.estimatedValue[i].price != null) {%>
-    {
-      value:<%= property.estimatedValue[i].price %>,
-      month: '<%= property.estimatedValue[i].month %>',
-      year:<%= property.estimatedValue[i].year %>},
+        {
+          value:<%= property.estimatedValue[i].price %>,
+          month: '<%= property.estimatedValue[i].month %>',
+          year:<%= property.estimatedValue[i].year %>},
                 <%}%>
               <% } %>
               ]
 
 
 
-    $(function () {
-      $('#myTab li:last-child a').tab('show')
-    })
-  </script>
-  <script src="/scripts/valueGraphFuncs.js">
+      $(function () {
+        $('#myTab li:last-child a').tab('show')
+      })
+    </script>
+    <script src="/scripts/valueGraphFuncs.js">
   //===========================================
   //       Function for value graph
   //===========================================
-  </script>
-  <script>
-    
+    </script>
+    <script>
 
 
-    var chart2 = new Chart(ctxrent, {
-      // The type of chart we want to create
-      type: 'line',
 
-      // The data for our dataset
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        datasets: [{
-          fill: false,
-          label: 'Rent Paid',
-          lineTension: 0,
-          backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgb(255, 99, 132)',
-          data: [<% for(var i = 0; i<property.rentData.length; i++) { %>
+      var chart2 = new Chart(ctxrent, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+          datasets: [{
+            fill: false,
+            label: 'Rent Paid',
+            lineTension: 0,
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [<% for(var i = 0; i<property.rentData.length; i++) { %>
                   <%= property.rentData[i].price %>,
                   <% } %>
                 ]
@@ -328,27 +444,27 @@
       }
     });
 
-    function showInput() {
-      $("#jobId").toggle();
-    }
+      function showInput() {
+        $("#jobId").toggle();
+      }
 
-    function showtenantform() {
-      $("#tenantform").toggle();
-    }
+      function showtenantform() {
+        $("#tenantform").toggle();
+      }
 
-    function showTable() {
-      $("#valueTable").toggle();
-      $("#csvbutton").toggle();
-    }
+      function showTable() {
+        $("#valueTable").toggle();
+        $("#csvbutton").toggle();
+      }
 
-    
+
   //===========================================
   //       Function for total rent graph
   //===========================================
 
-  </script>
-</div>
+    </script>
+  </div>
 
 
 
-<% include ./partials/footer.ejs %>
+  <% include ./partials/footer.ejs %>
