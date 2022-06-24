@@ -64,6 +64,8 @@
                 </p>
                 <p>Moved in: <%= property.Tenants[i].date_moved_in%>
                 </p>
+                <p>Contract: 6 month <a href="#">Contract</a></p>
+                <p>Contract End Date: 16/07/2022</p>
                 <form style="display:inline-block"
                   action="/properties/<%=property._id%>/new-tenant/<%=property.Tenants[i]._id%>?_method=DELETE"
                   method="POST">
@@ -292,12 +294,27 @@
         </div>
 
       </div>
-      <div class="tab-pane" id="propertyExpenses" role="tabpanel" aria-labelledby="propertyExpenses-tab">
+      <div class="tab-pane" id="propertyExpenses" role="tabpanel" aria-labelledby="propertyExpenses-tab" >
         <div class="jumbotron">
 
           <div class="container">
             <h3>Property Expenses</h3>
-            <button class="btn btn-primary">Add New Expense</button>
+            <button class="btn btn-primary" onclick="showExpensesForm()">Add New Expense</button>
+            <div style="height:auto;width:250px;margin: 0 auto">
+            <form id="expensesForm" style="height:400px;display:block;width:auto;display: none;">
+              <label for="expenseName">Name</label>
+              <input id="expenseName" class="form-control w-100" type="text" placeholder="Name">
+              <label for="expenseDetail">Detail</label>
+              <input id="expenseDetail" class="form-control w-100" type="text" placeholder="Detail">
+              <label for="expenseType">Type</label>
+              <input id="expenseType" class="form-control w-100" type="text" placeholder="Type">
+              <label for="expenseDate">Date</label>
+              <input id="expenseDate" class="form-control w-100" type="date">
+              <label for="expenseAmount">Amount £'s</label>
+              <input id="expenseAmount" class="form-control w-100" type="number">
+              <submit class="btn btn-primary" style="margin-top:20px">Add Expense</submit>
+            </form>
+          </div>
           </div>
         </div>
 
@@ -378,6 +395,10 @@
             console.log("Success")
           }
         )
+      }
+
+      function showExpensesForm() {
+        $("#expensesForm").toggle();
       }
     </script>
 

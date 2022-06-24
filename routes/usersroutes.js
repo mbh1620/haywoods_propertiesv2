@@ -205,6 +205,21 @@ router.get("/user/:id/manage/renewal-reminder/insurance", function(req,res){
     }
 })
 
+router.get("/user/:id/manage/renewal-reminder/all", function(req,res){
+    var page = "All Renewal";
+    if(req.user.id == req.params.id){
+        User.findById(req.params.id).populate('properties').exec(function (err, founduser) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.render("./renewals/all.ejs", { property: founduser.properties, page:page });
+            }
+        })
+    } else {
+        res.redirect("/error");
+    }
+})
+
 //Route for getting the manage page for property - Middleware (DONE)
 
 router.get("/user/:id/manage/:propid", middleware.isLoggedIn, function (req, res) {

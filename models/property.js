@@ -59,7 +59,14 @@ var propertySchema = new mongoose.Schema({
     propertyInsuranceRenewal: String,
     propertyInsuranceCompleted: Boolean,
     propertyInsuranceCompletedDate: String,
-    propertyInsuranceStatus: String
+    propertyInsuranceStatus: String,
+
+    propertyExpenses: [{
+        Name: String,
+        Detail: String,
+        Date: String,
+        Amount: String
+    }]
 });
 
 module.exports = mongoose.model("Property", propertySchema);

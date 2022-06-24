@@ -79,6 +79,8 @@
                         $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: yellow;color:black")
                     } else if ($('.statusBoxes').eq(i).html() == "Past Deadline! Needs Renewing Now!") {
                         $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: red;color:black")
-                    }
+                    } else if ($('.statusBoxes').eq(i).html() == "") {
+                    $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: white;color:black")
+            }
                 }
             </script>

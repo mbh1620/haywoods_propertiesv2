@@ -14,7 +14,7 @@
                 <div class="container-fluid" style="margin-top:20px;">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Electrical Safety Renewal</h1>
+                    <h1 class="h3 mb-2 text-gray-800">Renewal</h1>
                     <p class="mb-4"></p>
 
                     <!-- Content Row -->
@@ -25,17 +25,16 @@
                             <!-- Area Chart -->
                             <div class="card shadow mb-4" style="height:1000px">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Electrical Safety Renewal</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">All Renewal</h6>
                                 </div>
                                 <div class="card-body" style="height:550px;">
                                     <table class="table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">Property</th>
-                                                <th scope="col">Electrical Safety Certificate Done</th>
-                                                <th scope="col">Electrical Safety Certificate Completed</th>
-                                                <th scope="col">Next Renewal Date</th>
-                                                <th scope="col">Status</th>
+                                                <th scope="col">Gas Safety Status</th>
+                                                <th scope="col">Electrical Safety Status</th>
+                                                <th scope="col">Property Insurance Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -44,10 +43,10 @@
                                                     <th scope="row">
                                                         <%= property[i].name %>
                                                     </th>
-                                                    <td scope="row" style="text-align:center"><input type="checkbox"></td>
-                                                    <td scope="row" style="text-align:center"><input type="date" readonly></td>
-                                                    <td scope="row" style="text-align:center"><input type="date" value="<%=property[i].electricalSafetyRenewal%>" readonly></td>
-                                                    <td scope="row" class="statusBoxes" id="statusBox<%=i%>" style="text-align:center;background-color: greenyellow;color:black"><%= property[i].electricalSafetyStatus %></td>
+                                                    
+                                                    <td class="statusBoxes" scope="row" style="text-align:center;background-color: greenyellow;color:black"><%= property[i].gasSafetyStatus %></td>
+                                                    <td class="statusBoxes" scope="row" style="text-align:center;background-color: greenyellow;color:black"><%= property[i].electricalSafetyStatus %></td>
+                                                    <td class="statusBoxes" scope="row" style="text-align:center;background-color: greenyellow;color:black"><%= property[i].propertyInsuranceStatus %></td>
                                                 </tr>
                                                 <% } %>
                                         </tbody>
@@ -69,22 +68,18 @@
             <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
             <script>
-
-            for(var i = 0; i < $('.statusBoxes').length; i++){
-
-                console.log("test")
-                console.log($('.statusBoxes').eq(i).html())
-                //for every property
-                if($('.statusBoxes').eq(i).html() == "Completed"){
-                    $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: greenyellow;color:black")
-                } else if ($('.statusBoxes').eq(i).html() == "Due for Renewal"){
-                    $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: yellow;color:black")
-                } else if ($('.statusBoxes').eq(i).html() == "Past Deadline! Needs Renewing Now!") {
-                    $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: red;color:black")
-                } else if ($('.statusBoxes').eq(i).html() == "") {
+                for(var i = 0; i < $('.statusBoxes').length; i++){
+                    console.log("test")
+                    console.log($('.statusBoxes').eq(i).html())
+                    //for every property
+                    if($('.statusBoxes').eq(i).html() == "Completed"){
+                        $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: greenyellow;color:black")
+                    } else if ($('.statusBoxes').eq(i).html() == "Due for Renewal"){
+                        $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: yellow;color:black")
+                    } else if ($('.statusBoxes').eq(i).html() == "Past Deadline! Needs Renewing Now!") {
+                        $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: red;color:black")
+                    } else if ($('.statusBoxes').eq(i).html() == "") {
                     $('.statusBoxes').eq(i).attr('style',"text-align:center;background-color: white;color:black")
-            }
-        }
-
-
+                    }
+                }
             </script>
