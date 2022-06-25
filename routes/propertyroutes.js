@@ -403,6 +403,25 @@ router.post("/properties/:id/insuranceCompletion", function(req,res){
     })
 })
 
+router.post("/properties/:id/addExpense", function(req,res){
+    var userId = req.body.user
+    Property.findById(req.params.id, function(err, foundProperty){
+        if(err) {
+            console.log(err)
+        } else {
+            foundProperty.propertyExpenses.push({
+                Name: req.body.expenseName,
+                Detail: req.body.expenseDetail,
+                Type: req.body.expenseType,
+                Date: new Date(),
+                Amount: req.body.expenseAmount
+            })
+            foundProperty.save()
+            res.redirect("/user/"+userId+"/manage/"+req.params.id);
+        }
+    })
+})
+
 //EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE) 
 router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {
