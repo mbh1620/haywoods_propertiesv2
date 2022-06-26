@@ -74,12 +74,11 @@
               <h6 class="m-0 font-weight-bold text-primary">Yearly Expenses</h6>
             </div>
             <!-- Card Body -->
-            <div class="card-body">
-              <div class="chart-pie pt-4">
-                <canvas id="myPieChart"></canvas>
+            <div class="card-body" style="height:auto">
+              <div class="chart-pie pt-4" style="height:auto">
+                <canvas style="height:250px" id="myDonutChart"></canvas>
               </div>
               <hr>
-              Styling for the donut chart can be found in the <code>/js/demo/chart-pie-demo.js</code> file.
             </div>
           </div>
         </div>
@@ -376,6 +375,68 @@
         id: user_id
       })
   }
+
+  //=====================================================
+  //   Setting up pie chart
+  //=====================================================
+  var labels = [];
+  var propertyExpenses = [];
+
+  
+  
+  <% for(var i = 0; i < property.length; i++){ %>
+    <% var total = 0; %>
+      <% if(typeof(property[i].propertyExpenses) !== undefined ){%>
+      <% for(var z = 0; z < property[i].propertyExpenses.length; z++){ %>
+        //Add all property expenses into one data point
+        <% if(typeof property[i].propertyExpenses[z].Amount !== "undefined"){ %>
+          console.log(<%= property[i].propertyExpenses[z].Amount %>)
+        <% total += Number(property[i].propertyExpenses[z].Amount) %>; 
+        <% }} %>
+        <% if(total > 0 ) { %>
+          labels.push('<%=property[i].name%>')
+          propertyExpenses.push(<%= Number(total) %>)
+        <% } %>
+        console.log(propertyExpenses)
+  <% }} %>
+
+
+  console.log(labels)
+
+  var donutChart = document.getElementById("myDonutChart").getContext('2d');
+  var myDonutChart = new Chart(donutChart, {
+    type: 'doughnut',
+    data:{
+      labels: labels,
+      datasets: [{
+        label: 'Expenses',
+        data: propertyExpenses,
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)'
+      ],
+      borderColor: [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)'
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+   	//cutoutPercentage: 40,
+    responsive: false,
+    }
+  });
+
+  //=====================================================
+  //   Function for populating expenses pie chart
+  //=====================================================
+
+
 
   //=====================================================
   //  Function for AJAX request for excel spreadsheet
