@@ -79,6 +79,7 @@
                 <canvas style="height:250px" id="myDonutChart"></canvas>
               </div>
               <hr>
+              <b>Total Expenditure: £<span id="total-id"></span></b>
             </div>
           </div>
         </div>
@@ -399,6 +400,12 @@
         <% } %>
         console.log(propertyExpenses)
   <% }} %>
+
+  var total = 0;
+  for(var i = 0; i < propertyExpenses.length; i++){
+    total += propertyExpenses[i];
+  }
+  $('#total-id').html(total)
 
 
   console.log(labels)
