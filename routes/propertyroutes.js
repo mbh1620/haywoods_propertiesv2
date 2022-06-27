@@ -422,6 +422,20 @@ router.post("/properties/:id/addExpense", function(req,res){
     })
 })
 
+router.post("/properties/:id/deleteExpenses", function(req,res){
+    Property.findById(req.params.id, function(err, foundProperty){
+        if(err) {
+            console.log(err)
+        } else {    
+            for ( var key in req.body){
+               foundProperty.propertyExpenses.splice(parseInt(key),1)
+            }
+            foundProperty.save()
+            res.redirect("/properties");
+        }
+    })
+})
+
 //EDIT ROUTE - ADD MIDDLEWARE! and author checking (DONE) 
 router.get("/properties/:id/edit", middleware.isLoggedIn, function (req, res) {
     Property.findById(req.params.id, function (err, foundProperty) {

@@ -311,6 +311,7 @@
           <div class="container">
             
             <button class="btn btn-primary" onclick="showExpensesForm()">Add New Expense</button>
+            <button class="btn btn-danger" style="float:right" onclick="showDeleteForm()">Delete Expense</button>
             <div style="height:auto;width:250px;margin: 0 auto">
             <form id="expensesForm" style="height:400px;display:block;width:auto;display: none;" action="/properties/<%= property._id %>/addExpense" method="POST">
               <label for="expenseName">Name</label>
@@ -322,6 +323,16 @@
               <label for="expenseAmount">Amount £'s</label>
               <input id="expenseAmount" name="expenseAmount" class="form-control w-100" type="number">
               <input type="submit" class="btn btn-primary" style="margin-top:20px" value="Add Expense">
+            </form>
+            </div>
+            <div style="max-height: 300px; overflow:scroll; width:50%;margin: 0 auto">
+            <form id="deleteExpensesForm" style="height:400px;display:none;" action="/properties/<%= property._id %>/deleteExpenses" method="POST">
+              <% for(var i = 0; i < property.propertyExpenses.length; i++){ %>
+                <li class="list-group-item list-group-item-action w-100" style="height:50px;width:250px"><input type="checkbox" style="float:left;margin-top:5px;margin-right:20px" id="checkbox-<%=i%>" name="<%=i%>"><%= property.propertyExpenses[i].Name %><span style="float:right">£<%= property.propertyExpenses[i].Amount %></span></li> 
+                
+                <% } %>
+                <input type="submit" class="btn btn-danger" value="delete">
+              </div>
             </form>
           </div>
           </div>
@@ -408,6 +419,10 @@
 
       function showExpensesForm() {
         $("#expensesForm").toggle();
+      }
+
+      function showDeleteForm(){
+        $('#deleteExpensesForm').toggle();
       }
     </script>
 
