@@ -1,0 +1,74 @@
+<% include ./partials/header.ejs %>
+
+<div style="height:88.5vh" class="container w-50 p-3">
+    <div class="jumbotron">
+        <h1 class="text-center">Move In Tenant</h1>
+        
+        
+        <form action="/properties/<%= propertyId %>/new-tenant" method="POST">
+
+
+            <div class="container w-75">
+            <div class="form-group">
+                <label for="exampleInputEmail1">First Name</label>
+                <input type="text" name="firstname" class="form-control" id="First-Name"
+                    aria-describedby="Firatn" placeholder="First Name">
+            </div>
+            
+            <div class="form-group">
+                <label for="exampleInputEmail1">Last Name</label>
+                <input type="text" name="lastname" class="form-control" id="Last-Name"
+                    aria-describedby="emailHelp" placeholder="Last Name">
+
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email</label>
+                <input type="email" name="email" class="form-control" id="Email"
+                    aria-describedby="emailHelp" placeholder="Email">
+
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Mobile Number</label>
+                <input type="text" name="mobile_number" class="form-control" id="Mobile-Number"
+                    aria-describedby="emailHelp" placeholder="Mobile Number">
+
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Home Number</label>
+                <input type="text" name="house_number" class="form-control" id="Home-Number"
+                    aria-describedby="emailHelp" placeholder="Home Number">
+
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">Contract Type:</label>
+                <select class="form-control" name="contract_type">
+                    <option>6 Month</option>
+                    <option>12 Month</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Generate Contract?</label>
+                <input type="checkbox" name="generateContract" class="form-control" id="MoveInDate"
+                    aria-describedby="emailHelp" placeholder="Move In Date">
+
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Move In Date</label>
+                <input type="date" name="date_moved_in" class="form-control" id="MoveInDate"
+                    aria-describedby="emailHelp" placeholder="Move In Date">
+
+            </div>
+
+
+
+            
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Next</button>
+        </form>
+    </div>
+</div>
+
+<% include ./partials/footer.ejs %>

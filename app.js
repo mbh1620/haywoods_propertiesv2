@@ -15,9 +15,9 @@ var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 
 // Route Imports 
+var usersroutes = require('./routes/usersroutes');
 var propertyroutes = require('./routes/propertyroutes');
 var tenantroutes = require('./routes/tenantroutes');
-var usersroutes = require('./routes/usersroutes');
 var graphingroutes = require('./routes/graphingroutes').router;
 var scheduler_monthly = require('./routes/graphingroutes').j;
 
@@ -47,8 +47,9 @@ if(process.env.NODE_ENV === 'production'){
 } else if (process.env.NODE_ENV === 'development'){
     //Connect to Development Database
     mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@cluster0.drwm0.mongodb.net/Haywoods_properties_development?retryWrites=true&w=majority", { useUnifiedTopology:true, useNewUrlParser: true, useFindAndModify: false });
-} 
+}
 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //=====================================================
@@ -75,3 +76,5 @@ app.get("/*", function (req, res){
 })
 
 app.listen("8080");
+
+module.exports = app;

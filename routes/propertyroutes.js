@@ -582,6 +582,11 @@ router.delete("/properties/:id/photo/:photoId", middleware.isLoggedIn, function 
 
 // })
 
+//Move a tenant into a property
+router.get("/properties/:id/moveInTenant", middleware.isLoggedIn, function(req,res){
+    res.render("moveInTenant.ejs", {propertyId: req.params.id});
+})
+
 function calculateStatus(renewalDateInput) {
     var renewalDate = new Date(renewalDateInput)
     var todaysDate = new Date()
