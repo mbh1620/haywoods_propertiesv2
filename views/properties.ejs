@@ -1,110 +1,135 @@
 <% include ./partials/header.ejs %>
 
-<head>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-        crossorigin="" />
-</head>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+            crossorigin="" />
+    </head>
 
-<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-    integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-    crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
 
 
-<div class="jumbotron text-center">
-    <h1>Properties</h1>
-    <a class="btn btn-success btn-sm" href="/properties/new" style="float:left">Add new property</a>
-</div>
-<div class="container container-fluid">
-    <div id="mapid" style="height:400px;margin-top: 20px;"></div>
-</div>
-<div class="container container-fluid">
-    <div id="filter-jumbotron" class="jumbotron" style="margin-top:20px">
-    Search radius <input type="number"></br>
-    Price range <input type="number" value="" placeholder="Min" style="width:70px;margin-top:20px;margin-left:20px"><input type="number" value="Max" placeholder="Max" style="width:70px"></br>
-    Property Type <input type="" style="margin-top:20px">
-</div>
-</div>
-<div class="container container-fluid">
-        <% if(properties[0] == undefined){ %>
+    <div class="jumbotron text-center">
+        <h1>Properties</h1>
+        <a class="btn btn-success btn-sm" href="/properties/new" style="float:left">Add new property</a>
+    </div>
+    <div class="container container-fluid">
+        <div id="mapid" style="height:400px;margin-top: 20px;"></div>
+    </div>
+    <div class="container container-fluid">
+        <div id="filter-jumbotron" class="jumbotron" style="margin-top:0px;margin-bottom:0px">
+            Search radius <input type="number"></br>
+            Price range <input type="number" value="" placeholder="Min"
+                style="width:70px;margin-top:20px;margin-left:20px"><input type="number" value="Max" placeholder="Max"
+                style="width:70px"></br>
+            Property Type <input type="" style="margin-top:20px">
+        </div>
+    </div>
+    <div class="container container-fluid">
+        <% if(properties[0]==undefined){ %>
             <% console.log("undefined") %>
-            <div style="height:55vh" class="row h-30 text-center"></div>
-        <% }; %>
-    
-        <% var x = 0; %>
-        <% var y = 0; %>
-        <% properties.forEach(function(property){ %>
-        <% if(property.show_on_main){ %>
-        <% y++ %>
-        
-        
-        
-        <% if( x % 4 == 0 || x == 0){ %>
-        <div class="row h-30 text-center">
-        <% } %>
-        <% x++; %>
+                <div style="height:55vh" class="row h-30 text-center"></div>
+                <% }; %>
 
-        <div class="mt-5 col-md-6 col-lg-4 col-xl-3">
-            <div class="card w-100 p-3 p-3 bg-light" style="height:450px;">
-                <div class="card-header bg-dark text-light"><%= property.name %></div>
-                <img class="card-img-top" src="../uploads/<%= property._id%>/<%= property.first %>"></img>
-                <!-- <img src="<%= property.image %>"> -->
-                <div class="card-body">
+                    <% var x=0; %>
+                        <% var y=0; %>
+                            <% properties.forEach(function(property){ %>
+                                <% if(property.show_on_main){ %>
+                                    <% y++ %>
 
-                    <p style="margin-top:-20px;"><%= property.description.slice(0,80) %>...</p>
-                    <p><a href="/properties/<%= property._id %>" class="btn btn-primary">More Info</a></p>
+                                        <% if( x % 3==0 || x==0){ %>
+                                            <div class="row h-30 text-center">
+                                                <% } %>
+                                                    <% x++; %>
 
-                </div>
+                                                        <div class="mt-5 col-md-6 col-lg-4 col-xl-4">
+                                                            <div class="card w-100 p-3 p-3 bg-white"
+                                                                onclick="goToProperty('/properties/<%= property._id %>')"
+                                                                onmouseenter="addShadow()" onmouseleave="removeShadow()" style="height:450px;">
+                                                                <div class="card-header bg-dark text-light">
+                                                                    <%= property.name %>
+                                                                </div>
+                                                                <img class="card-img-top"
+                                                                    src="../uploads/<%= property._id%>/<%= property.first %>"></img>
+                                                                <!-- <img src="<%= property.image %>"> -->
+                                                                <div class="card-body">
+                                                                    <h5 style="text-align:left">£<%= property.price %> pcm
+                                                                    </h5>
+                                                                    <p style="text-align:left">
+                                                                        <%= property.description.slice(0,80) %>...
+                                                                    </p>
+                                                                    <p style="float:left">
+                                                                        <i class="fa fa-bed" aria-hidden="true"></i> <%= property.number_of_bedrooms %> <i class="fa fa-bath"
+                                                                            aria-hidden="true"></i> <%= property.number_of_bathrooms %> 
+                                                                        <i class="fa fa-television"
+                                                                            aria-hidden="true"></i> <%= property.number_of_livingrooms %></p>
 
-            </div>
+                                                                </div>
 
-        </div>
-        <% if(x % 4 == 0){ %>
-        </div>
-        <% } %>
-        <% } %>
-        <% }); %>
-        <% if( y == 0){ %>
-            
-            
-            <div class="jumbotron" style="margin-top:75px">
+                                                            </div>
 
-                <h5 style="text-align: center;"> No properties are listed for rent! Please come back later. </h5>
+                                                        </div>
+                                                        <% if(x % 3==0){ %>
+                                            </div>
+                                            <% } %>
+                                                <% } %>
+                                                    <% }); %>
+                                                        <% if( y==0){ %>
 
-            </div>
 
-        <% } %>
-        
-        
-        
+                                                            <div class="jumbotron" style="margin-top:75px">
 
-    
-</div>
-</div>
-<style>
-.card-img-top {
-    width: 100%;
-    height: 55%;
-    object-fit: cover;
-}
+                                                                <h5 style="text-align: center;"> No properties are
+                                                                    listed for rent! Please come back later. </h5>
 
-</style>
+                                                            </div>
 
-<script>
-    var mymap = L.map('mapid').setView([52.63771, -1.15017], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                                                            <% } %>
 
-        maxZoom: 18,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
-    }).addTo(mymap);
+
+
+
+
+    </div>
+    </div>
+    <style>
+        .card-img-top {
+            width: 100%;
+            height: 55%;
+            object-fit: cover;
+        }
+    </style>
+
+    <script>
+        function addShadow(){
+            console.log('addingShadow')
+            $(this).addClass('shadow');
+        }
+        function removeShadow(){
+            $(this).removeClass('shadow')
+        }
+        function goToProperty(propertyUrl) {
+            window.location = propertyUrl
+        }
+
+
+        var mymap = L.map('mapid').setView([52.63771, -1.15017], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'pk.eyJ1IjoibWJoMTYyMCIsImEiOiJjankwb244aWgwNHd1M2dsYWtkd2h2NWdwIn0.74tfwmTddrE7BpzyAA-0hw'
+        }).addTo(mymap);
             <% properties.forEach(function (property) { %>
-                <% if(property.show_on_main){ %>
+                <% if (property.show_on_main) { %>
             var marker = new L.marker([<%= property.lat %>, <%= property.long %>]).addTo(mymap);
-            <% }}); %>
+            <% }
+        }); %>
 
-</script>
+    </script>
 
 
-<% include ./partials/footer.ejs %>
+    <% include ./partials/footer.ejs %>

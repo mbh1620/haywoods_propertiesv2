@@ -31,6 +31,21 @@
           <textarea class="form-control" id="exampleFormControlTextarea1" name="property[description]" rows="3"
             placeholder=""><%= property.description %></textarea>
         </div>
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Number of Bedrooms</label>
+          <input type="number" class="form-control w-25" id="exampleInputPassword1" name="property[number_of_bedrooms]"
+            value="<%= property.number_of_bedrooms %>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Number of Bathrooms</label>
+          <input type="number" class="form-control w-25" id="exampleInputPassword1" name="property[number_of_bathrooms]"
+            value="<%= property.number_of_bathrooms %>" placeholder="">
+        </div>
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Number of Living Rooms</label>
+          <input type="number" class="form-control w-25" id="exampleInputPassword1" name="property[number_of_livingrooms]"
+            value="<%= property.number_of_livingrooms %>" placeholder="">
+        </div>
         <div class="form-group form-check" style="height:50px;margin-top:50px">
           <!-- <input name="property[test]" hidden> -->
           <input type="hidden" id="other" name="property[show_on_main]" value="<%=property.show_on_main%>"><input

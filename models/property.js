@@ -10,6 +10,9 @@ var propertySchema = new mongoose.Schema({
     name: String,
     price: Number,
     description: String,
+    number_of_bathrooms: Number,
+    number_of_bedrooms: Number,
+    number_of_livingrooms: Number,
     lat: Number,
     long: Number,
     author: {
