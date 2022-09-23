@@ -10,7 +10,7 @@
     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
     crossorigin=""></script>
 
-  <div class="jumbotron w-75" style="margin: 0 auto;padding-bottom:30px">
+  <div class="jumbotron w-75" style="margin: 0 auto;padding-bottom:30px;height:auto">
     <div class="container">
       <h1 style="margin-bottom:50px;font-family: Helvetica, sans-serif;">
         <%= property.name %>
@@ -42,20 +42,29 @@
             <span class="sr-only">Next</span>
           </a>
         </div>
-        <div class="jumbotron bg-white" style="margin-top:50px;padding-top:20px;height:auto">
-          <p style="margin-top:20px;">This was listed by: <em>
-              <%= property.author.username %>
-            </em></p>
-          <p style="margin-top:20px;">Price: £<%= property.price %> pcm</p>
-          <p style="margin-top:20px;">Location:</p>
+        <div class="jumbotron bg-white" style="padding-top:20px;height:auto;padding-bottom:10px">
+          <h4 style="margin-top:20px;"> £<%= property.price %> pcm</h4>
+          <h6 style="margin-top:20px;"> 2 Bed House for rent</h6>
+          
+          <p style="">
+            <i class="fa fa-bed" aria-hidden="true"></i> <%= property.number_of_bedrooms %> Bedrooms
+            <i class="fa fa-bath" aria-hidden="true"></i> <%= property.number_of_bathrooms %> Bathroom
+            <i class="fa-solid fa-couch"></i> <%= property.number_of_livingrooms %> Living Rooms</p>
 
+          <hr>
+            <h4>Property Description</h4>
+          
+            <p style="display:block;white-space: pre-wrap;">
+              <%= property.description %>
+            </p>
+          
+          <hr>
+          <h4 style="margin-bottom:30px">Property Location</h4>
           <div id="mapid"
-            style="float:left;height:400px;width:400px; display:block; margin-right:20px; margin-bottom:20px;"></div>
-          <p style="display:block;white-space: pre-wrap;">
-            <%= property.description %>
-          </p>
+            style="float:left;height:350px;width:100%; display:block; margin-right:20px; margin-bottom:30px;"></div>
+        
           </br clear="left">
-          <div id="button-container" style="display:inline-block;width:400px; height:250px">
+          <div id="button-container" style="display:inline-block;width:400px; height:30px">
 
 
             <!-- Add logic for displaying edit and delete buttons here -->
@@ -75,13 +84,20 @@
                   <% }} %>
                     <a style="display:inline-block;" href="/properties" class="btn btn-danger">Back</a>
           </div>
-
-          <p>Contact Details:</p>
           <p>
-            <%= property.author.username %>
+            
+            <p style="margin-top:20px;">See more properties from: <em>
+              <a href="#"><%= property.author.username %></a>
+            </em></p>
           </p>
 
-        </div>
+          </div>
+
+          <!-- <div class="jumbotron bg-white">
+            <h2>Similar Properties</h2>
+          </div> -->
+
+        
       </div>
     </div>
   </div>

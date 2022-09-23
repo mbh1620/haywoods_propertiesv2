@@ -13,7 +13,7 @@ function createNewContract(tenantInformation, landlordInformation, propertyInfor
         var date = new Date()
         date = date.getDate() + "/" + date.getUTCMonth() + "/" + date.getFullYear()
 
-        newContract.pipe(fs.createWriteStream(`./uploads/${propertyInformation._id}/${propertyInformation.name}-${tenantInformation.firstname}-${tenantInformation.lastname}-Contract-.pdf`))
+        newContract.pipe(fs.createWriteStream(`./uploads/${propertyInformation._id}/Documents/${propertyInformation.name}-${tenantInformation.firstname}-${tenantInformation.lastname}-Contract-.pdf`))
 
         newContract.fontSize(18)
         .text(`Dated: ${date}`)
